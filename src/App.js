@@ -7,12 +7,12 @@ import Notebook from "./components/Notebook.js";
 import Profile from "./components/Profile.js";
 import Signup from "./components/Signup.js";
 import startDB from "./Firebase.js";
-import NewProject from "./components/NewProject.js";
-import EditProject from "./components/EditProject.js";
+import NewProject from "./components/NewProject.tsx";
+import EditProject from "./components/projects/EditProject.tsx";
 
 //for github basename on browserrouter / ghpages name
 //redux
-const App = function () {
+const App = function() {
   // const db = startDB();
   // let signedin = false;
   // if (!signedin) {
