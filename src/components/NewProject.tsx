@@ -16,6 +16,7 @@ const NewProject = function() {
         linktoraveler: string;
         finishby: string; //type date
         sizemade: string;
+        patternfrom: string;
         patterncategory: string;
         tags: string[]; // separate tags and add # // select can be more than one
         needles: string[];
@@ -69,6 +70,7 @@ const NewProject = function() {
                 linktoraveler: "",
                 finishby: "",
                 sizemade: "",
+                patternfrom: "",
                 patterncategory: "", //select. might be more than one?
                 tags: [], // separate tags and add # // select can be more than one
                 needles: [],
@@ -171,9 +173,6 @@ const NewProject = function() {
                 </label>
                 <button type="submit">Continue</button>
             </form>
-            {/* <Routes> */}
-            {/*   <Route path=":newProjectName" element={<EditProject />} /> */}
-            {/* </Routes> */}
         </div>
     );
 };
