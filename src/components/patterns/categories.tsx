@@ -1,8 +1,9 @@
-const categories = function() {
+const displaycategories = function() {
     const categoriesArray = [
+        { item: "no category" },
         {
             folder: "Clothing",
-            subfolders: [
+            subfolder: [
                 "Coat/Jacket",
                 "Dress",
                 "Intimate-Apparel",
@@ -126,6 +127,7 @@ const categories = function() {
                 "Snood",
             ],
         },
+        { item: "Medical" },
         {
             subfolder: "Bag",
             subsubfolder: [
@@ -430,38 +432,101 @@ const categories = function() {
         },
     ];
 
-    const ulSelectCategory = document.getElementById("selectcategory");
+    const ulSelectCategory: HTMLElement | null = document.getElementById(
+        "selectcategory"
+    );
+
+    // there should be two event listeners. one for folder and a different one for subfolder. or just check the class on showfoldercontent
+    const showFolderContent = function(event: MouseEvent): void {
+        const folderclicked: HTMLElement | null = event.target as HTMLElement;
+        console.log(folderclicked);
+        //o hidden false é de children nao é de ul; also nao é um ul
+        // shows every ul and li instead of just ul and direct children
+        const folderUlChild: HTMLElement | null = folderclicked.querySelector(
+            "ul.subfolder"
+        );
+
+        if (folderUlChild !== null) {
+            const ulChildren = folderUlChild.querySelectorAll("li");
+            if (ulChildren !== null) {
+                ulChildren.forEach((child) => (child.hidden = false));
+            }
+        }
+    };
+
     for (let i = 0; i < categoriesArray.length; i++) {
         const currentobj = categoriesArray[i];
         const isFolder = currentobj.folder;
         if (isFolder === undefined) {
-            const isSubFolder = currentobj.subfolder;
-            const subsubfolder = currentobj.subsubfolder;
-            const subfolderparent = document.getElementById(isSubFolder);
-            const newUl = document.createElement("ul");
-            for (let j = 0; j < subsubfolder.length; j++) {
+            if (currentobj.item !== undefined) {
                 const newli = document.createElement("li");
-                newli.setAttribute("id", subsubfolder[j]);
-                newli.textContent = subsubfolder[j];
-                newUl.appendChild(newli);
+                ulSelectCategory?.appendChild(newli);
+                newli.setAttribute("class", "item");
+                newli.textContent = currentobj.item;
+            } else {
+                const isSubFolder = currentobj.subfolder;
+                const subsubfolder = currentobj.subsubfolder;
+                const subfolderparent = document.getElementById(isSubFolder);
+                const newUl = document.createElement("ul");
+                newUl.addEventListener("click", showFolderContent);
+                newUl.setAttribute("class", "subsubfolder");
+                for (let j = 0; j < subsubfolder.length; j++) {
+                    const newli = document.createElement("li");
+                    newli.setAttribute("class", "item");
+                    newli.setAttribute("id", subsubfolder[j]);
+                    newli.textContent = subsubfolder[j];
+                    newli.hidden = true;
+                    newUl.appendChild(newli);
+                }
+                subfolderparent?.appendChild(newUl);
             }
-            subfolderparent.appendChild(newUl);
         } else {
             const li = document.createElement("li");
             li.setAttribute("class", "folder");
+            li.addEventListener("click", showFolderContent);
             li.textContent = isFolder;
-            ulSelectCategory.appendChild(li);
+            ulSelectCategory?.appendChild(li);
             const newUl = document.createElement("ul");
+            newUl.setAttribute("class", "subfolder");
+            //newUl.addEventListener("click", showFolderContent);
             const subfolder = currentobj.subfolder;
-            for (let j = 0; j < subfolder.length; j++) {
-                const newli = document.createElement("li");
-                newli.textContent = subfolder[j];
-                newli.setAttribute("id", subfolder[j]);
-                newUl.appendChild(newli);
+            if (subfolder !== undefined) {
+                for (let j = 0; j < subfolder.length; j++) {
+                    const newli = document.createElement("li");
+                    newli.textContent = subfolder[j];
+                    newli.setAttribute("id", subfolder[j]);
+                    newli.setAttribute("class", "item");
+                    newli.hidden = true;
+                    newUl.appendChild(newli);
+                }
+                li.appendChild(newUl);
             }
-            li.appendChild(newUl);
         }
     }
+
+    const updateInput = function(event: MouseEvent): void {
+        const clickedOnItem:
+            | boolean
+            | null = (event.target as HTMLElement).classList.contains("item");
+        if (clickedOnItem) {
+            const liclicked: string | null = (event.target as HTMLElement)
+                .textContent;
+            const inputSelectCategory = document.getElementById(
+                "selectcategoryinput"
+            ) as HTMLInputElement;
+            if (inputSelectCategory !== null && liclicked !== null) {
+                inputSelectCategory.value = liclicked;
+            }
+            //remove categories
+            const folders = document.querySelectorAll(".folder");
+            const subfolders = document.querySelectorAll(".subfolder");
+            const items = document.querySelectorAll(".item");
+            folders.forEach((folder) => folder.remove());
+            subfolders.forEach((subfolder) => subfolder.remove());
+            items.forEach((item) => item.remove());
+        }
+    };
+    ulSelectCategory?.addEventListener("click", updateInput);
 };
 
-export default categories;
+export default displaycategories;

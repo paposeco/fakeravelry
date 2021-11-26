@@ -1,6 +1,7 @@
 //acess info from store
-
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import displaycategories from "../patterns/categories";
 //import Pattern from "../NewProject.tsx"; ainda nao sei se preciso disto
 
 // receives basic information about project and creates form for filling out the rest
@@ -14,21 +15,21 @@ const EditProject = function() {
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
     };
-    //to do: on mount document.getElementById("orange").selected = true; for craft
+    const handlerOfChange = function() { };
 
     return (
         <div>
             <h2>edit project</h2>
-            <ul>
-                <li>{craft}</li>
-                <li>{name}</li>
-                <li>{pattern}</li>
-                <li>{aboutpattern}</li>
-            </ul>
-            <form onSubmit={handlerOfSubmit}>
+            <form id="editprojectform" onSubmit={handlerOfSubmit}>
                 <label htmlFor="projectname">
                     Name
-                    <input type="text" value={name} id="projectname" name="projectname" />
+                    <input
+                        type="text"
+                        value={name}
+                        id="projectname"
+                        name="projectname"
+                        onChange={handlerOfChange}
+                    />
                 </label>
                 <label htmlFor="madefor">
                     Made for
@@ -57,10 +58,16 @@ const EditProject = function() {
                         id="patternname"
                         name="patternname"
                         value={pattern}
+                        onChange={handlerOfChange}
                     />
                 </label>
                 <label htmlFor="craft-select">Craft</label>
-                <select name="crafts" id="craft-select">
+                <select
+                    name="crafts"
+                    id="craft-select"
+                    value={craft}
+                    onChange={handlerOfChange}
+                >
                     <option value="knitting">Knitting</option>
                     <option value="crochet">Crochet</option>
                     <option value="loomknitting">Loom Knitting</option>
@@ -68,8 +75,22 @@ const EditProject = function() {
                     <option value="weaving">Weaving</option>
                     <option value="spinning">Spinning</option>
                 </select>
-        //select category, on click runs categories();
+                <input
+                    type="text"
+                    name="selectcategoryinput"
+                    id="selectcategoryinput"
+                    placeholder="select category..."
+                    readOnly
+                    onClick={displaycategories}
+                    onChange={handlerOfChange}
+                />
                 <ul id="selectcategory"></ul>
+                {/* <div>
+                    <p id="selectcategorytext" onClick={displaycategories}>
+                        select category...
+                    </p>
+                    
+                </div> */}
             </form>
         </div>
     );

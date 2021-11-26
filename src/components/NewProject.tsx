@@ -177,7 +177,7 @@ const NewProject = function() {
     );
 };
 
-export { NewProject };
+export default NewProject;
 
 // project details can be added after. this creates a project with a name
 
