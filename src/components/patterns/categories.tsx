@@ -1,532 +1,502 @@
 const displaycategories = function() {
-    const categoriesArray = [
-        { item: "no category" },
-        {
-            folder: "Clothing",
-            subfolder: [
-                "Coat/Jacket",
-                "Dress",
-                "Intimate-Apparel",
-                "Bra",
-                "Other",
-                "Pasties",
-                "Underwear",
-                "Leggings",
-                "Onesies",
-                "Other",
-                "Pants",
-                "Robe",
-                "Shorts",
-                "Shrug/Bolero",
-                "Skirt",
-                "Sleepwear",
-                "Soakers",
-                "Sweater",
-                "Cardigan",
-                "Other",
-                "Pullover",
-                "Swimwear",
-                "Tops",
-                "Other",
-                "Sleeveless-Top",
-                "Strapless-Top",
-                "Tee",
-                "Vest",
-            ],
-        },
-        {
-            subfolder: "Intimate-Apparel",
-            subsubfolder: ["Bra", "Other", "Pasties", "Underwear"],
-        },
-        { subfolder: "Sweater", subsubfolder: ["Cardigan", "Other", "Pullover"] },
-        {
-            subfolder: "Tops",
-            subsubfolder: ["Other", "Sleeveless-Top", "Strapless-Top", "Tee"],
-        },
+  const categoriesArray = [
+    { item: "nocategory" },
+    {
+      folderTopLevel: "Clothing",
+      subfolder: [
+        "Coat/Jacket",
+        "Dress",
+        "Intimate-Apparel",
+        "Leggings",
+        "Onesies",
+        "Other",
+        "Pants",
+        "Robe",
+        "Shorts",
+        "Shrug/Bolero",
+        "Skirt",
+        "Sleepwear",
+        "Soakers",
+        "Sweater",
+        "Swimwear",
+        "Tops",
+        "Vest",
+      ],
+    },
+    {
+      folderSecondLevel: "Intimate-Apparel",
+      subfolder: ["Bra", "Other", "Pasties", "Underwear"],
+    },
+    {
+      folderSecondLevel: "Sweater",
+      subfolder: ["Cardigan", "Other", "Pullover"],
+    },
+    {
+      folderSecondLevel: "Tops",
+      subfolder: ["Other", "Sleeveless-Top", "Strapless-Top", "Tee"],
+    },
 
-        {
-            folder: "Accessories",
-            subfolder: [
-                "Bag",
-                "Backpack",
-                "Clutch",
-                "Drawstring",
-                "Duffle",
-                "Laptop",
-                "Market-bag-(slouchy)",
-                "Messenger",
-                "Money",
-                "Other",
-                "Purse/Handbag",
-                "Tote",
-                "Wristlet",
-                "Belt",
-                "Feet/Legs",
-                "Boot-Toppers",
-                "Booties",
-                "Legwarmers",
-                "Other",
-                "Slippers",
-                "Socks",
-                "Ankle",
-                "Knee-highs",
-                "Mid-calf",
-                "Other",
-                "Thigh-high",
-                "Toeless",
-                "Tube",
-                "Spats",
-                "Hands",
-                "Convertible",
-                "Cuffs",
-                "Fingerless-Gloves/Mitts",
-                "Gloves",
-                "Mittens",
-                "Muff",
-                "Other",
-                "Hat",
-                "Balaclava",
-                "Beanie,-Toque",
-                "Beret,-Tam",
-                "Billed",
-                "Bonnet",
-                "Brimmed",
-                "Cloche",
-                "Earflap",
-                "Other",
-                "Pixie",
-                "Stocking",
-                "Yarmulke",
-                "Jewelry",
-                "Ankle",
-                "Bracelet",
-                "Brooch",
-                "Earrings",
-                "Necklace",
-                "Other",
-                "Ring",
-                "Neck/Torso",
-                "Bib",
-                "Cape",
-                "Collar",
-                "Cowl",
-                "Necktie",
-                "Other",
-                "Poncho",
-                "Scarf",
-                "Shawl/Wrap",
-                "Other",
-                "Other-Headwear",
-                "Earwarmers",
-                "Eye-mask",
-                "Hair-accessories",
-                "Headband",
-                "Headwrap",
-                "Kerchief",
-                "Other",
-                "Snood",
-            ],
-        },
-        { item: "Medical" },
-        {
-            subfolder: "Bag",
-            subsubfolder: [
-                "Backpack",
-                "Clutch",
-                "Drawstring",
-                "Duffle",
-                "Laptop",
-                "Market-bag-(slouchy)",
-                "Messenger",
-                "Money",
-                "Other",
-                "Purse/Handbag",
-                "Tote",
-                "Wristlet",
-            ],
-        },
-        {
-            subfolder: "Feet/Legs",
-            subsubfolder: [
-                "Boot-Toppers",
-                "Booties",
-                "Legwarmers",
-                "Other",
-                "Slippers",
-                "Socks",
-                "Ankle",
-                "Knee-highs",
-                "Mid-calf",
-                "Other",
-                "Thigh-high",
-                "Toeless",
-                "Tube",
-                "Spats",
-            ],
-        },
-        {
-            subfolder: "Socks",
-            subsubfolder: [
-                "Ankle",
-                "Knee-highs",
-                "Mid-calf",
-                "Other",
-                "Thigh-high",
-                "Toeless",
-                "Tube",
-            ],
-        },
-        {
-            subfolder: "Hands",
-            subsubfolder: [
-                "Convertible",
-                "Cuffs",
-                "Fingerless-Gloves/Mitts",
-                "Gloves",
-                "Mittens",
-                "Muff",
-                "Other",
-            ],
-        },
-        {
-            subfolder: "Hat",
-            subsubfolder: [
-                "Balaclava",
-                "Beanie,-Toque",
-                "Beret,-Tam",
-                "Billed",
-                "Bonnet",
-                "Brimmed",
-                "Cloche",
-                "Earflap",
-                "Other",
-                "Pixie",
-                "Stocking",
-                "Yarmulke",
-            ],
-        },
-        {
-            subfolder: "Jewelry",
-            subsubfolder: [
-                "Ankle",
-                "Bracelet",
-                "Brooch",
-                "Earrings",
-                "Necklace",
-                "Other",
-                "Ring",
-            ],
-        },
-        {
-            subfolder: "Neck/Torso",
-            subsubfolder: [
-                "Bib",
-                "Cape",
-                "Collar",
-                "Cowl",
-                "Necktie",
-                "Other",
-                "Poncho",
-                "Scarf",
-                "Shawl/Wrap",
-            ],
-        },
-        {
-            subfolder: "Other-Headwear",
-            subsubfolder: [
-                "Earwarmers",
-                "Eye-mask",
-                "Hair-accessories",
-                "Headband",
-                "Headwrap",
-                "Kerchief",
-                "Other",
-                "Snood",
-            ],
-        },
+    {
+      folderTopLevel: "Accessories",
+      subfolder: [
+        "Bag",
+        "Belt",
+        "Feet/Legs",
+        "Hands",
+        "Hat",
+        "Jewelry",
+        "Neck/Torso",
+        "Other-Headwear",
+      ],
+    },
+    { item: "Medical" },
+    {
+      folderSecondLevel: "Bag",
+      subfolder: [
+        "Backpack",
+        "Clutch",
+        "Drawstring",
+        "Duffle",
+        "Laptop",
+        "Market-bag-(slouchy)",
+        "Messenger",
+        "Money",
+        "Other",
+        "Purse/Handbag",
+        "Tote",
+        "Wristlet",
+      ],
+    },
+    {
+      folderSecondLevel: "Feet/Legs",
+      subfolder: [
+        "Boot-Toppers",
+        "Booties",
+        "Legwarmers",
+        "Other",
+        "Slippers",
+        "Socks",
+        "Spats",
+      ],
+    },
+    {
+      folderThirdLevel: "Socks",
+      subfolder: [
+        "Ankle",
+        "Knee-highs",
+        "Mid-calf",
+        "Other",
+        "Thigh-high",
+        "Toeless",
+        "Tube",
+      ],
+    },
+    {
+      folderSecondLevel: "Hands",
+      subfolder: [
+        "Convertible",
+        "Cuffs",
+        "Fingerless-Gloves/Mitts",
+        "Gloves",
+        "Mittens",
+        "Muff",
+        "Other",
+      ],
+    },
+    {
+      folderSecondLevel: "Hat",
+      subfolder: [
+        "Balaclava",
+        "Beanie/Toque",
+        "Beret/Tam",
+        "Billed",
+        "Bonnet",
+        "Brimmed",
+        "Cloche",
+        "Earflap",
+        "Other",
+        "Pixie",
+        "Stocking",
+        "Yarmulke",
+      ],
+    },
+    {
+      folderSecondLevel: "Jewelry",
+      subfolder: [
+        "Ankle",
+        "Bracelet",
+        "Brooch",
+        "Earrings",
+        "Necklace",
+        "Other",
+        "Ring",
+      ],
+    },
+    {
+      folderSecondLevel: "Neck/Torso",
+      subfolder: [
+        "Bib",
+        "Cape",
+        "Collar",
+        "Cowl",
+        "Necktie",
+        "Other",
+        "Poncho",
+        "Scarf",
+        "Shawl/Wrap",
+      ],
+    },
+    {
+      folderSecondLevel: "Other-Headwear",
+      subfolder: [
+        "Earwarmers",
+        "Eye-mask",
+        "Hair-accessories",
+        "Headband",
+        "Headwrap",
+        "Kerchief",
+        "Other",
+        "Snood",
+      ],
+    },
 
-        {
-            folder: "Home",
-            subfolder: [
-                "Blanket",
-                "Baby-Blanket",
-                "Bedspread",
-                "Other",
-                "Throw",
-                "Bookmark",
-                "Cleaning",
-                "Bath-Mitt",
-                "Other",
-                "Scrubber",
-                "Towel",
-                "Washcloth/Dishcloth",
-                "Coaster",
-                "Containers",
-                "Cozy",
-                "Automobile",
-                "Bathroom",
-                "Book-Cover",
-                "Coffee/Tea-Pot",
-                "Cup/Mug",
-                "Electronics",
-                "Food-Cozy",
-                "Glasses-Case",
-                "Hanger-Cover",
-                "Hot-Water-Bottle",
-                "Lip-Balm",
-                "Mature-Content-Toys",
-                "Other",
-                "Sports-Equipment",
-                "Tissue-Box-Cover",
-                "Curtain",
-                "Decorative",
-                "Christmas-Stocking",
-                "Doily",
-                "Hanging-Ornament",
-                "Ornamental-Flower",
-                "Other",
-                "Picture-Frame",
-                "Wall-Hanging",
-                "Wreath",
-                "Lampshade",
-                "Other",
-                "Pillow",
-                "Potholder",
-                "Rug",
-                "Sachet",
-                "Table-Setting",
-                "Napkin",
-                "Other",
-                "Placemat",
-                "Table-Runner",
-                "Tablecloth",
-            ],
-        },
-        {
-            subfolder: "Blanket",
-            subsubfolder: ["Baby-Blanket", "Bedspread", "Other", "Throw"],
-        },
-        {
-            subfolder: "Cleaning",
-            subsubfolder: [
-                "Bath-Mitt",
-                "Other",
-                "Scrubber",
-                "Towel",
-                "Washcloth/Dishcloth",
-            ],
-        },
-        {
-            subfolder: "Cozy",
-            subsubfolder: [
-                "Automobile",
-                "Bathroom",
-                "Book-Cover",
-                "Coffee/Tea-Pot",
-                "Cup/Mug",
-                "Electronics",
-                "Food-Cozy",
-                "Glasses-Case",
-                "Hanger-Cover",
-                "Hot-Water-Bottle",
-                "Lip-Balm",
-                "Mature-Content-Toys",
-                "Other",
-                "Sports-Equipment",
-                "Tissue-Box-Cover",
-            ],
-        },
-        {
-            subfolder: "Decorative",
-            subsubfolder: [
-                "Christmas-Stocking",
-                "Doily",
-                "Hanging-Ornament",
-                "Ornamental-Flower",
-                "Other",
-                "Picture-Frame",
-                "Wall-Hanging",
-                "Wreath",
-            ],
-        },
-        {
-            subfolder: "Table-Setting",
-            subsubfolder: [
-                "Napkin",
-                "Other",
-                "Placemat",
-                "Table-Runner",
-                "Tablecloth",
-            ],
-        },
+    {
+      folderTopLevel: "Home",
+      subfolder: [
+        "Blanket",
+        "Bookmark",
+        "Cleaning",
+        "Coaster",
+        "Containers",
+        "Cozy",
+        "Curtain",
+        "Decorative",
+        "Lampshade",
+        "Other",
+        "Pillow",
+        "Potholder",
+        "Rug",
+        "Sachet",
+        "Table-Setting",
+      ],
+    },
+    {
+      folderSecondLevel: "Blanket",
+      subfolder: ["Baby-Blanket", "Bedspread", "Other", "Throw"],
+    },
+    {
+      folderSecondLevel: "Cleaning",
+      subfolder: [
+        "Bath-Mitt",
+        "Other",
+        "Scrubber",
+        "Towel",
+        "Washcloth/Dishcloth",
+      ],
+    },
+    {
+      folderSecondLevel: "Cozy",
+      subfolder: [
+        "Automobile",
+        "Bathroom",
+        "Book-Cover",
+        "Coffee/Tea-Pot",
+        "Cup/Mug",
+        "Electronics",
+        "Food-Cozy",
+        "Glasses-Case",
+        "Hanger-Cover",
+        "Hot-Water-Bottle",
+        "Lip-Balm",
+        "Mature-Content-Toys",
+        "Other",
+        "Sports-Equipment",
+        "Tissue-Box-Cover",
+      ],
+    },
+    {
+      folderSecondLevel: "Decorative",
+      subfolder: [
+        "Christmas-Stocking",
+        "Doily",
+        "Hanging-Ornament",
+        "Ornamental-Flower",
+        "Other",
+        "Picture-Frame",
+        "Wall-Hanging",
+        "Wreath",
+      ],
+    },
+    {
+      folderSecondLevel: "Table-Setting",
+      subfolder: ["Napkin", "Other", "Placemat", "Table-Runner", "Tablecloth"],
+    },
 
-        {
-            folder: "Toys-and-Hobbies",
-            subfolder: [
-                "Ball",
-                "Blocks",
-                "Costume",
-                "Craft",
-                "Crochet-Hook-Holder",
-                "Needle-Holder",
-                "Other",
-                "Pin-Cushion",
-                "Tape-Measure-Cover",
-                "Doll-Clothes",
-                "Baby-Doll",
-                "Child-Doll",
-                "Fashion-doll",
-                "Other",
-                "Food",
-                "Game",
-                "Mature-Content",
-                "Mobile",
-                "Other",
-                "Puppet",
-                "Softies",
-                "Animal",
-                "Doll",
-                "Other",
-                "Plant",
-                "Vehicle",
-            ],
-        },
-        {
-            subfolder: "Craft",
-            subsubfolder: [
-                "Crochet-Hook-Holder",
-                "Needle-Holder",
-                "Other",
-                "Pin-Cushion",
-                "Tape-Measure-Cover",
-            ],
-        },
-        {
-            subfolder: "Doll-Clothes",
-            subsubfolder: ["Baby-Doll", "Child-Doll", "Fashion-doll", "Other"],
-        },
-        {
-            subfolder: "Softies",
-            subsubfolder: ["Animal", "Doll", "Other", "Plant", "Vehicle"],
-        },
+    {
+      folderTopLevel: "Toys-and-Hobbies",
+      subfolder: [
+        "Ball",
+        "Blocks",
+        "Costume",
+        "Craft",
+        "Doll-Clothes",
+        "Food",
+        "Game",
+        "Mature-Content",
+        "Mobile",
+        "Other",
+        "Puppet",
+        "Softies",
+      ],
+    },
+    {
+      folderTopLevel: "Craft",
+      subfolder: [
+        "Crochet-Hook-Holder",
+        "Needle-Holder",
+        "Other",
+        "Pin-Cushion",
+        "Tape-Measure-Cover",
+      ],
+    },
+    {
+      folderSecondLevel: "Doll-Clothes",
+      subfolder: ["Baby-Doll", "Child-Doll", "Fashion-doll", "Other"],
+    },
+    {
+      folderSecondLevel: "Softies",
+      subfolder: ["Animal", "Doll", "Other", "Plant", "Vehicle"],
+    },
 
-        {
-            folder: "Pet",
-            subfolder: ["Accessory", "Bedding", "Clothing", "Other", "Toys"],
-        },
-        {
-            folder: "Components",
-            subfolder: [
-                "Afghan-block",
-                "Applique/Embellishment",
-                "Button",
-                "Chart",
-                "Edging",
-                "Floral-block",
-                "Frog",
-                "Insertion",
-                "Other",
-                "Stitch-pattern",
-                "Tutorial",
-            ],
-        },
-    ];
+    {
+      folderTopLevel: "Pet",
+      subfolder: ["Accessory", "Bedding", "Clothing", "Other", "Toys"],
+    },
+    {
+      folderTopLevel: "Components",
+      subfolder: [
+        "Afghan-block",
+        "Applique/Embellishment",
+        "Button",
+        "Chart",
+        "Edging",
+        "Floral-block",
+        "Frog",
+        "Insertion",
+        "Other",
+        "Stitch-pattern",
+        "Tutorial",
+      ],
+    },
+  ];
 
-    const ulSelectCategory: HTMLElement | null = document.getElementById(
-        "selectcategory"
-    );
+  const ulSelectCategory: HTMLElement | null =
+    document.getElementById("selectcategory");
+  const showFolderContent = function(event: MouseEvent): void {
+    // folder clicked
+    const folderclicked: HTMLElement | null = event.target as HTMLElement;
+    // get subfolder child of folder clicked
+    const folderUlChild: HTMLElement | null =
+      folderclicked.querySelector("ul.subfolder");
 
-    // there should be two event listeners. one for folder and a different one for subfolder. or just check the class on showfoldercontent
-    const showFolderContent = function(event: MouseEvent): void {
-        const folderclicked: HTMLElement | null = event.target as HTMLElement;
-        console.log(folderclicked);
-        //o hidden false é de children nao é de ul; also nao é um ul
-        // shows every ul and li instead of just ul and direct children
-        const folderUlChild: HTMLElement | null = folderclicked.querySelector(
-            "ul.subfolder"
-        );
-
-        if (folderUlChild !== null) {
-            const ulChildren = folderUlChild.querySelectorAll("li");
-            if (ulChildren !== null) {
-                ulChildren.forEach((child) => (child.hidden = false));
-            }
-        }
-    };
-
-    for (let i = 0; i < categoriesArray.length; i++) {
-        const currentobj = categoriesArray[i];
-        const isFolder = currentobj.folder;
-        if (isFolder === undefined) {
-            if (currentobj.item !== undefined) {
-                const newli = document.createElement("li");
-                ulSelectCategory?.appendChild(newli);
-                newli.setAttribute("class", "item");
-                newli.textContent = currentobj.item;
-            } else {
-                const isSubFolder = currentobj.subfolder;
-                const subsubfolder = currentobj.subsubfolder;
-                const subfolderparent = document.getElementById(isSubFolder);
-                const newUl = document.createElement("ul");
-                newUl.addEventListener("click", showFolderContent);
-                newUl.setAttribute("class", "subsubfolder");
-                for (let j = 0; j < subsubfolder.length; j++) {
-                    const newli = document.createElement("li");
-                    newli.setAttribute("class", "item");
-                    newli.setAttribute("id", subsubfolder[j]);
-                    newli.textContent = subsubfolder[j];
-                    newli.hidden = true;
-                    newUl.appendChild(newli);
-                }
-                subfolderparent?.appendChild(newUl);
-            }
-        } else {
-            const li = document.createElement("li");
-            li.setAttribute("class", "folder");
-            li.addEventListener("click", showFolderContent);
-            li.textContent = isFolder;
-            ulSelectCategory?.appendChild(li);
-            const newUl = document.createElement("ul");
-            newUl.setAttribute("class", "subfolder");
-            //newUl.addEventListener("click", showFolderContent);
-            const subfolder = currentobj.subfolder;
-            if (subfolder !== undefined) {
-                for (let j = 0; j < subfolder.length; j++) {
-                    const newli = document.createElement("li");
-                    newli.textContent = subfolder[j];
-                    newli.setAttribute("id", subfolder[j]);
-                    newli.setAttribute("class", "item");
-                    newli.hidden = true;
-                    newUl.appendChild(newli);
-                }
-                li.appendChild(newUl);
-            }
-        }
+    if (folderUlChild !== null) {
+      folderUlChild.style.display = "block";
     }
+  };
 
-    const updateInput = function(event: MouseEvent): void {
-        const clickedOnItem:
-            | boolean
-            | null = (event.target as HTMLElement).classList.contains("item");
-        if (clickedOnItem) {
-            const liclicked: string | null = (event.target as HTMLElement)
-                .textContent;
-            const inputSelectCategory = document.getElementById(
-                "selectcategoryinput"
-            ) as HTMLInputElement;
-            if (inputSelectCategory !== null && liclicked !== null) {
-                inputSelectCategory.value = liclicked;
-            }
-            //remove categories
-            const folders = document.querySelectorAll(".folder");
-            const subfolders = document.querySelectorAll(".subfolder");
-            const items = document.querySelectorAll(".item");
-            folders.forEach((folder) => folder.remove());
-            subfolders.forEach((subfolder) => subfolder.remove());
-            items.forEach((item) => item.remove());
+  const showSubFolderContent = function(event: MouseEvent): void {
+    const subfolderClicked: HTMLElement | null = event.target as HTMLElement;
+    const subfolderUlChild: HTMLElement | null =
+      subfolderClicked.querySelector("ul.subsubfolder");
+    if (subfolderUlChild !== null) {
+      subfolderUlChild.style.display = "block";
+    }
+  };
+  const showSubSubFolderContent = function(event: MouseEvent): void {
+    const subsubfolderClicked: HTMLElement | null = event.target as HTMLElement;
+    const subsubfolderUlChild: HTMLElement | null =
+      subsubfolderClicked.querySelector("ul.subsubsubfolder");
+    if (subsubfolderUlChild !== null) {
+      subsubfolderUlChild.style.display = "block";
+    }
+  };
+
+  for (let i = 0; i < categoriesArray.length; i++) {
+    const firstKey: string = Object.keys(categoriesArray[i])[0];
+    if (
+      firstKey === "folderTopLevel" &&
+      categoriesArray[i].folderTopLevel !== undefined
+    ) {
+      // folder
+      const folderli = document.createElement("li");
+      const foldername: string | undefined = categoriesArray[i].folderTopLevel;
+      const subfolder: string[] | undefined = categoriesArray[i].subfolder;
+      if (foldername !== undefined) {
+        folderli.setAttribute("id", foldername!);
+        folderli.textContent = foldername!;
+      }
+
+      folderli.setAttribute("class", "folder");
+      folderli.addEventListener("click", showFolderContent);
+      ulSelectCategory?.appendChild(folderli);
+      // subfolder
+      const subfolderul = document.createElement("ul");
+      subfolderul.classList.add("subfolder", "childOf" + foldername);
+      subfolderul.style.display = "none";
+      folderli.appendChild(subfolderul);
+      if (subfolder !== undefined) {
+        for (let j = 0; j < subfolder.length; j++) {
+          const subfolderli = document.createElement("li");
+          subfolderli.textContent = subfolder[j];
+          subfolderli.classList.add("item", "childOf" + foldername);
+          const subfoldername: string = subfolder[j];
+          subfolderli.setAttribute("id", subfoldername);
+          subfolderul.appendChild(subfolderli);
         }
-    };
-    ulSelectCategory?.addEventListener("click", updateInput);
+      }
+    } else if (
+      firstKey === "folderSecondLevel" &&
+      categoriesArray[i].folderSecondLevel !== undefined
+    ) {
+      // subfolder
+      const subfoldername: string | undefined =
+        categoriesArray[i].folderSecondLevel;
+      const subfolder: string[] | undefined = categoriesArray[i].subfolder;
+      let liparent: HTMLElement | null = null;
+      if (subfoldername !== undefined) {
+        liparent = document.getElementById(subfoldername!);
+      }
+      const subfolderul = document.createElement("ul");
+      const liparentClasses: DOMTokenList | undefined = liparent?.classList;
+      subfolderul.classList.add(
+        "subfolder",
+        "childOf" + subfoldername,
+        "g" + liparentClasses![0]
+      );
+      subfolderul.style.display = "none";
+      liparent?.appendChild(subfolderul);
+      liparent?.classList.remove("item");
+      liparent?.classList.add("subfolder");
+
+      if (subfolder !== undefined) {
+        for (let j = 0; j < subfolder.length; j++) {
+          const subfolderli = document.createElement("li");
+          const subsubfoldername: string = subfolder[j];
+          subfolderli.textContent = subfolder[j];
+          subfolderli.addEventListener("click", showSubFolderContent);
+          subfolderli.classList.add(
+            "item",
+            "childOf" + subfoldername,
+            "g" + liparentClasses![0]
+          );
+          subfolderli.setAttribute("id", subsubfoldername);
+          subfolderul.appendChild(subfolderli);
+        }
+      }
+    } else if (
+      firstKey === "folderThirdLevel" &&
+      categoriesArray[i].folderThirdLevel !== undefined
+    ) {
+      // subsubfolder: socks only
+      const subsubfoldername: string | undefined =
+        categoriesArray[i].folderThirdLevel;
+      const subsubfolder: string[] | undefined = categoriesArray[i].subfolder;
+      let liparent: HTMLElement | null = null;
+      if (subsubfoldername !== undefined) {
+        liparent = document.getElementById(subsubfoldername!);
+      }
+
+      const subsubfolderul = document.createElement("ul");
+
+      subsubfolderul.style.display = "none";
+      liparent?.appendChild(subsubfolderul);
+      liparent?.classList.remove("item");
+      liparent?.classList.add("subsubfolder");
+      const liparentClasses: DOMTokenList | undefined = liparent?.classList;
+      subsubfolderul.classList.add(
+        "subsubfolder",
+        "childOf" + subsubfoldername,
+        "g" + liparentClasses![0],
+        "g" + liparentClasses![1]
+      );
+
+      if (subsubfolder !== undefined) {
+        for (let j = 0; j < subsubfolder.length; j++) {
+          const subsubfolderli = document.createElement("li");
+          const subsubsubfoldername: string = subsubfolder[j];
+          subsubfolderli.textContent = subsubfolder[j];
+          subsubfolderli.classList.add(
+            "item",
+            "childOf" + subsubfoldername,
+            "g" + liparentClasses![0],
+            "g" + liparentClasses![1]
+          );
+          subsubfolderli.addEventListener("click", showSubSubFolderContent);
+          subsubfolderli.setAttribute("id", subsubsubfoldername);
+          subsubfolderul.appendChild(subsubfolderli);
+        }
+      }
+    } else {
+      //is item
+      const item = categoriesArray[i].item;
+      if (item !== undefined) {
+        const itemli = document.createElement("li");
+        itemli.setAttribute("class", "item");
+        itemli.textContent = item;
+        ulSelectCategory?.appendChild(itemli);
+      }
+    }
+  }
+
+  const updateInput = function(event: MouseEvent): void {
+    const clickedOnItem: boolean | null = (
+      event.target as HTMLElement
+    ).classList.contains("item");
+    const clickedOnSubFolder: boolean | null = (
+      event.target as HTMLElement
+    ).classList.contains("subfolder");
+    const clickedOnSubsubFolder: boolean | null = (
+      event.target as HTMLElement
+    ).classList.contains("subsubfolder");
+    if (clickedOnItem && !clickedOnSubFolder && !clickedOnSubsubFolder) {
+      const liclicked: string | null = (event.target as HTMLElement)
+        .textContent;
+      const inputSelectCategory = document.getElementById(
+        "selectcategoryinput"
+      ) as HTMLInputElement;
+      if (inputSelectCategory !== null && liclicked !== null) {
+        const eventTarget: HTMLElement | null = event.target as HTMLElement;
+        const eventTargetClasses: DOMTokenList | undefined =
+          eventTarget?.classList;
+        const arrayClasses: string[] = Array.from(eventTargetClasses);
+        let catPath: string = "";
+        for (let c = 0; c < arrayClasses.length; c++) {
+          const currentClass: string = arrayClasses[c];
+          if (currentClass === "item") {
+            continue;
+          } else {
+            let cleanCat: string = "";
+            if (currentClass.substring(0, 7) === "childOf") {
+              cleanCat = currentClass.replace("childOf", "");
+            } else if (currentClass.substring(0, 8) === "gchildOf") {
+              cleanCat = currentClass.replace("gchildOf", "");
+            } else {
+              cleanCat = currentClass.replace("ggchildOf", "");
+            }
+            catPath += cleanCat + " > ";
+          }
+        }
+
+        inputSelectCategory.value = catPath + liclicked;
+      }
+      //remove categories
+      const folders = document.querySelectorAll(".folder");
+      folders.forEach((folder) => folder.remove());
+      const items = document.querySelectorAll(".item");
+      items.forEach((item) => item.remove());
+    }
+  };
+  ulSelectCategory?.addEventListener("click", updateInput);
 };
 
 export default displaycategories;
