@@ -97,20 +97,20 @@ const NewProject = function() {
     const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
-        const crafttype: string = (event.currentTarget.elements.namedItem(
-            "crafts"
-        ) as HTMLInputElement).value;
+        const crafttype: string = (
+            event.currentTarget.elements.namedItem("crafts") as HTMLInputElement
+        ).value;
 
-        const projectname: string = (event.currentTarget.elements.namedItem(
-            "projectname"
-        ) as HTMLInputElement).value;
+        const projectname: string = (
+            event.currentTarget.elements.namedItem("projectname") as HTMLInputElement
+        ).value;
 
-        const patternused: string = (event.currentTarget.elements.namedItem(
-            "patternused"
-        ) as HTMLInputElement).value;
-        const patternname: string = (event.currentTarget.elements.namedItem(
-            "patternname"
-        ) as HTMLInputElement).value;
+        const patternused: string = (
+            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
+        ).value;
+        const patternname: string = (
+            event.currentTarget.elements.namedItem("patternname") as HTMLInputElement
+        ).value;
         const newproject = new Project(
             crafttype,
             projectname,
