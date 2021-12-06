@@ -1,44 +1,11 @@
 // create new project
 import React, { useState } from "react";
 import { Routes, Route, useNavigate, RouteObject } from "react-router-dom";
-//import EditProject from "./projects/EditProject";
+import type { ProjectInfo, Pattern, Gauge } from "./common/types";
+// should create a new type for yarn only
 
-export interface Pattern {
-    name: string;
-    about: string;
-}
-// this function doesn't need an argument, not sure how to make a type for it
 const NewProject = function() {
     let navigate = useNavigate();
-
-    interface ProjectInfo {
-        madefor: string;
-        linktoraveler: string;
-        finishby: string; //type date
-        sizemade: string;
-        patternfrom: string;
-        patterncategory: string;
-        tags: string[]; // separate tags and add # // select can be more than one
-        needles: string[];
-        gauge: Gauge;
-        gaugepattern: string;
-        yarn: string[]; // should probably be an obj
-        projectnotes: string;
-        photo: string;
-        status: string;
-        happiness: string;
-        progress: number;
-        started: string;
-        completed: string;
-    }
-
-    interface Gauge {
-        numberStsOrRepeats: string;
-        stitches: boolean; // if false, user is using repeats
-        numberRows: number | null;
-        gaugesize: string; //2.5/5/10cm
-    }
-
     class Project {
         crafttype: string;
         projectname: string;
@@ -97,20 +64,20 @@ const NewProject = function() {
     const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
-        const crafttype: string = (
-            event.currentTarget.elements.namedItem("crafts") as HTMLInputElement
-        ).value;
+        const crafttype: string = (event.currentTarget.elements.namedItem(
+            "crafts"
+        ) as HTMLInputElement).value;
 
-        const projectname: string = (
-            event.currentTarget.elements.namedItem("projectname") as HTMLInputElement
-        ).value;
+        const projectname: string = (event.currentTarget.elements.namedItem(
+            "projectname"
+        ) as HTMLInputElement).value;
 
-        const patternused: string = (
-            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
-        ).value;
-        const patternname: string = (
-            event.currentTarget.elements.namedItem("patternname") as HTMLInputElement
-        ).value;
+        const patternused: string = (event.currentTarget.elements.namedItem(
+            "patternused"
+        ) as HTMLInputElement).value;
+        const patternname: string = (event.currentTarget.elements.namedItem(
+            "patternname"
+        ) as HTMLInputElement).value;
         const newproject = new Project(
             crafttype,
             projectname,
@@ -119,6 +86,7 @@ const NewProject = function() {
         );
         // create project on db
         // return obj of project info
+        // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
         const newpath: string = "/notebook/editproject/" + projectname;
         navigate(newpath, {
             state: {
