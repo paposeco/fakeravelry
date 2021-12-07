@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import uniqid from "uniqid";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { projectAdded, selectProjectById } from "./projectsSlice";
+
 import { RootState } from "../store/store";
 import displaycategories from "../patterns/categories";
 import NeedlesAvailable from "./selectNeedle";
 import HooksAvailable from "./selectHook";
 import { Colorways, Yarnweight, Currency } from "./SelectOptions";
-import type { ProjectInfo, Gauge } from "../common/types";
+import type { ProjectInfo, Pattern } from "../common/types";
 
 //import Pattern from "../NewProject.tsx"; ainda nao sei se preciso disto
 
@@ -20,7 +22,12 @@ import type { ProjectInfo, Gauge } from "../common/types";
 //need to create form
 const EditProject = function() {
     const { state } = useLocation();
-    const { craft, name, pattern, aboutpattern } = state;
+    //  const { craft, name, pattern, aboutpattern } = state;
+    const projectID = state.projectid;
+    // this could be a type
+    const currentProject: any = useSelector((state: RootState) =>
+        selectProjectById(state, projectID)
+    );
     const [selectNeedlesToRender, setSelectNeedlesToRender] = useState<
         JSX.Element[]
     >([]);
@@ -29,17 +36,69 @@ const EditProject = function() {
         []
     );
     const [hooksAdded, setHooksAdded] = useState<number>(0);
-    const [projectInformation, setProjectInformation] = useState<ProjectInfo>(
-        {} as ProjectInfo
+
+    const [craftType, setCraftType] = useState<string>(currentProject.crafttype);
+    const [projectName, setProjectName] = useState<string>(
+        currentProject.projectname
     );
+    const [patternUsed, setPatternUsed] = useState<string>(
+        currentProject.patternused
+    );
+    const [pattern, setPattern] = useState<Pattern>(currentProject.pattern);
+    const [projectInformation, setProjectInformation] = useState<ProjectInfo>(
+        currentProject.projectinfo
+    );
+
+    // can use generic nst handleChange = evt => {
+    /* const name = evt.target.name;
+                        * const value =
+                        * evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
+                        * setState({
+                        *   ...state,
+                        *   [name]: value
+                        * })
+                               } */
+
+    /* const [state, setState] = useState({});
+     * setState(prevState => {
+     *   // Object.assign would also work
+     *   return {...prevState, ...updatedValues};
+     * })
+     *  */
+    const handlerOfChange = function(
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ): void {
+        const formElementId = event.currentTarget.id; // event target or currenttarget=
+        if (formElementId === "craft-select") {
+            setCraftType(event.currentTarget.value);
+            // this is the way
+        } else if (formElementId === "sizemade") {
+            setProjectInformation((prevState) => {
+                let previousInfo = Object.assign({}, prevState);
+                previousInfo.sizemade = event.target.value;
+                return previousInfo;
+            });
+        }
+    };
+
+    /*
+     *   handleInputChange(event) {
+     *     const target = event.target;
+     *     const value = target.type === 'checkbox' ? target.checked : target.value;
+     *     const name = target.name;
+     *     this.setState({
+     *       [name]: value    });
+     *    }*/
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log(
-            (event.currentTarget.elements.namedItem(
-                "selectneedles0"
-            ) as HTMLInputElement).value
-        );
+        console.log(projectInformation);
+        /* console.log(
+         *     (event.currentTarget.elements.namedItem(
+         *         "selectneedles0"
+         *     ) as HTMLInputElement).value
+         * ); */
+        // update store with projectUpdate
     };
 
     const addNeedle = function(event: React.MouseEvent): void {
@@ -75,24 +134,6 @@ const EditProject = function() {
             yarnForm!.style.display = "block";
         }
     };
-    const handlerOfChange = function(
-        event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
-    ): void { };
-
-    // fetches projectsinstore. need to place it in state. instead of receiving basic info from uselocation, could parseeverything from store directly.
-    const projectsInStore: any = useSelector(
-        (state: RootState) => state.projects
-    );
-    console.log(projectsInStore);
-    /*
-     *   handleInputChange(event) {
-     *     const target = event.target;
-     *     const value = target.type === 'checkbox' ? target.checked : target.value;
-     *     const name = target.name;
-     *     this.setState({
-     *       [name]: value    });
-     *    }*/
-
     useEffect(() => {
         renderMultipleSelectNeedles();
     }, [needlesAdded]);
@@ -115,7 +156,7 @@ const EditProject = function() {
                         Name
                         <input
                             type="text"
-                            value={name}
+                            value={projectName}
                             id="projectname"
                             name="projectname"
                             onChange={handlerOfChange}
@@ -135,7 +176,12 @@ const EditProject = function() {
                     </label>
                     <label htmlFor="sizemade">
                         Size made
-                        <input type="text" id="sizemade" name="sizemade" />
+                        <input
+                            type="text"
+                            id="sizemade"
+                            name="sizemade"
+                            onChange={handlerOfChange}
+                        />
                     </label>
                     <label htmlFor="patternfrom">
                         Pattern from
@@ -147,7 +193,7 @@ const EditProject = function() {
                             type="text"
                             id="patternname"
                             name="patternname"
-                            value={pattern}
+                            value={pattern.name}
                             onChange={handlerOfChange}
                         />
                     </label>
@@ -155,7 +201,7 @@ const EditProject = function() {
                     <select
                         name="crafts"
                         id="craft-select"
-                        value={craft}
+                        value={craftType}
                         onChange={handlerOfChange}
                     >
                         <option value="knitting">Knitting</option>

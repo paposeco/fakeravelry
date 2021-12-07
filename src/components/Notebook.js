@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 
-const Notebook = function () {
+const Notebook = function() {
   return (
     <div>
       <Link to="/notebook/newproject">Add new project</Link>

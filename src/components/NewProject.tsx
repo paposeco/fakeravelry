@@ -1,7 +1,10 @@
 // create new project
 import React, { useState } from "react";
 import { Routes, Route, useNavigate, RouteObject } from "react-router-dom";
-import type { ProjectInfo, Pattern, Gauge } from "./common/types";
+import type { ProjectInfo, Pattern } from "./common/types";
+import { useDispatch } from "react-redux";
+import { nanoid } from "@reduxjs/toolkit";
+import { projectAdded } from "./projects/projectsSlice";
 // should create a new type for yarn only
 
 const NewProject = function() {
@@ -60,6 +63,7 @@ const NewProject = function() {
         }
     }
 
+    const dispatch = useDispatch();
     // need to save to redux store and db
     const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -84,16 +88,26 @@ const NewProject = function() {
             patternused,
             patternname
         );
+
         // create project on db
         // return obj of project info
         // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
+
+        const projectID = nanoid();
+        dispatch(
+            projectAdded({
+                projectid: projectID,
+                crafttype: newproject.crafttype,
+                projectname: newproject.projectname,
+                pattern: newproject.pattern,
+                projectinfo: newproject.projectinfo,
+            })
+        );
+
         const newpath: string = "/notebook/editproject/" + projectname;
         navigate(newpath, {
             state: {
-                craft: newproject.crafttype,
-                name: newproject.projectname,
-                pattern: newproject.pattern.name,
-                aboutpattern: newproject.pattern.about,
+                projectid: projectID,
             },
         });
     };
