@@ -8,7 +8,7 @@ const ProjectStatus = function(props: { editordisplay: string }) {
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setCurrentStatus({
-            progress: (event.currentTarget.elements.namedItem(
+            status: (event.currentTarget.elements.namedItem(
                 "status"
             ) as HTMLInputElement).value,
             happiness: (event.currentTarget.elements.namedItem(
@@ -43,7 +43,7 @@ const ProjectStatus = function(props: { editordisplay: string }) {
                         <select
                             id="status"
                             name="status"
-                            value={currentStatus.progress}
+                            value={currentStatus.progressrange}
                             onChange={handlerOfChange}
                         >
                             <option value="inprogress">In progress</option>
@@ -103,7 +103,7 @@ const ProjectStatus = function(props: { editordisplay: string }) {
             <div>
                 <div>
                     <p>Status</p>
-                    <p>{currentStatus.progress}</p>
+                    <p>{currentStatus.status}</p>
                 </div>
                 <div>
                     <p>Progress</p>

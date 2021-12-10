@@ -1,12 +1,20 @@
 import uniqid from "uniqid";
 import React, { useState } from "react";
 import { Hooks } from "./SelectOptions";
-const HooksAvailable = function(props: { name: string }) {
+const HooksAvailable = function(props: {
+    name: string;
+    handler: (
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => void;
+}) {
     const [selectedHook, setSelectedHook] = useState<string>("25");
     const changeSelectedHook = function(
-        event: React.FormEvent<HTMLSelectElement>
+        event: React.ChangeEvent<HTMLSelectElement>
     ) {
-        setSelectedHook(event.currentTarget.value);
+        setSelectedHook(event.target.value);
+        {
+            props.handler(event);
+        }
     };
     return (
         <div>
@@ -15,6 +23,8 @@ const HooksAvailable = function(props: { name: string }) {
                 id={props.name}
                 onChange={changeSelectedHook}
                 value={selectedHook}
+                data-project="info"
+                className="hooks"
             >
                 {Hooks.map((hooksize) => (
                     <option key={uniqid()} value={hooksize.value}>

@@ -1,122 +1,109 @@
 // create new project
 import React, { useState } from "react";
-import { Routes, Route, useNavigate, RouteObject } from "react-router-dom";
-import type { ProjectInfo, Pattern } from "./common/types";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+//import { useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
-import { projectAdded } from "./projects/projectsSlice";
+//import { projectAdded } from "./projects/projectsSlice";
 // should create a new type for yarn only
 
 const NewProject = function() {
     let navigate = useNavigate();
-    class Project {
-        crafttype: string;
-        projectname: string;
-        patternused: string;
-        pattern: Pattern;
-        projectinfo: ProjectInfo;
 
-        constructor(
-            crafttypeselected: string,
-            projectnameselected: string,
-            patternusedselected: string,
-            patternnameselected: string
-        ) {
-            this.crafttype = crafttypeselected;
-            this.projectname = projectnameselected;
-            this.patternused = patternusedselected;
-            if (patternusedselected === "usedapattern") {
-                this.pattern = { name: patternnameselected, about: "" }; //about should look for a pattern in db
-            } else if (patternusedselected === "didntuseapattern") {
-                this.pattern = { name: "", about: "" };
-            } else {
-                this.pattern = {
-                    name: "",
-                    about: "Personal pattern (not in Ravelry)",
-                };
-            }
-            this.projectinfo = {
-                madefor: "",
-                linktoraveler: "",
-                finishby: "",
-                sizemade: "",
-                patternfrom: "",
-                patterncategory: "", //select. might be more than one?
-                tags: [], // separate tags and add # // select can be more than one
-                needles: [],
-                gauge: {
-                    numberStsOrRepeats: "",
-                    stitches: true,
-                    numberRows: null, //not sure
-                    gaugesize: "",
-                }, // select. gauge size must be 2.5/5/10cm
-                gaugepattern: "", //yarn, needles and private notes gets added afterwards
-                yarn: [],
-                projectnotes: "",
-                photo: "", //image src
-                status: "In progress", // change status with select
-                happiness: "",
-                progress: 0,
-                started: "", //date
-                completed: "", //date}
-            };
-        }
-    }
-
-    const dispatch = useDispatch();
+    //    const dispatch = useDispatch();
     // need to save to redux store and db
-    const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
+    /* const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
+     *     event.preventDefault();
+     *     //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
+     *     const crafttype: string = (event.currentTarget.elements.namedItem(
+     *         "crafts"
+     *     ) as HTMLInputElement).value;
+     *     const projectname: string = (event.currentTarget.elements.namedItem(
+     *         "projectname"
+     *     ) as HTMLInputElement).value;
+     *     const patternused: string = (event.currentTarget.elements.namedItem(
+     *         "patternused"
+     *     ) as HTMLInputElement).value;
+     *     const patternname: string = (event.currentTarget.elements.namedItem(
+     *         "patternname"
+     *     ) as HTMLInputElement).value;
+     *     const newproject = new Project(
+     *         crafttype,
+     *         projectname,
+     *         patternused,
+     *         patternname
+     *     ); */
+
+    // create project on db
+    // return obj of project info
+    // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
+
+    const [projectID, setProjectID] = useState<string>(nanoid());
+    const [craftType, setCraftType] = useState<string>("");
+    const [projectName, setProjectName] = useState<string>("");
+    const [patternName, setPatternName] = useState<string>("");
+
+    const setFunctions = new Map([
+        ["craft-select", setCraftType],
+        ["projectname", setProjectName],
+        ["patternname", setPatternName],
+    ]);
+
+    const handlerOfChange = function(
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ): void {
+        const elementID = event.target.id;
+        const newvalue = event.target.value;
+        const elementStateFunction = setFunctions.get(elementID);
+        if (elementStateFunction !== undefined) {
+            elementStateFunction(newvalue);
+        }
+    };
+
+    const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
-        const crafttype: string = (event.currentTarget.elements.namedItem(
-            "crafts"
-        ) as HTMLInputElement).value;
-
-        const projectname: string = (event.currentTarget.elements.namedItem(
-            "projectname"
-        ) as HTMLInputElement).value;
-
-        const patternused: string = (event.currentTarget.elements.namedItem(
+        const patternUsed: string = (event.currentTarget.elements.namedItem(
             "patternused"
         ) as HTMLInputElement).value;
-        const patternname: string = (event.currentTarget.elements.namedItem(
-            "patternname"
-        ) as HTMLInputElement).value;
-        const newproject = new Project(
-            crafttype,
-            projectname,
-            patternused,
-            patternname
-        );
-
-        // create project on db
-        // return obj of project info
-        // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
-
-        const projectID = nanoid();
-        dispatch(
-            projectAdded({
-                projectid: projectID,
-                crafttype: newproject.crafttype,
-                projectname: newproject.projectname,
-                pattern: newproject.pattern,
-                projectinfo: newproject.projectinfo,
-            })
-        );
-
-        const newpath: string = "/notebook/editproject/" + projectname;
+        const newpath: string = "/notebook/editproject/" + projectName;
         navigate(newpath, {
             state: {
                 projectid: projectID,
+                crafttype: craftType,
+                projectname: projectName,
+                patternused: patternUsed,
+                patternname: patternName,
             },
         });
+        // create project in db with project id
     };
+
+    /*
+     *       dispatch(
+     *             projectAdded({
+     *                 projectid: projectID,
+     *                 photo: newproject.photo,
+     *                 crafttype: newproject.crafttype,
+     *                 projectname: newproject.projectname,
+     *                 pattern: newproject.pattern,
+     *                 projectinfo: newproject.projectinfo,
+     *                 projectstatus: newproject.projectstatus,
+     *             })
+     *         );
+     *
+     *         const newpath: string = "/notebook/editproject/" + projectname;
+     *         navigate(newpath, {
+     *             state: {
+     *                 projectid: projectID,
+     *             },
+     *         });
+     *     }; */
 
     return (
         <div>
-            <form onSubmit={handlerSubmit}>
+            <form onSubmit={handlerOfSubmit}>
                 <label htmlFor="craft-select">Which craft?</label>
-                <select name="crafts" id="craft-select">
+                <select name="crafts" id="craft-select" onChange={handlerOfChange}>
                     <option value="knitting">Knitting</option>
                     <option value="crochet">Crochet</option>
                     <option value="loomknitting">Loom Knitting</option>
@@ -125,7 +112,12 @@ const NewProject = function() {
                     <option value="spinning">Spinning</option>
                 </select>
                 <label htmlFor="projectname">Name your project </label>
-                <input type="text" id="projectname" name="projectname" />
+                <input
+                    type="text"
+                    id="projectname"
+                    name="projectname"
+                    onChange={handlerOfChange}
+                />
 
                 <input
                     type="radio"
@@ -136,7 +128,12 @@ const NewProject = function() {
                 />
                 <label htmlFor="usedapattern">I used a pattern</label>
                 <label htmlFor="patternname">Enter the pattern name</label>
-                <input type="text" id="patternname" name="patternname" />
+                <input
+                    type="text"
+                    id="patternname"
+                    name="patternname"
+                    onChange={handlerOfChange}
+                />
                 <input
                     type="radio"
                     id="didntuseapattern"
