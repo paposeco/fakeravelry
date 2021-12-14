@@ -5,16 +5,15 @@ import { useLocation } from "react-router-dom";
 import uniqid from "uniqid";
 import { useSelector, useDispatch } from "react-redux";
 import { projectAdded, selectProjectById } from "./projectsSlice";
-import Project from "../common/classes";
-
-import { RootState } from "../store/store";
+import Project, { YarnEntry } from "../common/classes";
+//import { RootState } from "../store/store";
 import displaycategories from "../patterns/categories";
 import NeedlesAvailable from "./selectNeedle";
 import HooksAvailable from "./selectHook";
-import { Colorways, Yarnweight, Currency } from "./SelectOptions";
+import YarnInfo from "./YarnInfo";
 import type { ProjectInfo, Pattern, Status } from "../common/types";
 
-//import Pattern from "../NewProject.tsx"; ainda nao sei se preciso disto
+// defaultvalue or value
 
 // receives basic information about project and creates form for filling out the rest
 // updates store on form submit and db
@@ -50,6 +49,8 @@ const EditProject = function() {
         newproject.projectstatus
     );
 
+    const [happinessChecked, setHappinessChecked] = useState<string>("");
+
     useEffect(() => {
         dispatch(
             projectAdded({
@@ -80,6 +81,9 @@ const EditProject = function() {
     );
     const [hooksAdded, setHooksAdded] = useState<number>(0);
 
+    const [showYarnForm, setShowYarnForm] = useState<JSX.Element[]>([]);
+    const [numberYarnAdded, setNumberYarnAdded] = useState<number>(0);
+
     const setFunctions = new Map([
         ["projectname", setProjectName],
         ["craft-select", setCraftType],
@@ -105,7 +109,6 @@ const EditProject = function() {
             if (elementStateFunction !== undefined) {
                 elementStateFunction(newvalue);
             }
-            // each time a needle gets added, state must be updated
         } else if (elementDataSet === "info") {
             setProjectInformation((prevState) => {
                 let previousInfo = Object.assign({}, prevState);
@@ -126,7 +129,37 @@ const EditProject = function() {
                 return previousInfo;
             });
         } else if (elementDataSet === "yarn") {
+            let indexYarnAdded = event.target.parentElement!.parentElement!.id;
+            if (
+                elementId === "closestcolor" ||
+                elementId === "yarnweight" ||
+                elementId === "skeinmeterageunit" ||
+                elementId === "skeinweightunit" ||
+                elementId === "currency"
+            ) {
+                indexYarnAdded = event.target.parentElement!.id;
+            }
+            setProjectInformation((prevState) => {
+                let previousInfo = Object.assign({}, prevState);
+                const currentIndexOnProjectInfo = previousInfo.yarn.findIndex(
+                    (element) => element.yarnID === indexYarnAdded
+                );
+                let currentYarn = previousInfo.yarn[currentIndexOnProjectInfo];
+                currentYarn[elementId] = event.target.value;
+                return previousInfo;
+            });
         } else if (elementDataSet === "status") {
+            setProjectStatus((prevState) => {
+                let previousStatus = Object.assign({}, prevState);
+                if (event.target.name === "happiness") {
+                    setHappinessChecked(elementId);
+                    previousStatus.happiness = elementId;
+                } else {
+                    previousStatus[elementId] = event.target.value;
+                }
+
+                return previousStatus;
+            });
         } else if (elementDataSet === "gauge") {
             if (elementId === "gaugehorizontal") {
                 setProjectInformation({
@@ -152,20 +185,9 @@ const EditProject = function() {
                     gauge: { ...projectInformation!.gauge, gaugesize: newvalue },
                 });
             }
-            console.log(projectInformation);
         } else {
             console.log("data set is missing");
         }
-        /* if (elementId === "craft-select") {
-         *     setCraftType(event.currentTarget.value);
-         *     // this is the way
-         * } else if (elementId === "sizemade") {
-         *     setProjectInformation((prevState) => {
-         *         let previousInfo = Object.assign({}, prevState);
-         *         previousInfo.sizemade = event.target.value;
-         *         return previousInfo;
-         *     });
-         * } */
     };
 
     /*
@@ -179,8 +201,12 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
         // update store with projectUpdate
+
+        // ******** update store and DB eventually. then redirect to a <project> component and send project id. fetch info store and display on component.
+
+        console.log(projectInformation);
+        console.log(projectStatus);
     };
 
     const addNeedle = function(event: React.MouseEvent) {
@@ -236,13 +262,44 @@ const EditProject = function() {
         }
     };
 
-    const addYarn = function(): void {
-        const yarnForm: HTMLElement | null = document.querySelector(
-            "#yarn fieldset"
-        );
-        if (yarnForm !== null) {
-            yarnForm!.style.display = "block";
+    const addYarn = function(event: React.MouseEvent): void {
+        setNumberYarnAdded(numberYarnAdded + 1);
+        const newyarn = new YarnEntry("yarn" + numberYarnAdded);
+        setProjectInformation((prevState) => {
+            let previousProjectInformation = Object.assign({}, prevState);
+            previousProjectInformation.yarn = [
+                ...previousProjectInformation.yarn,
+                newyarn,
+            ];
+            return previousProjectInformation;
+        });
+    };
+
+    const renderMultipleAddYarn = function(): void {
+        for (let i = 0; i < numberYarnAdded; i++) {
+            setShowYarnForm(
+                showYarnForm.concat(
+                    <YarnInfo
+                        yarnID={"yarn" + i}
+                        key={uniqid()}
+                        handler={handlerOfChange}
+                    />
+                )
+            );
         }
+    };
+
+    // add to class, type and initial store. actually should change initial store because I think things have changed.
+    const [photoUploaded, setPhotoUploaded] = useState(false);
+    const [photoLinkToDB, setPhotoLinkToDB] = useState("");
+
+    const savePhoto = function(event: React.FormEvent<HTMLFormElement>) {
+        setPhotoUploaded(true);
+        //save photo to db and get link to display on component
+        // photo -> input select file; place on storage and display on page imediately; photo state should be received or not. ? if received, display photo, else display input submit
+        // set link locally and to store// local store, db and redux should all share the same elements. photo uploaded true/false and photo location.
+        //setPhotoLinkToDB();
+        event.preventDefault();
     };
     useEffect(() => {
         renderMultipleSelectNeedles();
@@ -250,14 +307,28 @@ const EditProject = function() {
     useEffect(() => {
         renderMultipleSelectHooks();
     }, [hooksAdded]);
-
+    useEffect(() => {
+        renderMultipleAddYarn();
+    }, [numberYarnAdded]);
     //display project about
     //useEffect on load should fetch obj from store and set project info as component state. on input change update the elements on state; fetch last element on store
     //see how to fetch data form store
     return (
         <div>
             <div>
-                <p>add photos</p>
+                <form onSubmit={savePhoto}>
+                    <label htmlFor="uploadphotoproject">
+                        <input
+                            type="file"
+                            id="uploadphotoproject"
+                            name="uploadphotoproject"
+                            accept="image/*"
+                        />
+                    </label>
+                    <button id="submitphoto" type="submit">
+                        Upload
+                    </button>
+                </form>
             </div>
             <div>
                 <h2>edit project</h2>
@@ -438,147 +509,7 @@ const EditProject = function() {
                         <button onClick={addYarn} type="button">
                             add yarn
                         </button>
-                        <fieldset style={{ display: "none" }}>
-                            <label htmlFor="yarnname">
-                                Yarn
-                                <input
-                                    type="text"
-                                    name="yarnname"
-                                    id="yarnname"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <label htmlFor="colorway">
-                                Colorway
-                                <input
-                                    type="text"
-                                    name="colorway"
-                                    id="colorway"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <select
-                                name="closestcolor"
-                                id="closestcolor"
-                                onChange={handlerOfChange}
-                                value="colorway0"
-                                data-project="yarn"
-                            >
-                                {Colorways.map((color, index) => (
-                                    <option value={"color" + index} key={uniqid()}>
-                                        {color}
-                                    </option>
-                                ))}
-                            </select>
-                            <label htmlFor="dyelot">
-                                Dye lot
-                                <input
-                                    name="dyelot"
-                                    id="dyelot"
-                                    type="text"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <select
-                                name="yarnweight"
-                                id="yarnweight"
-                                onChange={handlerOfChange}
-                                value="yarnweight0"
-                                data-project="yarn"
-                            >
-                                {Yarnweight.map((weight, index) => (
-                                    <option value={"yarnweight" + index} key={uniqid()}>
-                                        {weight}
-                                    </option>
-                                ))}
-                            </select>
-                            <label htmlFor="meterage">
-                                Per skein: <input id="meterage" name="meterage" type="number" />
-                                <select
-                                    name="skeinmeterageunit"
-                                    id="skeinmeterageunit"
-                                    value="meters"
-                                    onChange={handlerOfChange}
-                                    data-project="yarn"
-                                >
-                                    <option value="meters">Meters</option>
-                                    <option value="yards">Convert to Yards</option>
-                                </select>
-                                <input
-                                    id="skeinweight"
-                                    name="skeinweight"
-                                    type="number"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                                <select
-                                    name="skeinweightunit"
-                                    id="skeinweightunit"
-                                    value="grams"
-                                    onChange={handlerOfChange}
-                                    data-project="yarn"
-                                >
-                                    <option value="grams">Grams</option>
-                                    <option value="ounces">Convert to Ounces</option>
-                                </select>
-                            </label>
-                            <label htmlFor="numberskeins">
-                                Skeins
-                                <input
-                                    type="number"
-                                    id="numberskeins"
-                                    name="numberskeins"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <label htmlFor="purchasedat">
-                                Purchased at
-                                <input
-                                    id="purchasedat"
-                                    name="purchasedat"
-                                    type="text"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <label htmlFor="purchasedate">
-                                Purchase date
-                                <input
-                                    name="purchasedate"
-                                    id="purchasedate"
-                                    type="date"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                            </label>
-                            <label htmlFor="totalpaid">
-                                Total paid
-                                <input
-                                    type="number"
-                                    name="totalpaid"
-                                    id="totalpaid"
-                                    data-project="yarn"
-                                    onChange={handlerOfChange}
-                                />
-                                <select
-                                    name="currency"
-                                    id="currency"
-                                    value="currency0"
-                                    onChange={handlerOfChange}
-                                    data-project="yarn"
-                                >
-                                    {Currency.map((cur, index) => (
-                                        <option value={"currency" + index} key={uniqid()}>
-                                            {cur}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        </fieldset>
+                        {showYarnForm}
                     </div>
                     <h3>Project notes</h3>
                     <input
@@ -590,12 +521,12 @@ const EditProject = function() {
                     />
                     <input type="submit" value="Save Changes" />
                     <div>
-                        <label htmlFor="status">
+                        <label htmlFor="progressstatus">
                             Status
                             <select
-                                id="status"
-                                name="status"
-                                value="inprogress"
+                                id="progressstatus"
+                                name="progressstatus"
+                                value={projectStatus.progressstatus}
                                 onChange={handlerOfChange}
                                 data-project="status"
                             >
@@ -613,6 +544,7 @@ const EditProject = function() {
                                 id="verysad"
                                 onChange={handlerOfChange}
                                 data-project="status"
+                                checked={happinessChecked === "verysad"}
                             />
                             <label htmlFor="verysad">Very sad</label>
                             <input
@@ -621,6 +553,7 @@ const EditProject = function() {
                                 id="sad"
                                 onChange={handlerOfChange}
                                 data-project="status"
+                                checked={happinessChecked === "sad"}
                             />
                             <label htmlFor="sad">Sad</label>
                             <input
@@ -629,6 +562,7 @@ const EditProject = function() {
                                 id="meh"
                                 onChange={handlerOfChange}
                                 data-project="status"
+                                checked={happinessChecked === "meh"}
                             />
                             <label htmlFor="meh">Meh</label>
                             <input
@@ -637,6 +571,7 @@ const EditProject = function() {
                                 id="happy"
                                 onChange={handlerOfChange}
                                 data-project="status"
+                                checked={happinessChecked === "happy"}
                             />
                             <label htmlFor="happy">Happy</label>
                             <input
@@ -645,6 +580,7 @@ const EditProject = function() {
                                 id="veryhappy"
                                 onChange={handlerOfChange}
                                 data-project="status"
+                                checked={happinessChecked === "veryhappy"}
                             />
                             <label htmlFor="veryhappy">Very Happy</label>
                         </label>
@@ -655,6 +591,7 @@ const EditProject = function() {
                                 name="progressrange"
                                 id="progressrange"
                                 min="0"
+                                value={projectStatus.progressrange}
                                 max="100"
                                 onChange={handlerOfChange}
                                 data-project="status"

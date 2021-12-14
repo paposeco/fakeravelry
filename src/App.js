@@ -53,7 +53,7 @@ const App = function() {
         <Route path="/messages" element={<Messages />} />
         <Route path="/notebook" element={<Notebook />} />
         <Route path="/notebook/newproject/*" element={<NewProject />} />
-        <Route path="/notebook/editproject/*" element={<EditProject />} />
+        <Route path="/notebook/:id/editproject/" element={<EditProject />} />
       </Routes>
     </BrowserRouter>
   );

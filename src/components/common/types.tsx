@@ -3,7 +3,7 @@ export interface Pattern {
     about: string;
 }
 
-interface IObjectKeys {
+export interface IObjectKeys {
     [key: string]:
     | string
     | number
@@ -11,7 +11,8 @@ interface IObjectKeys {
     | Gauge
     | Yarn[]
     | Needles[]
-    | undefined;
+    | undefined
+    | null;
 }
 
 interface Needles {
@@ -31,7 +32,7 @@ export interface ProjectInfo extends IObjectKeys {
     sizemade: string;
     patternfrom: string;
     patterncategory: string;
-    tags: string[]; // separate tags and add # // select can be more than one // i will handle this later -> look for , or spaces
+    selectedtags: string; // separate tags and add # // select can be more than one // i will handle this later -> look for , or spaces
     needles: Needles[];
     hooks: Hooks[];
     gauge: Gauge;
@@ -48,26 +49,29 @@ export interface Gauge {
 }
 
 export interface Status {
-    status: string;
+    [key: string]: string | number | null | undefined;
+    progressstatus: string;
     progressrange: string;
     happiness: string;
-    startdate: string;
+    starteddate: string;
     completeddate: string;
 }
 
-export interface Yarn {
+export type Yarn = {
+    [key: string]: string | number | null | undefined;
+    yarnID: string;
     yarnname: string;
     colorway: string;
     closestcolor: string;
     dyelot: string;
     yarnweight: string;
-    meterage: number;
+    meterage: number | null;
     skeinmeterageunit: string;
-    skeinweight: number;
+    skeinweight: number | null;
     skeinweightunit: string;
-    numberskeins: number;
+    numberskeins: number | null;
     purchasedat: string;
     purchasedate: string;
-    totalpaid: number;
+    totalpaid: number | null;
     currency: string;
-}
+};

@@ -1,7 +1,7 @@
-import type { ProjectInfo, Pattern, Status, Gauge } from "./types";
+import type { ProjectInfo, Pattern, Status, Gauge, Yarn } from "./types";
 
 export default class Project {
-    photo: string;
+    photo: boolean;
     crafttype: string;
     projectname: string;
     patternused: string;
@@ -15,7 +15,7 @@ export default class Project {
         patternusedselected: string,
         patternnameselected: string
     ) {
-        this.photo = "";
+        this.photo = false;
         this.crafttype = crafttypeselected;
         this.projectname = projectnameselected;
         this.patternused = patternusedselected;
@@ -36,7 +36,7 @@ export default class Project {
             sizemade: "",
             patternfrom: "",
             patterncategory: "", //select. might be more than one?
-            tags: [], // separate tags and add # // select can be more than one
+            selectedtags: "", // separate tags and add # // select can be more than one
             needles: [],
             hooks: [],
             gauge: {
@@ -50,11 +50,47 @@ export default class Project {
             projectnotes: "",
         };
         this.projectstatus = {
-            status: "In progress", // change status with select
+            progressstatus: "In progress", // change status with select
             progressrange: "0",
             happiness: "",
-            startdate: "", //date
+            starteddate: "", //date
             completeddate: "", //date}
         };
+    }
+}
+
+export class YarnEntry implements Yarn {
+    [key: string]: string | number | null | undefined;
+    yarnID: string;
+    yarnname: string;
+    colorway: string;
+    closestcolor: string;
+    dyelot: string;
+    yarnweight: string;
+    meterage: number | null;
+    skeinmeterageunit: string;
+    skeinweight: number | null;
+    skeinweightunit: string;
+    numberskeins: number | null;
+    purchasedat: string;
+    purchasedate: string;
+    totalpaid: number | null;
+    currency: string;
+    constructor(yarnID: string) {
+        this.yarnID = yarnID;
+        this.yarnname = "";
+        this.colorway = "";
+        this.closestcolor = "";
+        this.dyelot = "";
+        this.yarnweight = "";
+        this.meterage = null;
+        this.skeinmeterageunit = "";
+        this.skeinweight = null;
+        this.skeinweightunit = "";
+        this.numberskeins = null;
+        this.purchasedat = "";
+        this.purchasedate = "";
+        this.totalpaid = null;
+        this.currency = "";
     }
 }

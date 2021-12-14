@@ -4,7 +4,7 @@ import { RootState } from "../store/store";
 const initialState = [
     {
         projectid: "",
-        photo: "",
+        photo: false,
         crafttype: "",
         projectname: "",
         patternused: "",
@@ -16,7 +16,7 @@ const initialState = [
             sizemade: "",
             patternfrom: "",
             patterncategory: "",
-            tags: [],
+            tags: "",
             needles: [],
             hooks: [],
             gauge: {
@@ -33,7 +33,7 @@ const initialState = [
             status: "In progress",
             progressrange: 0,
             happiness: "",
-            startdate: "",
+            starteddate: "",
             completeddate: "",
         },
     },

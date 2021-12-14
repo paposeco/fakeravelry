@@ -62,10 +62,10 @@ const NewProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const patternUsed: string = (event.currentTarget.elements.namedItem(
-            "patternused"
-        ) as HTMLInputElement).value;
-        const newpath: string = "/notebook/editproject/" + projectName;
+        const patternUsed: string = (
+            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
+        ).value;
+        const newpath: string = "/notebook/" + projectName + "/editproject";
         navigate(newpath, {
             state: {
                 projectid: projectID,
