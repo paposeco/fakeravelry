@@ -293,7 +293,7 @@ const EditProject = function() {
     const [photoUploaded, setPhotoUploaded] = useState(false);
     const [photoLinkToDB, setPhotoLinkToDB] = useState("");
 
-    const savePhoto = function(event: React.FormEvent<HTMLFormElement>) {
+    const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         setPhotoUploaded(true);
         //save photo to db and get link to display on component
         // photo -> input select file; place on storage and display on page imediately; photo state should be received or not. ? if received, display photo, else display input submit
