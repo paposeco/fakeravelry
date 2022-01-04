@@ -1,11 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -23,14 +22,16 @@ const startDB = function() {
     return db;
 };
 
+const database = startDB();
+let auth = getAuth();
+
 const createUser = function(
     email: string,
     password: string,
     username: string,
     nameSelected: string
 ) {
-    startDB();
-    const auth = getAuth();
+    //  startDB();
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in
@@ -50,8 +51,8 @@ const startEmptyProfile = async function(
     username: string,
     nameSelected: string
 ) {
-    const db = startDB();
-    await setDoc(doc(db, "users", userId), {
+    //const db = startDB();
+    await setDoc(doc(database, "users", userId), {
         username: username,
         name: nameSelected,
         email: email,
@@ -61,7 +62,6 @@ const startEmptyProfile = async function(
 // checks for unique email and username might take a while if i leave it like this
 
 const signIn = async function(email: string, password: string) {
-    const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in
@@ -75,7 +75,6 @@ const signIn = async function(email: string, password: string) {
 };
 
 const signOutUser = async function() {
-    const auth = getAuth();
     signOut(auth)
         .then(() => {
             // Sign-out successful.
@@ -85,23 +84,72 @@ const signOutUser = async function() {
         });
 };
 
-const authObserver = async function() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/firebase.User
-            const uid = user.uid;
-            // ...
-        } else {
-            // User is signed out
-            // ...
+const getInfo = async function(infotofetch: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        const docRef = doc(database, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            // Convert to user object
+            const userinfo = docSnap.data();
+            if (infotofetch === "username") {
+                return userinfo.username;
+            } else if (infotofetch === "name") {
+                return userinfo.name;
+            }
         }
-    });
+    }
+};
+
+// this isn't consistent with the project class
+const addProjectToNotebook = async function(
+    projectid: string,
+    craftType: string,
+    projectname: string,
+    patternused: string,
+    patternname: string
+) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        await setDoc(doc(database, "users", user.uid, "projects", projectid), {
+            photo: false,
+            crafttype: craftType,
+            projectname: projectname,
+            patternused: patternused,
+            pattern: { name: patternname, about: "" },
+            projectinfo: {
+                madefor: "",
+                linktoraveler: "",
+                finishby: "",
+                sizemade: "",
+                patternfrom: "",
+                patterncategory: "",
+                tags: "",
+                needles: [],
+                hooks: [],
+                gauge: {
+                    numberStsOrRepeats: "",
+                    stitches: true,
+                    numberRows: null,
+                    gaugesize: "",
+                },
+                gaugepattern: "",
+                yarn: [],
+                projectnotes: "",
+            },
+            projectstatus: {
+                status: "In progress",
+                progressrange: 0,
+                happiness: "",
+                starteddate: "",
+                completeddate: "",
+            },
+        });
+    }
 };
 
 //storage
 //email authentication
 
 export default startDB;
-export { createUser };
+export { createUser, auth, signIn, signOutUser, getInfo, addProjectToNotebook };

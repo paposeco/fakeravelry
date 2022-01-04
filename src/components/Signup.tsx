@@ -1,5 +1,6 @@
 import { createUser } from "../Firebase";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Signup = function() {
     const [username, setUsername] = useState<string>("");
@@ -14,15 +15,19 @@ const Signup = function() {
         ["password", setPassword],
     ]);
 
+    const navigate = useNavigate();
     const handlerOfSubmit = async function(
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
         const signup = createUser(email, password, username, nameSelected);
+        const newpath: string = "/people/" + username;
+        navigate(newpath, { state: { name: nameSelected } });
+        // creates user and should dispatch to empty profile
     };
 
     const handlerOfChange = function(
-        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        event: React.ChangeEvent<HTMLInputElement>
     ) {
         const elementId: string = event.target.id;
         const elementStateFunction = setFunctions.get(elementId);

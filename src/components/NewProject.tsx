@@ -1,5 +1,5 @@
 // create new project
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 //import { useDispatch } from "react-redux";
@@ -7,8 +7,10 @@ import { nanoid } from "@reduxjs/toolkit";
 //import { projectAdded } from "./projects/projectsSlice";
 // should create a new type for yarn only
 
+import { addProjectToNotebook, getInfo } from "../Firebase";
+
 const NewProject = function() {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     //    const dispatch = useDispatch();
     // need to save to redux store and db
@@ -42,6 +44,7 @@ const NewProject = function() {
     const [craftType, setCraftType] = useState<string>("");
     const [projectName, setProjectName] = useState<string>("");
     const [patternName, setPatternName] = useState<string>("");
+    const [newprojectpath, setnewprojectpath] = useState<string>("");
 
     const setFunctions = new Map([
         ["craft-select", setCraftType],
@@ -60,13 +63,25 @@ const NewProject = function() {
         }
     };
 
-    const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
+    const handlerOfSubmit = async function(
+        event: React.FormEvent<HTMLFormElement>
+    ) {
         event.preventDefault();
-        const patternUsed: string = (
-            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
-        ).value;
-        const newpath: string = "/notebook/" + projectName + "/editproject";
-        navigate(newpath, {
+        const patternUsed: string = (event.currentTarget.elements.namedItem(
+            "patternused"
+        ) as HTMLInputElement).value;
+        //      const newpath: string = "/notebook/" + projectName + "/editproject";
+        await getUsername(projectName);
+        // need to send current info to db and then update it later
+        await addProjectToNotebook(
+            projectID,
+            craftType,
+            projectName,
+            patternUsed,
+            patternName
+        );
+        // nao esta a navegar para a proxima pagina e nao diz nada
+        navigate(newprojectpath, {
             state: {
                 projectid: projectID,
                 crafttype: craftType,
@@ -76,6 +91,13 @@ const NewProject = function() {
             },
         });
         // create project in db with project id
+    };
+
+    const getUsername = async function(selectedprojectname: string) {
+        const username = await getInfo("username");
+        setnewprojectpath(
+            "/notebook/" + username + "/" + selectedprojectname + "/editproject"
+        );
     };
 
     /*
