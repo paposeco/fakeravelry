@@ -15,12 +15,12 @@ export interface IObjectKeys {
     | null;
 }
 
-interface Needles {
+export interface Needles {
     selectid: string;
     value: string;
 }
 
-interface Hooks {
+export interface Hooks {
     selectid: string;
     value: string;
 }

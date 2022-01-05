@@ -12,6 +12,7 @@ import NeedlesAvailable from "./selectNeedle";
 import HooksAvailable from "./selectHook";
 import YarnInfo from "./YarnInfo";
 import type { ProjectInfo, Pattern, Status } from "../common/types";
+import { updateProjectInDB } from "../../Firebase";
 
 // defaultvalue or value
 
@@ -201,13 +202,44 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        console.log(projectInformation.yarn);
         // update store with projectUpdate
 
         // ******** update store and DB eventually. then redirect to a <project> component and send project id. fetch info store and display on component.
-
-        console.log(projectInformation);
-        console.log(projectStatus);
+        updateProjectInDB(
+            projectID,
+            photoLinkToDB,
+            craftType,
+            projectName,
+            state.patternused,
+            patternName,
+            patternAbout,
+            projectInformation.madefor,
+            projectInformation.linktoraveler,
+            projectInformation.finishby,
+            projectInformation.sizemade,
+            projectInformation.patternfrom,
+            projectInformation.patterncategory,
+            projectInformation.selectedtags,
+            projectInformation.needles,
+            projectInformation.hooks,
+            projectInformation.gauge.numberStsOrRepeats,
+            projectInformation.gauge.horizontalunits,
+            projectInformation.gauge.numberRows,
+            projectInformation.gauge.gaugesize,
+            projectInformation.gaugepattern,
+            JSON.stringify(projectInformation.yarn),
+            projectInformation.projectnotes,
+            projectStatus.progressstatus,
+            projectStatus.progressrange,
+            projectStatus.happiness,
+            projectStatus.starteddate,
+            projectStatus.completeddate
+        );
+        // need to save to store
     };
+    // const teste = JSON.stringify(a);
+    // const aocontrario = JSON.parse(teste);
 
     const addNeedle = function(event: React.MouseEvent) {
         setNeedlesAdded(needlesAdded + 1);
@@ -294,12 +326,40 @@ const EditProject = function() {
     const [photoLinkToDB, setPhotoLinkToDB] = useState("");
 
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
         setPhotoUploaded(true);
         //save photo to db and get link to display on component
         // photo -> input select file; place on storage and display on page imediately; photo state should be received or not. ? if received, display photo, else display input submit
         // set link locally and to store// local store, db and redux should all share the same elements. photo uploaded true/false and photo location.
         //setPhotoLinkToDB();
-        event.preventDefault();
+        /* try {
+          *   // 1 - We add a message with a loading icon that will get updated with the shared image.
+          *   const messageRef = await addDoc(collection(getFirestore(), 'messages'), {
+          *     name: getUserName(),
+          *     imageUrl: LOADING_IMAGE_URL,
+          *     profilePicUrl: getProfilePicUrl(),
+          *     timestamp: serverTimestamp()
+          *   });
+          
+          *   // 2 - Upload the image to Cloud Storage.
+          *   const filePath = `${getAuth().currentUser.uid}/${messageRef.id}/${file.name}`;
+          *   const newImageRef = ref(getStorage(), filePath);
+          *   const fileSnapshot = await uploadBytesResumable(newImageRef, file);
+          *   
+          *   // 3 - Generate a public URL for the file.
+          *   const publicImageUrl = await getDownloadURL(newImageRef);
+          
+          *   // 4 - Update the chat message placeholder with the image's URL.
+          *   await updateDoc(messageRef,{
+          *     imageUrl: publicImageUrl,
+          *     storageUri: fileSnapshot.metadata.fullPath
+          *   });
+          * } catch (error) {
+          *   console.error('There was an error uploading a file to Cloud Storage:', error);
+          * }
+           */
+        try {
+        } catch (error) { }
     };
     useEffect(() => {
         renderMultipleSelectNeedles();

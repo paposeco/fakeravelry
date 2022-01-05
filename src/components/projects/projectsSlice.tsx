@@ -20,8 +20,8 @@ const initialState = [
             needles: [],
             hooks: [],
             gauge: {
-                numberStsOrRepeats: "",
-                stitches: true,
+                numberStsOrRepeats: null,
+                horizontalunits: "",
                 numberRows: null,
                 gaugesize: "",
             },
@@ -30,8 +30,8 @@ const initialState = [
             projectnotes: "",
         },
         projectstatus: {
-            status: "In progress",
-            progressrange: 0,
+            progressstatus: "In progress",
+            progressrange: "0",
             happiness: "",
             starteddate: "",
             completeddate: "",

@@ -41,10 +41,9 @@ const NewProject = function() {
     // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
 
     const [projectID, setProjectID] = useState<string>(nanoid());
-    const [craftType, setCraftType] = useState<string>("");
+    const [craftType, setCraftType] = useState<string>("knitting");
     const [projectName, setProjectName] = useState<string>("");
     const [patternName, setPatternName] = useState<string>("");
-    const [newprojectpath, setnewprojectpath] = useState<string>("");
 
     const setFunctions = new Map([
         ["craft-select", setCraftType],
@@ -70,9 +69,11 @@ const NewProject = function() {
         const patternUsed: string = (event.currentTarget.elements.namedItem(
             "patternused"
         ) as HTMLInputElement).value;
-        //      const newpath: string = "/notebook/" + projectName + "/editproject";
-        await getUsername(projectName);
-        // need to send current info to db and then update it later
+        const cleanProjectName = projectName
+            .toLowerCase()
+            .trim()
+            .replace(/ /g, "-");
+        const newpath = await getUsername(cleanProjectName);
         await addProjectToNotebook(
             projectID,
             craftType,
@@ -80,8 +81,7 @@ const NewProject = function() {
             patternUsed,
             patternName
         );
-        // nao esta a navegar para a proxima pagina e nao diz nada
-        navigate(newprojectpath, {
+        navigate(newpath, {
             state: {
                 projectid: projectID,
                 crafttype: craftType,
@@ -90,14 +90,13 @@ const NewProject = function() {
                 patternname: patternName,
             },
         });
-        // create project in db with project id
     };
 
     const getUsername = async function(selectedprojectname: string) {
         const username = await getInfo("username");
-        setnewprojectpath(
-            "/notebook/" + username + "/" + selectedprojectname + "/editproject"
-        );
+        const path =
+            "/notebook/" + username + "/" + selectedprojectname + "/editproject";
+        return path;
     };
 
     /*
@@ -125,7 +124,12 @@ const NewProject = function() {
         <div>
             <form onSubmit={handlerOfSubmit}>
                 <label htmlFor="craft-select">Which craft?</label>
-                <select name="crafts" id="craft-select" onChange={handlerOfChange}>
+                <select
+                    name="crafts"
+                    id="craft-select"
+                    value={craftType}
+                    onChange={handlerOfChange}
+                >
                     <option value="knitting">Knitting</option>
                     <option value="crochet">Crochet</option>
                     <option value="loomknitting">Loom Knitting</option>

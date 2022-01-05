@@ -1,11 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
 import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
 } from "firebase/auth";
+
+import type { Needles, Hooks, Yarn } from "./components/common/types";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA1i11bP3s4ppzKH2MYBEkdjIlt8yW-KeU",
@@ -24,6 +28,7 @@ const startDB = function() {
 
 const database = startDB();
 let auth = getAuth();
+const storage = getStorage(firebaseApp);
 
 const createUser = function(
     email: string,
@@ -101,7 +106,6 @@ const getInfo = async function(infotofetch: string) {
     }
 };
 
-// this isn't consistent with the project class
 const addProjectToNotebook = async function(
     projectid: string,
     craftType: string,
@@ -112,7 +116,7 @@ const addProjectToNotebook = async function(
     const user = auth.currentUser;
     if (user !== null) {
         await setDoc(doc(database, "users", user.uid, "projects", projectid), {
-            photo: false,
+            photo: "",
             crafttype: craftType,
             projectname: projectname,
             patternused: patternused,
@@ -128,8 +132,8 @@ const addProjectToNotebook = async function(
                 needles: [],
                 hooks: [],
                 gauge: {
-                    numberStsOrRepeats: "",
-                    stitches: true,
+                    numberStsOrRepeats: null,
+                    horizontalunits: "stitches",
                     numberRows: null,
                     gaugesize: "",
                 },
@@ -138,8 +142,8 @@ const addProjectToNotebook = async function(
                 projectnotes: "",
             },
             projectstatus: {
-                status: "In progress",
-                progressrange: 0,
+                progresstatus: "In progress",
+                progressrange: "0",
                 happiness: "",
                 starteddate: "",
                 completeddate: "",
@@ -148,8 +152,91 @@ const addProjectToNotebook = async function(
     }
 };
 
+// need to get all the info to update the arrays.
+// maybe each project should have its own yarn subcollection
+
+const updateProjectInDB = async function(
+    currentprojectid: string,
+    photoUpdated: string,
+    crafttypeUpdated: string,
+    projectnameUpdated: string,
+    patternusedUpdated: string,
+    patternnameUpdated: string,
+    aboutUpdated: string,
+    madeforUpdated: string,
+    linktoravelerUpdated: string,
+    finishbyUpdated: string,
+    sizemadeUpdated: string,
+    patternfromUpdated: string,
+    patterncategoryUpdated: string,
+    tagsUpdated: string,
+    needlesUpdated: Needles[],
+    hooksUpdated: Hooks[],
+    numberStsOrRepeatsUpdated: number | null,
+    horizontalunitsUpdated: string,
+    numberRowsUpdated: number | null,
+    gaugesizeUpdated: string,
+    gaugepatternUpdated: string,
+    yarnUpdated: string,
+    projectnotesUpdated: string,
+    progressstatusUpdated: string,
+    progressrangeUpdated: string,
+    happinessUpdated: string,
+    starteddateUpdated: string,
+    completeddateUpdated: string
+) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        await setDoc(
+            doc(database, "users", user.uid, "projects", currentprojectid),
+            {
+                photo: photoUpdated,
+                crafttype: crafttypeUpdated,
+                projectname: projectnameUpdated,
+                patternused: patternusedUpdated,
+                pattern: { name: patternnameUpdated, about: aboutUpdated },
+                projectinfo: {
+                    madefor: madeforUpdated,
+                    linktoraveler: linktoravelerUpdated,
+                    finishby: finishbyUpdated,
+                    sizemade: sizemadeUpdated,
+                    patternfrom: patternfromUpdated,
+                    patterncategory: patterncategoryUpdated,
+                    tags: tagsUpdated,
+                    needles: needlesUpdated,
+                    hooks: hooksUpdated,
+                    gauge: {
+                        numberStsOrRepeats: numberStsOrRepeatsUpdated,
+                        horizontalunits: horizontalunitsUpdated,
+                        numberRows: numberRowsUpdated,
+                        gaugesize: gaugesizeUpdated,
+                    },
+                    gaugepattern: gaugepatternUpdated,
+                    yarn: yarnUpdated,
+                    projectnotes: projectnotesUpdated,
+                },
+                projectstatus: {
+                    progressstatus: progressstatusUpdated,
+                    progressrange: progressrangeUpdated,
+                    happiness: happinessUpdated,
+                    starteddate: starteddateUpdated,
+                    completeddate: completeddateUpdated,
+                },
+            }
+        );
+    }
+};
+
 //storage
 //email authentication
 
 export default startDB;
-export { createUser, auth, signIn, signOutUser, getInfo, addProjectToNotebook };
+export {
+    createUser,
+    auth,
+    signIn,
+    signOutUser,
+    getInfo,
+    addProjectToNotebook,
+    updateProjectInDB,
+};
