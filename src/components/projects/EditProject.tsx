@@ -1,29 +1,29 @@
 //acess info from store
 //import { useEffect } from "react";
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
-import { useSelector, useDispatch } from "react-redux";
-import { projectAdded, selectProjectById } from "./projectsSlice";
+import { useDispatch } from "react-redux";
+import {
+    projectAdded,
+    projectUpdated,
+    projectPhotoAdded,
+} from "./projectsSlice";
 import Project, { YarnEntry } from "../common/classes";
-//import { RootState } from "../store/store";
 import displaycategories from "../patterns/categories";
 import NeedlesAvailable from "./selectNeedle";
 import HooksAvailable from "./selectHook";
+import DisplayProjectImage from "./DisplayProjectImage";
 import YarnInfo from "./YarnInfo";
-import type { ProjectInfo, Pattern, Status } from "../common/types";
-import { updateProjectInDB } from "../../Firebase";
+import type { ProjectInfo, Status } from "../common/types";
+import { updateProjectInDB, uploadPhoto } from "../../Firebase";
 
-// defaultvalue or value
+//need to handle refreshes
 
-// receives basic information about project and creates form for filling out the rest
-// updates store on form submit and db
-//can create project on db on new project (and update db here on save) and add it to store on edit project
-//maybe first local state and at the end put in store. in theory what will happen in the future is that when app loads, fetches all projects to store. when a new project is added it's added to db and to existing store.
-//need to create form
 const EditProject = function() {
     const { state } = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { projectid, crafttype, projectname, patternused, patternname } = state;
     const [projectID, setProjectID] = useState(state.projectid);
     const newproject = new Project(
@@ -51,20 +51,6 @@ const EditProject = function() {
     );
 
     const [happinessChecked, setHappinessChecked] = useState<string>("");
-
-    useEffect(() => {
-        dispatch(
-            projectAdded({
-                projectid: projectID,
-                photo: newproject.photo,
-                crafttype: newproject.crafttype,
-                projectname: newproject.projectname,
-                pattern: newproject.pattern,
-                projectinfo: newproject.projectinfo,
-                projectstatus: newproject.projectstatus,
-            })
-        );
-    }, [state]);
 
     //on refresh, store gets cleared ?? if state already exists, shouldn't read from redux, but from local state, should create new item in storage then
     /* const currentProject: any = useSelector((state: RootState) =>
@@ -202,13 +188,9 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log(projectInformation.yarn);
-        // update store with projectUpdate
 
-        // ******** update store and DB eventually. then redirect to a <project> component and send project id. fetch info store and display on component.
         updateProjectInDB(
             projectID,
-            photoLinkToDB,
             craftType,
             projectName,
             state.patternused,
@@ -236,7 +218,40 @@ const EditProject = function() {
             projectStatus.starteddate,
             projectStatus.completeddate
         );
-        // need to save to store
+        //pattern used is not correct
+        dispatch(
+            projectUpdated({
+                projectid: projectID,
+                crafttype: craftType,
+                projectname: projectName,
+                patternused: state.patternused,
+                patternname: patternName,
+                about: patternAbout,
+                madefor: projectInformation.madefor,
+                linktoraveler: projectInformation.linktoraveler,
+                finishby: projectInformation.finishby,
+                sizemade: projectInformation.sizemade,
+                patternfrom: projectInformation.patternfrom,
+                patterncategory: projectInformation.patterncategory,
+                tags: projectInformation.selectedtags,
+                needles: projectInformation.needles,
+                hooks: projectInformation.hooks,
+                numberStsOrRepeats: projectInformation.gauge.numberStsOrRepeats,
+                horizontalunits: projectInformation.gauge.horizontalunits,
+                numberRows: projectInformation.gauge.numberRows,
+                gaugesize: projectInformation.gauge.gaugesize,
+                gaugepattern: projectInformation.gaugepattern,
+                yarn: JSON.stringify(projectInformation.yarn),
+                projectnotes: projectInformation.projectnotes,
+                progressstatus: projectStatus.progressstatus,
+                progressrange: projectStatus.progressrange,
+                happiness: projectStatus.happiness,
+                starteddate: projectStatus.starteddate,
+                completeddate: projectStatus.completeddate,
+            })
+        );
+        // want to navigate to new path with navigate  and send project id to be fetched on display project.
+        // going to try to save username on store to avoid querying the db every time
     };
     // const teste = JSON.stringify(a);
     // const aocontrario = JSON.parse(teste);
@@ -321,46 +336,46 @@ const EditProject = function() {
         }
     };
 
-    // add to class, type and initial store. actually should change initial store because I think things have changed.
-    const [photoUploaded, setPhotoUploaded] = useState(false);
-    const [photoLinkToDB, setPhotoLinkToDB] = useState("");
-
+    const [photoUploaded, setPhotoUploaded] = useState<boolean>(false);
+    const [imageSelected, setImageSelected] = useState<FileList | null>();
+    const [publicImgUrl, setPublicImgUrl] = useState<string>();
+    const [
+        displayImageComponent,
+        setDisplayImageComponent,
+    ] = useState<JSX.Element>();
+    const imageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setImageSelected(event.target.files);
+    };
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setPhotoUploaded(true);
-        //save photo to db and get link to display on component
-        // photo -> input select file; place on storage and display on page imediately; photo state should be received or not. ? if received, display photo, else display input submit
-        // set link locally and to store// local store, db and redux should all share the same elements. photo uploaded true/false and photo location.
-        //setPhotoLinkToDB();
-        /* try {
-          *   // 1 - We add a message with a loading icon that will get updated with the shared image.
-          *   const messageRef = await addDoc(collection(getFirestore(), 'messages'), {
-          *     name: getUserName(),
-          *     imageUrl: LOADING_IMAGE_URL,
-          *     profilePicUrl: getProfilePicUrl(),
-          *     timestamp: serverTimestamp()
-          *   });
-          
-          *   // 2 - Upload the image to Cloud Storage.
-          *   const filePath = `${getAuth().currentUser.uid}/${messageRef.id}/${file.name}`;
-          *   const newImageRef = ref(getStorage(), filePath);
-          *   const fileSnapshot = await uploadBytesResumable(newImageRef, file);
-          *   
-          *   // 3 - Generate a public URL for the file.
-          *   const publicImageUrl = await getDownloadURL(newImageRef);
-          
-          *   // 4 - Update the chat message placeholder with the image's URL.
-          *   await updateDoc(messageRef,{
-          *     imageUrl: publicImageUrl,
-          *     storageUri: fileSnapshot.metadata.fullPath
-          *   });
-          * } catch (error) {
-          *   console.error('There was an error uploading a file to Cloud Storage:', error);
-          * }
-           */
-        try {
-        } catch (error) { }
+        if (imageSelected !== (null && undefined)) {
+            const publicUrl = await uploadPhoto(projectID, imageSelected![0]);
+            setPublicImgUrl(publicUrl);
+            dispatch(
+                projectPhotoAdded({ projectid: projectID, imageUrl: publicUrl })
+            );
+        }
     };
+
+    const renderImage = function(): void {
+        if (publicImgUrl !== undefined) {
+            setDisplayImageComponent(<DisplayProjectImage imageurl={publicImgUrl} />);
+        }
+    };
+    useEffect(() => {
+        dispatch(
+            projectAdded({
+                projectid: projectID,
+                imageUrl: "",
+                crafttype: newproject.crafttype,
+                projectname: newproject.projectname,
+                pattern: newproject.pattern,
+                projectinfo: newproject.projectinfo,
+                projectstatus: newproject.projectstatus,
+            })
+        );
+    }, [state]);
     useEffect(() => {
         renderMultipleSelectNeedles();
     }, [needlesAdded]);
@@ -370,19 +385,24 @@ const EditProject = function() {
     useEffect(() => {
         renderMultipleAddYarn();
     }, [numberYarnAdded]);
+    useEffect(() => {
+        renderImage();
+    }, [publicImgUrl]);
     //display project about
     //useEffect on load should fetch obj from store and set project info as component state. on input change update the elements on state; fetch last element on store
     //see how to fetch data form store
     return (
         <div>
             <div>
-                <form onSubmit={savePhoto}>
+                {displayImageComponent}
+                <form id="uploadPhotoForm" onSubmit={savePhoto}>
                     <label htmlFor="uploadphotoproject">
                         <input
                             type="file"
                             id="uploadphotoproject"
                             name="uploadphotoproject"
                             accept="image/*"
+                            onChange={imageChange}
                         />
                     </label>
                     <button id="submitphoto" type="submit">

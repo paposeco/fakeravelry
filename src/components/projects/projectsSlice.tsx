@@ -4,7 +4,7 @@ import { RootState } from "../store/store";
 const initialState = [
     {
         projectid: "",
-        photo: false,
+        imageUrl: "",
         crafttype: "",
         projectname: "",
         patternused: "",
@@ -46,21 +46,85 @@ const projectsSlice = createSlice({
         projectAdded(state, action) {
             state.push(action.payload);
         },
-        // incomplete for now
-        projectUpdated(state, action) {
-            const { projectid, projectname, pattern } = action.payload;
+        projectPhotoAdded(state, action) {
+            const { projectid, imageUrl } = action.payload;
             const existingProject = state.find(
                 (project) => project.projectid === projectid
             );
             if (existingProject) {
+                existingProject.imageUrl = imageUrl;
+            }
+        },
+        projectUpdated(state, action) {
+            const {
+                projectid,
+                crafttype,
+                projectname,
+                patternused,
+                patternname,
+                about,
+                madefor,
+                linktoraveler,
+                finishby,
+                sizemade,
+                patternfrom,
+                patterncategory,
+                tags,
+                needles,
+                hooks,
+                numberStsOrRepeats,
+                horizontalunits,
+                numberRows,
+                gaugesize,
+                gaugepattern,
+                yarn,
+                projectnotes,
+                progressstatus,
+                progressrange,
+                happiness,
+                starteddate,
+                completeddate,
+            } = action.payload;
+            const existingProject = state.find(
+                (project) => project.projectid === projectid
+            );
+            if (existingProject) {
+                existingProject.crafttype = crafttype;
                 existingProject.projectname = projectname;
-                existingProject.pattern = pattern;
+                existingProject.patternused = patternused;
+                existingProject.pattern.name = patternname;
+                existingProject.pattern.about = about;
+                existingProject.projectinfo.madefor = madefor;
+                existingProject.projectinfo.linktoraveler = linktoraveler;
+                existingProject.projectinfo.finishby = finishby;
+                existingProject.projectinfo.sizemade = sizemade;
+                existingProject.projectinfo.patternfrom = patternfrom;
+                existingProject.projectinfo.patterncategory = patterncategory;
+                existingProject.projectinfo.tags = tags;
+                existingProject.projectinfo.needles = needles;
+                existingProject.projectinfo.hooks = hooks;
+                existingProject.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
+                existingProject.projectinfo.gauge.horizontalunits = horizontalunits;
+                existingProject.projectinfo.gauge.numberRows = numberRows;
+                existingProject.projectinfo.gauge.gaugesize = gaugesize;
+                existingProject.projectinfo.gaugepattern = gaugepattern;
+                existingProject.projectinfo.yarn = yarn;
+                existingProject.projectinfo.projectnotes = projectnotes;
+                existingProject.projectstatus.progressstatus = progressstatus;
+                existingProject.projectstatus.progressrange = progressrange;
+                existingProject.projectstatus.happiness = happiness;
+                existingProject.projectstatus.starteddate = starteddate;
+                existingProject.projectstatus.completeddate = completeddate;
             }
         },
     },
 });
 
-export const { projectAdded, projectUpdated } = projectsSlice.actions;
+export const {
+    projectAdded,
+    projectUpdated,
+    projectPhotoAdded,
+} = projectsSlice.actions;
 export const selectProjectById = (state: RootState, projectID: string) =>
     state.projects.find((project) => project.projectid === projectID);
 export default projectsSlice.reducer;

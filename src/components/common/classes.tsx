@@ -1,7 +1,6 @@
 import type { ProjectInfo, Pattern, Status, Gauge, Yarn } from "./types";
 
 export default class Project {
-    photo: string;
     crafttype: string;
     projectname: string;
     patternused: string;
@@ -15,7 +14,6 @@ export default class Project {
         patternusedselected: string,
         patternnameselected: string
     ) {
-        this.photo = "";
         this.crafttype = crafttypeselected;
         this.projectname = projectnameselected;
         this.patternused = patternusedselected;

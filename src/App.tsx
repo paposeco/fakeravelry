@@ -10,6 +10,9 @@ import Signup from "./components/Signup";
 import { auth, getInfo } from "./Firebase";
 import NewProject from "./components/NewProject";
 import EditProject from "./components/projects/EditProject";
+import DisplayProject from "./components/projects/DisplayProject";
+import { useDispatch } from "react-redux";
+import { userAdded } from "./components/store/userInfoSlice";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -18,22 +21,36 @@ import EditProject from "./components/projects/EditProject";
 const App = function() {
     const [userSignedIn, setUserSignedIn] = useState<boolean>(false);
     const [username, setUsername] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [userID, setUserID] = useState<string>("");
     const [peoplepath, setPeoplePath] = useState<string>("");
     const [notebookpath, setNotebookpath] = useState<string>("");
-
+    const dispatch = useDispatch();
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 setUserSignedIn(true);
-                const currentusername = await getInfo("username");
-                setUsername(currentusername);
-                setPeoplePath("/people/" + currentusername);
-                setNotebookpath("/notebook/" + currentusername);
+                const userInfo = await getInfo("both");
+                setUsername(userInfo[0]);
+                setName(userInfo[1]);
+                setUserID(userInfo[2]);
+                setPeoplePath("/people/" + userInfo[0]);
+                setNotebookpath("/notebook/" + userInfo[0]);
             } else {
                 setUserSignedIn(false);
             }
         });
     });
+
+    useEffect(() => {
+        dispatch(
+            userAdded({
+                username: username,
+                name: name,
+                userID: userID,
+            })
+        );
+    }, [userID]);
 
     if (!userSignedIn) {
         return (
@@ -85,6 +102,7 @@ const App = function() {
                         path="/notebook/:id/:id/editproject/"
                         element={<EditProject />}
                     />
+                    <Route path="/notebook/:id/:id/" element={<DisplayProject />} />
                 </Routes>
             </BrowserRouter>
         );
