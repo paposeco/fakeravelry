@@ -75,3 +75,22 @@ export type Yarn = {
     totalpaid: number | null;
     currency: string;
 };
+
+export interface ProjectFromStore {
+    [key: string]:
+    | string
+    | number
+    | null
+    | undefined
+    | Pattern
+    | ProjectInfo
+    | Status;
+    projectid: string;
+    imageUrl: string;
+    crafttype: string;
+    projectname: string;
+    patternused: string;
+    pattern: Pattern;
+    projectinfo: ProjectInfo;
+    projectstatus: Status;
+}

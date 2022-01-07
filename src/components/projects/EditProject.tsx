@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import {
     projectAdded,
     projectUpdated,
@@ -26,13 +27,15 @@ const EditProject = function() {
     const navigate = useNavigate();
     const { projectid, crafttype, projectname, patternused, patternname } = state;
     const [projectID, setProjectID] = useState(state.projectid);
+    const [username, setUsername] = useState<string>(
+        useSelector((state: RootState) => state.userinfo.username)
+    );
     const newproject = new Project(
         state.crafttype,
         state.projectname,
         state.patternused,
         state.patternname
     );
-
     const [craftType, setCraftType] = useState<string>(newproject.crafttype);
     const [projectName, setProjectName] = useState<string>(
         newproject.projectname
@@ -188,7 +191,6 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
         updateProjectInDB(
             projectID,
             craftType,
@@ -219,6 +221,7 @@ const EditProject = function() {
             projectStatus.completeddate
         );
         //pattern used is not correct
+        // redux store
         dispatch(
             projectUpdated({
                 projectid: projectID,
@@ -251,6 +254,15 @@ const EditProject = function() {
             })
         );
         // want to navigate to new path with navigate  and send project id to be fetched on display project.
+        const cleanProjectName = projectName
+            .toLowerCase()
+            .trim()
+            .replace(/ /g, "-");
+
+        const path = "/notebook/" + username + "/" + cleanProjectName;
+        navigate(path, {
+            state: { projectid: projectID },
+        });
         // going to try to save username on store to avoid querying the db every time
     };
     // const teste = JSON.stringify(a);
@@ -336,7 +348,6 @@ const EditProject = function() {
         }
     };
 
-    const [photoUploaded, setPhotoUploaded] = useState<boolean>(false);
     const [imageSelected, setImageSelected] = useState<FileList | null>();
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
     const [
@@ -348,7 +359,6 @@ const EditProject = function() {
     };
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        setPhotoUploaded(true);
         if (imageSelected !== (null && undefined)) {
             const publicUrl = await uploadPhoto(projectID, imageSelected![0]);
             setPublicImgUrl(publicUrl);
@@ -367,15 +377,9 @@ const EditProject = function() {
         dispatch(
             projectAdded({
                 projectid: projectID,
-                imageUrl: "",
-                crafttype: newproject.crafttype,
-                projectname: newproject.projectname,
-                pattern: newproject.pattern,
-                projectinfo: newproject.projectinfo,
-                projectstatus: newproject.projectstatus,
             })
         );
-    }, [state]);
+    }, [projectID]);
     useEffect(() => {
         renderMultipleSelectNeedles();
     }, [needlesAdded]);

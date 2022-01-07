@@ -16,7 +16,7 @@ const initialState = [
             sizemade: "",
             patternfrom: "",
             patterncategory: "",
-            tags: "",
+            selectedtags: "",
             needles: [],
             hooks: [],
             gauge: {
@@ -44,7 +44,13 @@ const projectsSlice = createSlice({
     initialState,
     reducers: {
         projectAdded(state, action) {
-            state.push(action.payload);
+            if (state.length === 1 && state[0].projectid === "") {
+                state[0].projectid = action.payload.projectid;
+            } else {
+                let initialstateCopy = Object.assign({}, initialState[0]);
+                initialstateCopy.projectid = action.payload.projectid;
+                state.push(initialstateCopy);
+            }
         },
         projectPhotoAdded(state, action) {
             const { projectid, imageUrl } = action.payload;
@@ -69,7 +75,7 @@ const projectsSlice = createSlice({
                 sizemade,
                 patternfrom,
                 patterncategory,
-                tags,
+                selectedtags,
                 needles,
                 hooks,
                 numberStsOrRepeats,
@@ -100,7 +106,7 @@ const projectsSlice = createSlice({
                 existingProject.projectinfo.sizemade = sizemade;
                 existingProject.projectinfo.patternfrom = patternfrom;
                 existingProject.projectinfo.patterncategory = patterncategory;
-                existingProject.projectinfo.tags = tags;
+                existingProject.projectinfo.selectedtags = selectedtags;
                 existingProject.projectinfo.needles = needles;
                 existingProject.projectinfo.hooks = hooks;
                 existingProject.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;

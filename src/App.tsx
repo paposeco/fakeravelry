@@ -43,13 +43,15 @@ const App = function() {
     });
 
     useEffect(() => {
-        dispatch(
-            userAdded({
-                username: username,
-                name: name,
-                userID: userID,
-            })
-        );
+        if (userID !== "") {
+            dispatch(
+                userAdded({
+                    username: username,
+                    name: name,
+                    userID: userID,
+                })
+            );
+        }
     }, [userID]);
 
     if (!userSignedIn) {
@@ -58,19 +60,11 @@ const App = function() {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
-                    {/* <Route path="/people/:id" element={<Profile />} />
-                    <Route path="/community" element={<Community />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/notebook" element={<Notebook />} />
-                    <Route path="/notebook/newproject/*" element={<NewProject />} />
-                    <Route path="/notebook/:id/editproject/" element={<EditProject />} /> have to check if this is right*/}
                 </Routes>
             </BrowserRouter>
         );
     } else {
         return (
-            //notebook should be /id too
-            // isto tudo so aparece se estiver loggedin
             <BrowserRouter>
                 <div>
                     <nav>
@@ -102,7 +96,7 @@ const App = function() {
                         path="/notebook/:id/:id/editproject/"
                         element={<EditProject />}
                     />
-                    <Route path="/notebook/:id/:id/" element={<DisplayProject />} />
+                    <Route path="/notebook/:id/:id" element={<DisplayProject />} />
                 </Routes>
             </BrowserRouter>
         );
