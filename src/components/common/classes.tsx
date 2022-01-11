@@ -42,8 +42,8 @@ export default class Project {
                 horizontalunits: "stitches",
                 numberRows: null, //not sure
                 gaugesize: "",
+                gaugepattern: "",
             }, // select. gauge size must be 2.5/5/10cm
-            gaugepattern: "", //yarn, needles and private notes gets added afterwards
             yarn: [],
             projectnotes: "",
         };

@@ -1,6 +1,6 @@
 import uniqid from "uniqid";
 import React, { useState } from "react";
-import { Hooks } from "./SelectOptions";
+import { HookSizes } from "./SelectOptions";
 const HooksAvailable = function(props: {
     name: string;
     handler: (
@@ -26,7 +26,7 @@ const HooksAvailable = function(props: {
                 data-project="info"
                 className="hooks"
             >
-                {Hooks.map((hooksize) => (
+                {HookSizes.map((hooksize) => (
                     <option key={uniqid()} value={hooksize.value}>
                         {hooksize.text}
                     </option>

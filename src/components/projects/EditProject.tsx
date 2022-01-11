@@ -27,9 +27,8 @@ const EditProject = function() {
     const navigate = useNavigate();
     const { projectid, crafttype, projectname, patternused, patternname } = state;
     const [projectID, setProjectID] = useState(state.projectid);
-    const [username, setUsername] = useState<string>(
-        useSelector((state: RootState) => state.userinfo.username)
-    );
+    const [username, setUsername] = useState<string>("");
+    const user = useSelector((state: RootState) => state.userinfo.username);
     const newproject = new Project(
         state.crafttype,
         state.projectname,
@@ -169,6 +168,11 @@ const EditProject = function() {
                     ...projectInformation!,
                     gauge: { ...projectInformation!.gauge, numberRows: Number(newvalue) },
                 });
+            } else if (elementId === "gaugepattern") {
+                setProjectInformation({
+                    ...projectInformation!,
+                    gauge: { ...projectInformation!.gauge, gaugepattern: newvalue },
+                });
             } else {
                 setProjectInformation({
                     ...projectInformation!,
@@ -191,35 +195,35 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        updateProjectInDB(
-            projectID,
-            craftType,
-            projectName,
-            state.patternused,
-            patternName,
-            patternAbout,
-            projectInformation.madefor,
-            projectInformation.linktoraveler,
-            projectInformation.finishby,
-            projectInformation.sizemade,
-            projectInformation.patternfrom,
-            projectInformation.patterncategory,
-            projectInformation.selectedtags,
-            projectInformation.needles,
-            projectInformation.hooks,
-            projectInformation.gauge.numberStsOrRepeats,
-            projectInformation.gauge.horizontalunits,
-            projectInformation.gauge.numberRows,
-            projectInformation.gauge.gaugesize,
-            projectInformation.gaugepattern,
-            JSON.stringify(projectInformation.yarn),
-            projectInformation.projectnotes,
-            projectStatus.progressstatus,
-            projectStatus.progressrange,
-            projectStatus.happiness,
-            projectStatus.starteddate,
-            projectStatus.completeddate
-        );
+        /* updateProjectInDB(
+         *     projectID,
+         *     craftType,
+         *     projectName,
+         *     state.patternused,
+         *     patternName,
+         *     patternAbout,
+         *     projectInformation.madefor,
+         *     projectInformation.linktoraveler,
+         *     projectInformation.finishby,
+         *     projectInformation.sizemade,
+         *     projectInformation.patternfrom,
+         *     projectInformation.patterncategory,
+         *     projectInformation.selectedtags,
+         *     projectInformation.needles,
+         *     projectInformation.hooks,
+         *     projectInformation.gauge.numberStsOrRepeats,
+         *     projectInformation.gauge.horizontalunits,
+         *     projectInformation.gauge.numberRows,
+         *     projectInformation.gauge.gaugesize,
+         *     projectInformation.gauge.gaugepattern,
+         *     JSON.stringify(projectInformation.yarn),
+         *     projectInformation.projectnotes,
+         *     projectStatus.progressstatus,
+         *     projectStatus.progressrange,
+         *     projectStatus.happiness,
+         *     projectStatus.starteddate,
+         *     projectStatus.completeddate
+         * ); */
         //pattern used is not correct
         // redux store
         dispatch(
@@ -236,14 +240,14 @@ const EditProject = function() {
                 sizemade: projectInformation.sizemade,
                 patternfrom: projectInformation.patternfrom,
                 patterncategory: projectInformation.patterncategory,
-                tags: projectInformation.selectedtags,
+                selectedtags: projectInformation.selectedtags,
                 needles: projectInformation.needles,
                 hooks: projectInformation.hooks,
                 numberStsOrRepeats: projectInformation.gauge.numberStsOrRepeats,
                 horizontalunits: projectInformation.gauge.horizontalunits,
                 numberRows: projectInformation.gauge.numberRows,
                 gaugesize: projectInformation.gauge.gaugesize,
-                gaugepattern: projectInformation.gaugepattern,
+                gaugepattern: projectInformation.gauge.gaugepattern,
                 yarn: JSON.stringify(projectInformation.yarn),
                 projectnotes: projectInformation.projectnotes,
                 progressstatus: projectStatus.progressstatus,
@@ -253,6 +257,7 @@ const EditProject = function() {
                 completeddate: projectStatus.completeddate,
             })
         );
+
         // want to navigate to new path with navigate  and send project id to be fetched on display project.
         const cleanProjectName = projectName
             .toLowerCase()
@@ -392,6 +397,9 @@ const EditProject = function() {
     useEffect(() => {
         renderImage();
     }, [publicImgUrl]);
+    useEffect(() => {
+        setUsername(user);
+    }, [user]);
     //display project about
     //useEffect on load should fetch obj from store and set project info as component state. on input change update the elements on state; fetch last element on store
     //see how to fetch data form store
@@ -581,9 +589,9 @@ const EditProject = function() {
                             Pattern for gauge
                             <input
                                 type="text"
-                                name="patternforgauge"
-                                id="patternforgauge"
-                                data-project="info"
+                                name="gaugepattern"
+                                id="gaugepattern"
+                                data-project="gauge"
                                 onChange={handlerOfChange}
                             />
                         </label>

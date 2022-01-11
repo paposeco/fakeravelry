@@ -21,11 +21,11 @@ const initialState = [
             hooks: [],
             gauge: {
                 numberStsOrRepeats: null,
-                horizontalunits: "",
+                horizontalunits: "stitches",
                 numberRows: null,
                 gaugesize: "",
+                gaugepattern: "",
             },
-            gaugepattern: "",
             yarn: [],
             projectnotes: "",
         },
@@ -113,7 +113,7 @@ const projectsSlice = createSlice({
                 existingProject.projectinfo.gauge.horizontalunits = horizontalunits;
                 existingProject.projectinfo.gauge.numberRows = numberRows;
                 existingProject.projectinfo.gauge.gaugesize = gaugesize;
-                existingProject.projectinfo.gaugepattern = gaugepattern;
+                existingProject.projectinfo.gauge.gaugepattern = gaugepattern;
                 existingProject.projectinfo.yarn = yarn;
                 existingProject.projectinfo.projectnotes = projectnotes;
                 existingProject.projectstatus.progressstatus = progressstatus;

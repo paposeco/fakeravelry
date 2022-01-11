@@ -1,6 +1,6 @@
 import uniqid from "uniqid";
 import React, { useState } from "react";
-import { Needles } from "./SelectOptions";
+import { NeedleSizes } from "./SelectOptions";
 const NeedlesAvailable = function(props: {
     name: string;
     handler: (
@@ -28,7 +28,7 @@ const NeedlesAvailable = function(props: {
                 data-project="info"
                 className="needles"
             >
-                {Needles.map((needlesize) => (
+                {NeedleSizes.map((needlesize) => (
                     <option key={uniqid()} value={needlesize.value}>
                         {needlesize.text}
                     </option>

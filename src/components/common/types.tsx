@@ -36,16 +36,17 @@ export interface ProjectInfo extends IObjectKeys {
     needles: Needles[];
     hooks: Hooks[];
     gauge: Gauge;
-    gaugepattern: string;
     yarn: Yarn[]; // should probably be an obj
     projectnotes: string;
 }
 
 export interface Gauge {
+    [key: string]: string | number | null | undefined;
     numberStsOrRepeats: number | null;
     horizontalunits: string;
     numberRows: number | null;
     gaugesize: string; //2.5/5/10cm
+    gaugepattern: string;
 }
 
 export interface Status {
@@ -94,3 +95,13 @@ export interface ProjectFromStore {
     projectinfo: ProjectInfo;
     projectstatus: Status;
 }
+
+const instanceOfNeedle = function(object: any): object is Needles {
+    return "selectid" in object;
+};
+
+const instanceOfHook = function(object: any): object is Hooks {
+    return "selectid" in object;
+};
+
+export { instanceOfNeedle, instanceOfHook };
