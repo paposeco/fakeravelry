@@ -77,6 +77,17 @@ export type Yarn = {
     currency: string;
 };
 
+export interface YarnDisplay {
+    yarnID: string;
+    yarnname: string;
+    howmuch: string;
+    colorway: string;
+    dyelot: string;
+    colorfamily: string;
+    purchasedat: string;
+    purchasedate: string;
+}
+
 export interface ProjectFromStore {
     [key: string]:
     | string

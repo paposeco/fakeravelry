@@ -78,17 +78,17 @@ export class YarnEntry implements Yarn {
         this.yarnID = yarnID;
         this.yarnname = "";
         this.colorway = "";
-        this.closestcolor = "";
+        this.closestcolor = "colorway0";
         this.dyelot = "";
-        this.yarnweight = "";
+        this.yarnweight = "yarnweight0";
         this.meterage = null;
-        this.skeinmeterageunit = "";
+        this.skeinmeterageunit = "meters";
         this.skeinweight = null;
-        this.skeinweightunit = "";
+        this.skeinweightunit = "grams";
         this.numberskeins = null;
         this.purchasedat = "";
         this.purchasedate = "";
         this.totalpaid = null;
-        this.currency = "";
+        this.currency = "currency0";
     }
 }

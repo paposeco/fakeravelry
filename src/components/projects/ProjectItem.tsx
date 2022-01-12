@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Needles, Hooks, Yarn, Gauge } from "../common/types";
+import type { Needles, Hooks, Yarn, Gauge, YarnDisplay } from "../common/types";
 import { NeedleMap, HookMap } from "./SelectOptions";
 import uniqid from "uniqid";
+import DisplayYarn from "./DisplayYarn";
 
 const ProjectItem = function(props: {
     itemdescription: string;
@@ -15,8 +16,8 @@ const ProjectItem = function(props: {
     const [needlesReady, setNeedlesReady] = useState<boolean>(false);
     const [hooksToDisplay, setHooksToDisplay] = useState<string[]>([]);
     const [hooksReady, setHooksReady] = useState<boolean>(false);
-    const [yarnToDisplay, setYarnToDisplay] = useState<Yarn[]>();
     const [yarnReady, setYarnReady] = useState<boolean>(false);
+    const [yarnToDisplay, setYarnToDisplay] = useState<YarnDisplay[]>([]);
 
     useEffect(() => {
         if (
@@ -97,74 +98,105 @@ const ProjectItem = function(props: {
         }
     }, [props]);
 
-    const showYarnMap = new Map([
-        ["colorway", false],
-        ["closestcolor", false],
-        ["dyelot", false],
-        ["numberskeins", false],
-        ["purchasedat", false],
-        ["purchasedate", false],
-    ]);
-
-    const [yarnUsed, setYarnUsed] = useState<
-        { yarnid: string; description: string }[]
-    >([]);
-
     useEffect(() => {
         if (props.itemdescription === "Yarn" && !yarnReady) {
             const yarncollectionjson: any = props.itemvalue;
             const yarncollection: Yarn[] = JSON.parse(yarncollectionjson);
             yarncollection.forEach((yarn) => {
-                for (const [key, value] of Object.entries(yarn)) {
-                    if (
-                        (typeof value === "string" && value !== "") ||
-                        (typeof value === "number" && value !== null)
-                    ) {
-                        const checkmap = showYarnMap.has(key);
-                        if (checkmap) {
-                            showYarnMap.set(key, true);
-                            if (key === "numberskeins") {
-                                const currentyarnid = yarn.yarnID;
-                                const numberofskeins = Number(value);
-                                const yarnmeterage = Number(yarn.meterage);
-                                const skeinweight = Number(yarn.skeinweight);
-                                if (
-                                    yarn.skeinmeterageunit === "meters" &&
-                                    yarn.skeinweightunit === "grams"
-                                ) {
-                                    const yarnuseddescription = `${value} skeins = ${Math.round(
-                                        numberofskeins * yarnmeterage
-                                    )} meters (${Math.round(
-                                        numberofskeins * yarnmeterage * 1.09
-                                    )} yards), ${Math.round(numberofskeins * skeinweight)} grams`;
-                                    setYarnUsed((yarnUsed) => [
-                                        ...yarnUsed,
-                                        { yarnid: currentyarnid, description: yarnuseddescription },
-                                    ]);
-                                } else if (
-                                    yarn.skeinmeterageunit === "yards" &&
-                                    yarn.skeinweightunit === "ounces"
-                                ) {
-                                    const yarnuseddescription = `${value} skeins = ${Math.round(
-                                        numberofskeins * yarnmeterage
-                                    )} yards (${Math.round(
-                                        numberofskeins * yarnmeterage * 0.914
-                                    )} meters), ${Math.round(
-                                        numberofskeins * skeinweight
-                                    )} ounces`;
-                                    setYarnUsed((yarnUsed) => [
-                                        ...yarnUsed,
-                                        { yarnid: currentyarnid, description: yarnuseddescription },
-                                    ]);
-                                }
-                            }
+                let yarnID = yarn.yarnID;
+                let yarnname = yarn.yarnname;
+                let howmuch = "";
+                let purchasedat = yarn.purchasedat;
+                let purchasedate = yarn.purchasedate;
+                if (yarn.numberskeins !== null) {
+                    console.log("yarn meterage: " + yarn.meterage);
+                    console.log("yarn weight: " + yarn.skeinweight);
+
+                    const numberofskeins = Number(yarn.numberskeins);
+                    const skeinweight = Number(yarn.skeinweight);
+                    const skeinWeightUnit = yarn.skeinweightunit;
+                    if (yarn.meterage !== null && yarn.skeinweight !== null) {
+                        const yarnmeterage = Number(yarn.meterage);
+                        console.log(yarn.skeinmeterageunit);
+                        if (yarn.skeinmeterageunit === "meters") {
+                            howmuch = `${numberofskeins} skeins = ${Math.round(
+                                numberofskeins * yarnmeterage
+                            )} meters (${Math.round(
+                                numberofskeins * yarnmeterage * 1.09
+                            )} yards), ${Math.round(
+                                numberofskeins * skeinweight
+                            )} ${skeinWeightUnit}`;
+                        } else if (yarn.skeinmeterageunit === "yards") {
+                            howmuch = `${numberofskeins} skeins = ${Math.round(
+                                numberofskeins * yarnmeterage
+                            )} yards (${Math.round(
+                                numberofskeins * yarnmeterage * 0.914
+                            )} meters), ${Math.round(
+                                numberofskeins * skeinweight
+                            )} ${skeinWeightUnit}`;
+                        }
+                    } else if (yarn.meterage === null && yarn.skeinweight !== null) {
+                        howmuch = `${numberofskeins} skeins = ${Math.round(
+                            numberofskeins * skeinweight
+                        )} ${skeinWeightUnit}`;
+                    } else if (yarn.meterage !== null && yarn.skeinweight === null) {
+                        const yarnmeterage = Number(yarn.meterage);
+                        if (yarn.skeinmeterageunit === "meters") {
+                            howmuch = `${numberofskeins} skeins = ${Math.round(
+                                numberofskeins * yarnmeterage
+                            )} meters (${Math.round(
+                                numberofskeins * yarnmeterage * 1.09
+                            )} yards)`;
+                        } else if (yarn.skeinmeterageunit === "yards") {
+                            howmuch = `${numberofskeins} skeins = ${Math.round(
+                                numberofskeins * yarnmeterage
+                            )} yards (${Math.round(
+                                numberofskeins * yarnmeterage * 0.914
+                            )} meters)`;
+                        }
+                    }
+                } else {
+                    if (yarn.meterage !== null && yarn.skeinweight !== null) {
+                        if (yarn.skeinmeterageunit === "meters") {
+                            howmuch = `${yarn.meterage} meters (${Math.round(
+                                Number(yarn.yarnmeterage) * 1.09
+                            )} yards), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                        } else if (yarn.skeinmeterageunit === "yards") {
+                            howmuch = `${yarn.meterage} yards (${Math.round(
+                                Number(yarn.yarnmeterage) * 0.914
+                            )} meters), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                        }
+                    } else if (yarn.meterage === null && yarn.skeinweight !== null) {
+                        howmuch = `${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                    } else if (yarn.meterage !== null && yarn.skeinweight === null) {
+                        if (yarn.skeinmeterageunit === "meters") {
+                            howmuch = `${yarn.meterage} meters (${Math.round(
+                                Number(yarn.yarnmeterage) * 1.09
+                            )} yards)`;
+                        } else if (yarn.skeinmeterageunit === "yards") {
+                            howmuch = `${yarn.meterage} yards (${Math.round(
+                                Number(yarn.yarnmeterage) * 0.914
+                            )} meters)`;
                         }
                     }
                 }
+                console.log(howmuch);
+                setYarnToDisplay((yarnToDisplay) => [
+                    ...yarnToDisplay,
+                    {
+                        yarnID: yarnID,
+                        yarnname: yarnname,
+                        howmuch: howmuch,
+                        colorway: yarn.colorway,
+                        dyelot: yarn.dyelot,
+                        colorfamily: yarn.closestcolor,
+                        purchasedat: purchasedat,
+                        purchasedate: purchasedate,
+                    },
+                ]);
             });
-
-            setYarnReady(true);
         }
+        setYarnReady(true);
     }, [props]);
 
     if (
@@ -172,7 +204,8 @@ const ProjectItem = function(props: {
         props.itemdescription !== "Needle" &&
         props.itemdescription !== "Hook" &&
         props.itemdescription !== "Yarn" &&
-        props.itemdescription !== "Tags"
+        props.itemdescription !== "Tags" &&
+        props.itemdescription !== "Notes"
     ) {
         return (
             <div className="projectinfodiv">
@@ -180,6 +213,8 @@ const ProjectItem = function(props: {
                 <div className="itemValue">{props.itemvalue}</div>
             </div>
         );
+    } else if (props.itemdescription === "Notes") {
+        return <div>{props.itemvalue}</div>;
     } else if (props.itemdescription === "Tags" && tagsSeparated) {
         return (
             <div className="projectinfodiv">
@@ -227,19 +262,8 @@ const ProjectItem = function(props: {
     } else if (props.itemdescription === "Yarn" && yarnReady) {
         return (
             <div className="projectinfodiv">
-                {yarnToDisplay!.map((yarn: Yarn) => (
-                    <div>
-                        <div className="itemDescription">Yarn</div>
-                        <div className="itemValue">{yarn.yarnname}</div>
-                        <div className="itemDescription">How much?</div>
-                        <div className="itemValue"></div>
-                        <div className="itemDescription">Colorway</div>
-                        <div className="itemValue">{yarn.colorway}</div>
-                        <div className="itemDescription">Color family</div>
-                        <div className="itemValue">{yarn.closestcolor}</div>
-                        <div className="itemDescription">Dyelot</div>
-                        <div className="itemValue">{yarn.dyelot}</div>
-                    </div>
+                {yarnToDisplay.map((yarn: YarnDisplay) => (
+                    <DisplayYarn yarn={yarn} uniqid={uniqid()} />
                 ))}
             </div>
         );

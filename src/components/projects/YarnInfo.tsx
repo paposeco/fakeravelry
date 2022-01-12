@@ -1,6 +1,5 @@
 import uniqid from "uniqid";
 import React, { useState } from "react";
-import { Yarn } from "../common/types";
 import { Colorways, Yarnweight, Currency } from "./SelectOptions";
 
 interface YarnSelects {
@@ -21,7 +20,7 @@ const YarnInfo = function(props: {
     // select needs to have a local handler
 
     const [selectValue, setSelectValue] = useState<YarnSelects>({
-        closestcolor: "colorway0",
+        closestcolor: "color0",
         yarnweight: "yarnweight0",
         skeinmeterageunit: "meters",
         skeinweightunit: "grams",
@@ -35,9 +34,7 @@ const YarnInfo = function(props: {
             prevSelects[elementID] = event.target.value;
             return prevSelects;
         });
-        {
-            props.handler(event);
-        }
+        props.handler(event);
     };
     return (
         <fieldset id={props.yarnID}>
@@ -98,7 +95,14 @@ const YarnInfo = function(props: {
                 ))}
             </select>
             <label htmlFor="meterage">
-                Per skein: <input id="meterage" name="meterage" type="number" />
+                Per skein:{" "}
+                <input
+                    id="meterage"
+                    name="meterage"
+                    type="number"
+                    onChange={props.handler}
+                    data-project="yarn"
+                />
                 <select
                     name="skeinmeterageunit"
                     id="skeinmeterageunit"

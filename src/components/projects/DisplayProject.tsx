@@ -6,16 +6,16 @@ import type { ProjectFromStore } from "../common/types";
 import ProjectItem from "./ProjectItem";
 import DisplayProjectImage from "./DisplayProjectImage";
 
+// fetches project com store and displays it with help from modules: displayprojectimage for project image and projectitem that displays each block of information. projectitem gets help from DisplayYarn for rendering the yarn elements
+
 const DisplayProject = function() {
     const { state } = useLocation();
     const { projectid } = state;
-    // on refresh is still a problem here
-    const [projectData, setProjectData] = useState<ProjectFromStore | undefined>(
-        useSelector((state: RootState) =>
+    const projectData:
+        | ProjectFromStore
+        | undefined = useSelector((state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        )
-    );
-
+        );
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
     const [displayMadefor, setDisplayMadeFor] = useState<boolean>(true);
@@ -71,6 +71,8 @@ const DisplayProject = function() {
         }
     }, [projectData]);
 
+    // need 2 more divs; one with progress and one with project about
+    // need to think about adding more than one image
     return (
         <div>
             <h2>{projectData!.projectName}</h2>
@@ -159,41 +161,4 @@ const DisplayProject = function() {
     );
 };
 
-//need to work on displayed everything and on toggling visibility for non empty components instead of return an empty div
-
 export default DisplayProject;
-/* {
- *     projectid: "",
- *     imageUrl: "",
- *     crafttype: "",
- *     projectname: "",
- *     patternused: "",
- *     pattern: { name: "", about: "" },
- *     projectinfo: {
- *         madefor: "", // special case
- *         linktoraveler: "",
- *         finishby: "",
- *         sizemade: "",
- *         patternfrom: "", // special case too -> only shown if a pattern was selected
- *         patterncategory: "",
- *         tags: "",
- *         needles: [],
- *         hooks: [],
- *         gauge: {
- *             numberStsOrRepeats: null,
- *             horizontalunits: "",
- *             numberRows: null,
- *             gaugesize: "",
- *         },
- *         gaugepattern: "", // special case
- *         yarn: [],
- *         projectnotes: "",
- *     },
- *     projectstatus: {
- *         progressstatus: "In progress",
- *         progressrange: "0",
- *         happiness: "",
- *         starteddate: "",
- *         completeddate: "",
- *     },
- * }, */

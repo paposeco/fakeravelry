@@ -119,14 +119,16 @@ const EditProject = function() {
             });
         } else if (elementDataSet === "yarn") {
             let indexYarnAdded = event.target.parentElement!.parentElement!.id;
+            /* console.log("original index yarn: " + indexYarnAdded);
+             *   elementId === "skeinmeterageunit" ||
+             *       elementId === "skeinweightunit" || */
             if (
                 elementId === "closestcolor" ||
                 elementId === "yarnweight" ||
-                elementId === "skeinmeterageunit" ||
-                elementId === "skeinweightunit" ||
                 elementId === "currency"
             ) {
                 indexYarnAdded = event.target.parentElement!.id;
+                //  console.log("updated index yarn: " + indexYarnAdded);
             }
             setProjectInformation((prevState) => {
                 let previousInfo = Object.assign({}, prevState);
@@ -195,35 +197,35 @@ const EditProject = function() {
 
     const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        /* updateProjectInDB(
-         *     projectID,
-         *     craftType,
-         *     projectName,
-         *     state.patternused,
-         *     patternName,
-         *     patternAbout,
-         *     projectInformation.madefor,
-         *     projectInformation.linktoraveler,
-         *     projectInformation.finishby,
-         *     projectInformation.sizemade,
-         *     projectInformation.patternfrom,
-         *     projectInformation.patterncategory,
-         *     projectInformation.selectedtags,
-         *     projectInformation.needles,
-         *     projectInformation.hooks,
-         *     projectInformation.gauge.numberStsOrRepeats,
-         *     projectInformation.gauge.horizontalunits,
-         *     projectInformation.gauge.numberRows,
-         *     projectInformation.gauge.gaugesize,
-         *     projectInformation.gauge.gaugepattern,
-         *     JSON.stringify(projectInformation.yarn),
-         *     projectInformation.projectnotes,
-         *     projectStatus.progressstatus,
-         *     projectStatus.progressrange,
-         *     projectStatus.happiness,
-         *     projectStatus.starteddate,
-         *     projectStatus.completeddate
-         * ); */
+        updateProjectInDB(
+            projectID,
+            craftType,
+            projectName,
+            state.patternused,
+            patternName,
+            patternAbout,
+            projectInformation.madefor,
+            projectInformation.linktoraveler,
+            projectInformation.finishby,
+            projectInformation.sizemade,
+            projectInformation.patternfrom,
+            projectInformation.patterncategory,
+            projectInformation.selectedtags,
+            projectInformation.needles,
+            projectInformation.hooks,
+            projectInformation.gauge.numberStsOrRepeats,
+            projectInformation.gauge.horizontalunits,
+            projectInformation.gauge.numberRows,
+            projectInformation.gauge.gaugesize,
+            projectInformation.gauge.gaugepattern,
+            JSON.stringify(projectInformation.yarn),
+            projectInformation.projectnotes,
+            projectStatus.progressstatus,
+            projectStatus.progressrange,
+            projectStatus.happiness,
+            projectStatus.starteddate,
+            projectStatus.completeddate
+        );
         //pattern used is not correct
         // redux store
         dispatch(
@@ -257,7 +259,6 @@ const EditProject = function() {
                 completeddate: projectStatus.completeddate,
             })
         );
-
         // want to navigate to new path with navigate  and send project id to be fetched on display project.
         const cleanProjectName = projectName
             .toLowerCase()
@@ -268,7 +269,6 @@ const EditProject = function() {
         navigate(path, {
             state: { projectid: projectID },
         });
-        // going to try to save username on store to avoid querying the db every time
     };
     // const teste = JSON.stringify(a);
     // const aocontrario = JSON.parse(teste);
