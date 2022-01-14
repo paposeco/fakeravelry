@@ -11,13 +11,13 @@ import {
     projectPhotoAdded,
 } from "./projectsSlice";
 import Project, { YarnEntry } from "../common/classes";
-import displaycategories from "../patterns/categories";
+import displaycategories, { selectedCategory } from "../patterns/categories";
 import NeedlesAvailable from "./selectNeedle";
 import HooksAvailable from "./selectHook";
 import DisplayProjectImage from "./DisplayProjectImage";
 import YarnInfo from "./YarnInfo";
-import type { ProjectInfo, Status } from "../common/types";
-import { updateProjectInDB, uploadPhoto } from "../../Firebase";
+import type { ProjectInfo, Status, ProjectFromStore } from "../common/types";
+import { updateProjectInDB, uploadPhoto, linkToRaveler } from "../../Firebase";
 
 //need to handle refreshes
 
@@ -25,34 +25,23 @@ const EditProject = function() {
     const { state } = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { projectid, crafttype, projectname, patternused, patternname } = state;
+    const { projectid } = state;
     const [projectID, setProjectID] = useState(state.projectid);
     const [username, setUsername] = useState<string>("");
     const user = useSelector((state: RootState) => state.userinfo.username);
-    const newproject = new Project(
-        state.crafttype,
-        state.projectname,
-        state.patternused,
-        state.patternname
-    );
-    const [craftType, setCraftType] = useState<string>(newproject.crafttype);
-    const [projectName, setProjectName] = useState<string>(
-        newproject.projectname
-    );
-    const [patternAbout, setPatternAbout] = useState<string>(
-        newproject.pattern.about
-    );
-    const [patternName, setPatternName] = useState<string>(
-        newproject.pattern.name
-    );
-    const [projectInformation, setProjectInformation] = useState<ProjectInfo>(
-        newproject.projectinfo
-    );
-    const [projectStatus, setProjectStatus] = useState<Status>(
-        newproject.projectstatus
-    );
+    const projectData:
+        | ProjectFromStore
+        | undefined = useSelector((state: RootState) =>
+            state.projects.find((element) => element.projectid === projectid)
+        );
 
-    const [happinessChecked, setHappinessChecked] = useState<string>("");
+    const [craftType, setCraftType] = useState<string>();
+    const [projectName, setProjectName] = useState<string>();
+    const [patternAbout, setPatternAbout] = useState<string>();
+    const [patternName, setPatternName] = useState<string>();
+    const [projectInformation, setProjectInformation] = useState<ProjectInfo>();
+    const [projectStatus, setProjectStatus] = useState<Status>();
+    const [happinessChecked, setHappinessChecked] = useState<string>();
 
     //on refresh, store gets cleared ?? if state already exists, shouldn't read from redux, but from local state, should create new item in storage then
     /* const currentProject: any = useSelector((state: RootState) =>
@@ -195,36 +184,43 @@ const EditProject = function() {
      *       [name]: value    });
      *    }*/
 
-    const handlerOfSubmit = function(event: React.FormEvent<HTMLFormElement>) {
+    const handlerOfSubmit = async function(
+        event: React.FormEvent<HTMLFormElement>
+    ) {
         event.preventDefault();
+
+        const ravelerpath: string = await linkToRaveler(
+            projectInformation!.linktoraveler
+        );
+
         updateProjectInDB(
             projectID,
-            craftType,
-            projectName,
+            craftType!,
+            projectName!,
             state.patternused,
-            patternName,
-            patternAbout,
-            projectInformation.madefor,
-            projectInformation.linktoraveler,
-            projectInformation.finishby,
-            projectInformation.sizemade,
-            projectInformation.patternfrom,
-            projectInformation.patterncategory,
-            projectInformation.selectedtags,
-            projectInformation.needles,
-            projectInformation.hooks,
-            projectInformation.gauge.numberStsOrRepeats,
-            projectInformation.gauge.horizontalunits,
-            projectInformation.gauge.numberRows,
-            projectInformation.gauge.gaugesize,
-            projectInformation.gauge.gaugepattern,
-            JSON.stringify(projectInformation.yarn),
-            projectInformation.projectnotes,
-            projectStatus.progressstatus,
-            projectStatus.progressrange,
-            projectStatus.happiness,
-            projectStatus.starteddate,
-            projectStatus.completeddate
+            patternName!,
+            patternAbout!,
+            projectInformation!.madefor,
+            ravelerpath,
+            projectInformation!.finishby,
+            projectInformation!.sizemade,
+            projectInformation!.patternfrom,
+            selectedCategory,
+            projectInformation!.selectedtags,
+            projectInformation!.needles,
+            projectInformation!.hooks,
+            projectInformation!.gauge.numberStsOrRepeats,
+            projectInformation!.gauge.horizontalunits,
+            projectInformation!.gauge.numberRows,
+            projectInformation!.gauge.gaugesize,
+            projectInformation!.gauge.gaugepattern,
+            JSON.stringify(projectInformation!.yarn),
+            projectInformation!.projectnotes,
+            projectStatus!.progressstatus,
+            projectStatus!.progressrange,
+            projectStatus!.happiness,
+            projectStatus!.starteddate,
+            projectStatus!.completeddate
         );
         //pattern used is not correct
         // redux store
@@ -237,11 +233,11 @@ const EditProject = function() {
                 patternname: patternName,
                 about: patternAbout,
                 madefor: projectInformation.madefor,
-                linktoraveler: projectInformation.linktoraveler,
+                linktoraveler: ravelerpath,
                 finishby: projectInformation.finishby,
                 sizemade: projectInformation.sizemade,
                 patternfrom: projectInformation.patternfrom,
-                patterncategory: projectInformation.patterncategory,
+                patterncategory: selectedCategory,
                 selectedtags: projectInformation.selectedtags,
                 needles: projectInformation.needles,
                 hooks: projectInformation.hooks,
@@ -335,6 +331,7 @@ const EditProject = function() {
                 ...previousProjectInformation.yarn,
                 newyarn,
             ];
+
             return previousProjectInformation;
         });
     };
@@ -378,13 +375,44 @@ const EditProject = function() {
             setDisplayImageComponent(<DisplayProjectImage imageurl={publicImgUrl} />);
         }
     };
+
+    // not sure how to create new project. should i just fetch what's on store and create project with that? fill in what's already on project?
+
     useEffect(() => {
-        dispatch(
-            projectAdded({
-                projectid: projectID,
-            })
-        );
+        //check if project exist on store
+        // initial state should be updated here too in case state is empty (didn't come from navigate)
+        /* const projectData:
+         *     | ProjectFromStore
+         *     | undefined = useSelector((state: RootState) =>
+         *         state.projects.find((element) => element.projectid === projectid)
+         *     ); */
+        /* if (projectData === undefined) {
+         *     dispatch(
+         *         projectAdded({
+         *             projectid: projectID,
+         *         })
+         *     );
+         * } else {
+         * } */
     }, [projectID]);
+
+    const [project, setProject] = useState();
+
+    useEffect(() => {
+        // not sure if there's a reason to use new project
+        // could just update variables with project from store
+
+        setCraftType(projectData!.crafttype);
+        setProjectName(projectData!.projectname);
+        setPatternAbout(projectData!.pattern.about);
+        setPatternName(projectData!.pattern.name);
+        setProjectInformation(projectData!.projectinfo);
+        setProjectStatus(projectData!.projectstatus);
+        setHappinessChecked(projectData!.projectstatus.happiness);
+
+        // continue until all sets are made from store first. i think this is the way
+    }, [projectData]);
+
     useEffect(() => {
         renderMultipleSelectNeedles();
     }, [needlesAdded]);
@@ -514,10 +542,9 @@ const EditProject = function() {
                     </select>
                     <input
                         type="text"
-                        name="selectcategoryinput"
-                        id="selectcategoryinput"
+                        name="patterncategory"
+                        id="patterncategory"
                         placeholder="select category..."
-                        readOnly
                         onClick={displaycategories}
                         onChange={handlerOfChange}
                         data-project="info"
@@ -618,7 +645,7 @@ const EditProject = function() {
                             <select
                                 id="progressstatus"
                                 name="progressstatus"
-                                value={projectStatus.progressstatus}
+                                value={projectStatus!.progressstatus}
                                 onChange={handlerOfChange}
                                 data-project="status"
                             >
@@ -638,7 +665,9 @@ const EditProject = function() {
                                 data-project="status"
                                 checked={happinessChecked === "verysad"}
                             />
-                            <label htmlFor="verysad">Very sad</label>
+                            <label htmlFor="verysad">
+                                <i className="las la-sad-tear happinessemoji"></i>
+                            </label>
                             <input
                                 type="radio"
                                 name="happiness"
@@ -647,7 +676,9 @@ const EditProject = function() {
                                 data-project="status"
                                 checked={happinessChecked === "sad"}
                             />
-                            <label htmlFor="sad">Sad</label>
+                            <label htmlFor="sad">
+                                <i className="las la-frown happinessemoji"></i>
+                            </label>
                             <input
                                 type="radio"
                                 name="happiness"
@@ -656,7 +687,9 @@ const EditProject = function() {
                                 data-project="status"
                                 checked={happinessChecked === "meh"}
                             />
-                            <label htmlFor="meh">Meh</label>
+                            <label htmlFor="meh">
+                                <i className="las la-meh happinessemoji"></i>
+                            </label>
                             <input
                                 type="radio"
                                 name="happiness"
@@ -665,7 +698,9 @@ const EditProject = function() {
                                 data-project="status"
                                 checked={happinessChecked === "happy"}
                             />
-                            <label htmlFor="happy">Happy</label>
+                            <label htmlFor="happy">
+                                <i className="las la-smile-beam happinessemoji"></i>
+                            </label>
                             <input
                                 type="radio"
                                 name="happiness"
@@ -674,7 +709,9 @@ const EditProject = function() {
                                 data-project="status"
                                 checked={happinessChecked === "veryhappy"}
                             />
-                            <label htmlFor="veryhappy">Very Happy</label>
+                            <label htmlFor="veryhappy">
+                                <i className="las la-laugh happinessemoji"></i>
+                            </label>
                         </label>
                         <label htmlFor="progressrange">
                             Progress
@@ -742,3 +779,9 @@ export default EditProject;
 /*  */
 
 // project status toggles form elements
+
+// very sad <i class="las la-sad-tear"></i>
+// sad <i class="las la-frown"></i>
+// meh <i class="las la-meh"></i>
+// happy <i class="las la-smile-beam"></i>
+// very happy <i class="las la-laugh"></i>

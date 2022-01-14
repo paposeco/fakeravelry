@@ -13,6 +13,7 @@ const Profile = function() {
     const [userSelectedName, setUserSelectedName] = useState<string>("");
     const getName = async function() {
         const name = await getInfo("name");
+        console.log(name);
         setUserSelectedName(name);
     };
 

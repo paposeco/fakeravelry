@@ -60,6 +60,10 @@ const App = function() {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/people/*" element={<Login />} />
+                    <Route path="/community" element={<Login />} />
+                    <Route path="/messages" element={<Login />} />
+                    <Route path="/notebook/*" element={<Login />} />
                 </Routes>
             </BrowserRouter>
         );

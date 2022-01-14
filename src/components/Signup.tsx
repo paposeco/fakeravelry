@@ -20,10 +20,13 @@ const Signup = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        const signup = createUser(email, password, username, nameSelected);
-        const newpath: string = "/people/" + username;
-        navigate(newpath, { state: { name: nameSelected } });
-        // creates user and should dispatch to empty profile
+        const signup = await createUser(email, password, username, nameSelected);
+        if (signup !== "user already exists") {
+            const newpath: string = "/people/" + username;
+            navigate(newpath, { state: { name: nameSelected } });
+        } else {
+            alert("Username is already being used. Choose another one");
+        }
     };
 
     const handlerOfChange = function(
@@ -47,7 +50,6 @@ const Signup = function() {
                         onChange={handlerOfChange}
                     />
                 </label>
-                {/* unique username on db > need to check if username exists in db*/}
                 <label htmlFor="nameSelected">
                     Name:{" "}
                     <input
@@ -65,7 +67,6 @@ const Signup = function() {
                         type="email"
                         onChange={handlerOfChange}
                     />
-                    {/* unique email on db >  check here too*/}
                 </label>
                 <label htmlFor="password">
                     Password:{" "}

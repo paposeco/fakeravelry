@@ -7,3 +7,39 @@ body{
     flex-direction: row;
     gap: 10px;
 }
+
+#project{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.projectstatusdiv{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+input[name="happiness"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  background-color: #fff;
+  /* Not removed via appearance */
+  margin: 0;
+}
+
+.happinessemoji{
+    font-size: 20px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.happinessemoji:hover{
+    font-size: 22px;
+}
+
+input[name="happiness"]:checked + label{
+    color: orange;
+}

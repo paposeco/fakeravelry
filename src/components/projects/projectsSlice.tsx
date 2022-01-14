@@ -46,9 +46,17 @@ const projectsSlice = createSlice({
         projectAdded(state, action) {
             if (state.length === 1 && state[0].projectid === "") {
                 state[0].projectid = action.payload.projectid;
+                state[0].crafttype = action.payload.crafttype;
+                state[0].projectname = action.payload.projectname;
+                state[0].patternused = action.payload.patternused;
+                state[0].pattern.name = action.payload.patternname;
             } else {
                 let initialstateCopy = Object.assign({}, initialState[0]);
                 initialstateCopy.projectid = action.payload.projectid;
+                initialstateCopy.crafttype = action.payload.crafttype;
+                initialstateCopy.projectname = action.payload.projectname;
+                initialstateCopy.patternused = action.payload.patternused;
+                initialstateCopy.pattern.name = action.payload.patternname;
                 state.push(initialstateCopy);
             }
         },

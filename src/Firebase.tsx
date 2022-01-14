@@ -5,6 +5,7 @@ import {
     setDoc,
     getDoc,
     updateDoc,
+    arrayUnion,
 } from "firebase/firestore";
 import {
     getDownloadURL,
@@ -68,24 +69,28 @@ const uploadPhoto = async function(projectid: string, file: File) {
     }
 };
 
-const createUser = function(
+const createUser = async function(
     email: string,
     password: string,
     username: string,
     nameSelected: string
 ) {
-    //  startDB();
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in
-            const user: string = userCredential.user.uid;
-            startEmptyProfile(user, email, username, nameSelected);
-        })
-        .catch((error) => {
-            const errorMessage = error.message;
-            console.log(errorMessage);
-            // ..
-        });
+    const checkUsernameDoesntExist = await checkUniqueUsername(username);
+    if (checkUsernameDoesntExist === true) {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user: string = userCredential.user.uid;
+                startEmptyProfile(user, email, username, nameSelected);
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                alert(errorMessage);
+                // ..
+            });
+    } else {
+        return "user already exists";
+    }
 };
 
 const startEmptyProfile = async function(
@@ -94,15 +99,16 @@ const startEmptyProfile = async function(
     username: string,
     nameSelected: string
 ) {
-    //const db = startDB();
     await setDoc(doc(database, "users", userId), {
         username: username,
         name: nameSelected,
         email: email,
     });
+    const docRef = doc(database, "usernames", "usernamescollection");
+    await updateDoc(docRef, {
+        all: arrayUnion({ userid: userId, username: username }),
+    });
 };
-
-// checks for unique email and username might take a while if i leave it like this
 
 const signIn = async function(email: string, password: string) {
     signInWithEmailAndPassword(auth, email, password)
@@ -125,6 +131,25 @@ const signOutUser = async function() {
         .catch((error) => {
             // An error happened.
         });
+};
+
+const checkUniqueUsername = async function(desiredusername: string) {
+    const docRef = doc(database, "usernames", "usernamescollection");
+    const docSnap = await getDoc(docRef);
+    const lowercaseusername = desiredusername.toLowerCase();
+    if (docSnap.exists()) {
+        const usernames = docSnap.data();
+        const usernamesarray: { userird: string; username: string }[] =
+            usernames.all;
+        let usernameisunique: boolean = true;
+        for (let i = 0; i < usernamesarray.length; i++) {
+            if (usernamesarray[i].username.toLowerCase() === lowercaseusername) {
+                usernameisunique = false;
+                break;
+            }
+        }
+        return usernameisunique;
+    }
 };
 
 const getInfo = async function(infotofetch: string) {
@@ -193,9 +218,35 @@ const addProjectToNotebook = async function(
     }
 };
 
-// need to get all the info to update the arrays.
-// maybe each project should have its own yarn subcollection
+const linkToRaveler = async function(username: string) {
+    const docRef = doc(database, "usernames", "usernamescollection");
+    const docSnap = await getDoc(docRef);
+    const usernamelowercase = username.toLowerCase();
+    let userID = "";
+    if (docSnap.exists()) {
+        const usernames = docSnap.data();
+        const usernamesarray: { userid: string; username: string }[] =
+            usernames.all;
+        let userExists = false;
+        for (let i = 0; i < usernamesarray.length; i++) {
+            if (usernamesarray[i].username.toLowerCase() === usernamelowercase) {
+                userExists = true;
+                userID = usernamesarray[i].userid;
+                break;
+            }
+        }
+        if (userExists) {
+            //when someone tries to access someone elses profiles, it needs to query the db and get everything about the user and place it in store maybe
+            return `/people/${username}`;
+        } else {
+            return "can't find user";
+        }
+    } else {
+        return "error in db";
+    }
+};
 
+// have to make sure user can't edit other peoples projects
 const updateProjectInDB = async function(
     currentprojectid: string,
     crafttypeUpdated: string,
@@ -270,9 +321,6 @@ const updateProjectInDB = async function(
     }
 };
 
-//storage
-//email authentication
-
 export default startDB;
 export {
     createUser,
@@ -283,4 +331,7 @@ export {
     addProjectToNotebook,
     updateProjectInDB,
     uploadPhoto,
+    linkToRaveler,
 };
+
+// quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

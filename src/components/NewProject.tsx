@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-//import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
-//import { projectAdded } from "./projects/projectsSlice";
+import { projectAdded } from "./projects/projectsSlice";
 // should create a new type for yarn only
 
 import { addProjectToNotebook, getInfo } from "../Firebase";
@@ -12,8 +12,8 @@ import { addProjectToNotebook, getInfo } from "../Firebase";
 const NewProject = function() {
     const navigate = useNavigate();
 
-    //    const dispatch = useDispatch();
-    // need to save to redux store and db
+    const dispatch = useDispatch();
+    //need to save to redux store and db
     /* const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
      *     event.preventDefault();
      *     //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
@@ -81,13 +81,20 @@ const NewProject = function() {
             patternUsed,
             patternName
         );
-        navigate(newpath, {
-            state: {
+
+        dispatch(
+            projectAdded({
                 projectid: projectID,
                 crafttype: craftType,
                 projectname: projectName,
                 patternused: patternUsed,
                 patternname: patternName,
+            })
+        );
+
+        navigate(newpath, {
+            state: {
+                projectid: projectID,
             },
         });
     };
