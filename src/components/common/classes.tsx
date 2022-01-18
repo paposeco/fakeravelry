@@ -38,13 +38,13 @@ export default class Project {
             needles: [],
             hooks: [],
             gauge: {
-                numberStsOrRepeats: null,
+                numberStsOrRepeats: undefined,
                 horizontalunits: "stitches",
-                numberRows: null, //not sure
+                numberRows: undefined, //not sure
                 gaugesize: "",
                 gaugepattern: "",
             }, // select. gauge size must be 2.5/5/10cm
-            yarn: [],
+            yarn: "", //json
             projectnotes: "",
         };
         this.projectstatus = {
@@ -65,14 +65,14 @@ export class YarnEntry implements Yarn {
     closestcolor: string;
     dyelot: string;
     yarnweight: string;
-    meterage: number | null;
+    meterage: number | undefined;
     skeinmeterageunit: string;
-    skeinweight: number | null;
+    skeinweight: number | undefined;
     skeinweightunit: string;
-    numberskeins: number | null;
+    numberskeins: number | undefined;
     purchasedat: string;
     purchasedate: string;
-    totalpaid: number | null;
+    totalpaid: number | undefined;
     currency: string;
     constructor(yarnID: string) {
         this.yarnID = yarnID;
@@ -81,14 +81,14 @@ export class YarnEntry implements Yarn {
         this.closestcolor = "colorway0";
         this.dyelot = "";
         this.yarnweight = "yarnweight0";
-        this.meterage = null;
+        this.meterage = undefined;
         this.skeinmeterageunit = "meters";
-        this.skeinweight = null;
+        this.skeinweight = undefined;
         this.skeinweightunit = "grams";
-        this.numberskeins = null;
+        this.numberskeins = undefined;
         this.purchasedat = "";
         this.purchasedate = "";
-        this.totalpaid = null;
+        this.totalpaid = undefined;
         this.currency = "currency0";
     }
 }

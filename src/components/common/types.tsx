@@ -36,15 +36,15 @@ export interface ProjectInfo extends IObjectKeys {
     needles: Needles[];
     hooks: Hooks[];
     gauge: Gauge;
-    yarn: Yarn[]; // should probably be an obj
+    yarn: string; // should probably be an obj
     projectnotes: string;
 }
 
 export interface Gauge {
     [key: string]: string | number | null | undefined;
-    numberStsOrRepeats: number | null;
+    numberStsOrRepeats: number | undefined;
     horizontalunits: string;
-    numberRows: number | null;
+    numberRows: number | undefined;
     gaugesize: string; //2.5/5/10cm
     gaugepattern: string;
 }
@@ -66,14 +66,14 @@ export type Yarn = {
     closestcolor: string;
     dyelot: string;
     yarnweight: string;
-    meterage: number | null;
+    meterage: number | undefined;
     skeinmeterageunit: string;
-    skeinweight: number | null;
+    skeinweight: number | undefined;
     skeinweightunit: string;
-    numberskeins: number | null;
+    numberskeins: number | undefined;
     purchasedat: string;
     purchasedate: string;
-    totalpaid: number | null;
+    totalpaid: number | undefined;
     currency: string;
 };
 

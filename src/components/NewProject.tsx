@@ -74,13 +74,13 @@ const NewProject = function() {
             .trim()
             .replace(/ /g, "-");
         const newpath = await getUsername(cleanProjectName);
-        await addProjectToNotebook(
-            projectID,
-            craftType,
-            projectName,
-            patternUsed,
-            patternName
-        );
+        /* await addProjectToNotebook(
+         *     projectID,
+         *     craftType,
+         *     projectName,
+         *     patternUsed,
+         *     patternName
+         * ); */
 
         dispatch(
             projectAdded({

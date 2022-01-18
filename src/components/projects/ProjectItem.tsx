@@ -38,34 +38,72 @@ const ProjectItem = function(props: {
 
     useEffect(() => {
         if (props.itemdescription === "Gauge" && !gaugeReady) {
-            let numberSts: number | null = null;
+            console.log(props.itemvalue);
+            let numberSts: number | undefined = undefined;
             let horizontalunits: string = "";
-            let numberRows: number | null = null;
+            let numberRows: number | undefined = undefined;
             let gaugesize: string = "";
             let gaugepattern: string = "";
             for (const [key, value] of Object.entries(props.itemvalue)) {
+                console.log(key);
+                console.log(value);
                 if (key === "numberStsOrRepeats") {
                     numberSts = value;
                 } else if (key === "horizontalunits") {
                     horizontalunits = value;
                 } else if (key === "numberRows") {
-                    numberRows = value;
+                    numberSts = value;
                 } else if (key === "gaugesize") {
                     gaugesize = value;
                 } else if (key === "gaugepattern") {
                     gaugepattern = value;
                 }
             }
-            if (gaugepattern === "") {
-                setGaugeInfo(
-                    `${numberSts} ${horizontalunits} and ${numberRows} rows = ${gaugesize} cm`
-                );
+            if (gaugepattern === "" && gaugesize === "") {
+                if (numberSts !== undefined && numberRows === undefined) {
+                    setGaugeInfo(`${numberSts} ${horizontalunits}`);
+                    setGaugeReady(true);
+                } else if (numberSts === undefined && numberRows !== undefined) {
+                    setGaugeInfo(`${numberRows} rows`);
+                    setGaugeReady(true);
+                } else if (numberSts !== undefined && numberRows !== undefined) {
+                    setGaugeInfo(
+                        `${numberSts} ${horizontalunits} and ${numberRows} rows`
+                    );
+                    setGaugeReady(true);
+                }
+            } else if (gaugepattern !== "" && gaugesize === "") {
+                if (numberSts !== undefined && numberRows === undefined) {
+                    setGaugeInfo(`${numberSts} ${horizontalunits} in ${gaugepattern}`);
+                    setGaugeReady(true);
+                } else if (numberSts === undefined && numberRows !== undefined) {
+                    setGaugeInfo(`${numberRows} rows in ${gaugepattern}`);
+                    setGaugeReady(true);
+                } else if (numberSts !== undefined && numberRows !== undefined) {
+                    setGaugeInfo(
+                        `${numberSts} ${horizontalunits} and ${numberRows} rows in ${gaugepattern}`
+                    );
+                    setGaugeReady(true);
+                }
+            } else if (gaugepattern === "" && gaugesize !== "") {
+                if (numberSts !== undefined && numberRows === undefined) {
+                    setGaugeInfo(`${numberSts} ${horizontalunits} = ${gaugesize} cm`);
+                    setGaugeReady(true);
+                } else if (numberSts === undefined && numberRows !== undefined) {
+                    setGaugeInfo(`${numberRows} rows = ${gaugesize} cm`);
+                    setGaugeReady(true);
+                } else if (numberSts !== undefined && numberRows !== undefined) {
+                    setGaugeInfo(
+                        `${numberSts} ${horizontalunits} and ${numberRows} rows = ${gaugesize} cm`
+                    );
+                    setGaugeReady(true);
+                }
             } else {
                 setGaugeInfo(
                     `${numberSts} ${horizontalunits} and ${numberRows} rows = ${gaugesize} cm in ${gaugepattern}`
                 );
+                setGaugeReady(true);
             }
-            setGaugeReady(true);
         }
     }, [props]);
 
@@ -108,14 +146,14 @@ const ProjectItem = function(props: {
                 let howmuch = "";
                 let purchasedat = yarn.purchasedat;
                 let purchasedate = yarn.purchasedate;
-                if (yarn.numberskeins !== null) {
+                if (yarn.numberskeins !== undefined) {
                     console.log("yarn meterage: " + yarn.meterage);
                     console.log("yarn weight: " + yarn.skeinweight);
 
                     const numberofskeins = Number(yarn.numberskeins);
                     const skeinweight = Number(yarn.skeinweight);
                     const skeinWeightUnit = yarn.skeinweightunit;
-                    if (yarn.meterage !== null && yarn.skeinweight !== null) {
+                    if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
                         const yarnmeterage = Number(yarn.meterage);
                         console.log(yarn.skeinmeterageunit);
                         if (yarn.skeinmeterageunit === "meters") {
@@ -135,11 +173,17 @@ const ProjectItem = function(props: {
                                 numberofskeins * skeinweight
                             )} ${skeinWeightUnit}`;
                         }
-                    } else if (yarn.meterage === null && yarn.skeinweight !== null) {
+                    } else if (
+                        yarn.meterage === undefined &&
+                        yarn.skeinweight !== undefined
+                    ) {
                         howmuch = `${numberofskeins} skeins = ${Math.round(
                             numberofskeins * skeinweight
                         )} ${skeinWeightUnit}`;
-                    } else if (yarn.meterage !== null && yarn.skeinweight === null) {
+                    } else if (
+                        yarn.meterage !== undefined &&
+                        yarn.skeinweight === undefined
+                    ) {
                         const yarnmeterage = Number(yarn.meterage);
                         if (yarn.skeinmeterageunit === "meters") {
                             howmuch = `${numberofskeins} skeins = ${Math.round(
@@ -156,7 +200,7 @@ const ProjectItem = function(props: {
                         }
                     }
                 } else {
-                    if (yarn.meterage !== null && yarn.skeinweight !== null) {
+                    if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
                         if (yarn.skeinmeterageunit === "meters") {
                             howmuch = `${yarn.meterage} meters (${Math.round(
                                 Number(yarn.yarnmeterage) * 1.09
@@ -166,9 +210,15 @@ const ProjectItem = function(props: {
                                 Number(yarn.yarnmeterage) * 0.914
                             )} meters), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
                         }
-                    } else if (yarn.meterage === null && yarn.skeinweight !== null) {
+                    } else if (
+                        yarn.meterage === undefined &&
+                        yarn.skeinweight !== undefined
+                    ) {
                         howmuch = `${yarn.skeinweight} ${yarn.skeinweightunit}`;
-                    } else if (yarn.meterage !== null && yarn.skeinweight === null) {
+                    } else if (
+                        yarn.meterage !== undefined &&
+                        yarn.skeinweight === undefined
+                    ) {
                         if (yarn.skeinmeterageunit === "meters") {
                             howmuch = `${yarn.meterage} meters (${Math.round(
                                 Number(yarn.yarnmeterage) * 1.09

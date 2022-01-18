@@ -35,13 +35,14 @@ const DisplayProject = function() {
         false
     );
 
-    const editProject = function() {
+    const editProject = function(event: React.MouseEvent) {
+        console.log(event);
         const cleanProjectName = projectData!.projectname
             .toLowerCase()
             .trim()
             .replace(/ /g, "-");
 
-        const path = "/notebook/" + user + "/" + cleanProjectName + "";
+        const path = "/notebook/" + user + "/" + cleanProjectName + "/editproject";
         navigate(path, {
             state: { projectid: projectData!.projectid },
         });
@@ -75,8 +76,8 @@ const DisplayProject = function() {
                 setDisplayNeedles(false);
             }
             if (
-                projectData.projectinfo.gauge.numberStsOrRepeats === null &&
-                projectData.projectinfo.gauge.numberRows === null &&
+                projectData.projectinfo.gauge.numberStsOrRepeats === undefined &&
+                projectData.projectinfo.gauge.numberRows === undefined &&
                 projectData.projectinfo.gauge.gaugesize === ""
             ) {
                 setDisplayGauge(false);

@@ -1,28 +1,31 @@
 import uniqid from "uniqid";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HookSizes } from "./SelectOptions";
-const HooksAvailable = function(props: {
-    name: string;
+import type { Hooks } from "../common/types";
+
+const DisplaySingleHook = function(props: {
+    hook: Hooks;
     handler: (
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
 }) {
-    const [selectedHook, setSelectedHook] = useState<string>("25");
-    const changeSelectedHook = function(
-        event: React.ChangeEvent<HTMLSelectElement>
-    ) {
-        setSelectedHook(event.target.value);
+    const [selectValue, setSelectValue] = useState<string>();
+    const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
+        setSelectValue(event.target.value);
         {
             props.handler(event);
         }
     };
+    useEffect(() => {
+        setSelectValue(props.hook.value);
+    }, [props]);
     return (
         <div>
             <select
-                name={props.name}
-                id={props.name}
-                onChange={changeSelectedHook}
-                value={selectedHook}
+                name={props.hook.selectid}
+                id={props.hook.selectid}
+                value={selectValue}
+                onChange={handleChange}
                 data-project="info"
                 className="hooks"
             >
@@ -35,4 +38,5 @@ const HooksAvailable = function(props: {
         </div>
     );
 };
-export default HooksAvailable;
+
+export default DisplaySingleHook;

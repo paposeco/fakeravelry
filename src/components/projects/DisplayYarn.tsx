@@ -38,7 +38,6 @@ const DisplayYarn = function(props: { yarn: YarnDisplay; uniqid: string }) {
     }, [props]);
 
     const getColorfamilyname = function(colorfamily: string) {
-        console.log(colorfamily);
         const colorIndex: number = Number(colorfamily.substring(5));
         const colorfamilyname: string = Colorways[colorIndex];
         return colorfamilyname;

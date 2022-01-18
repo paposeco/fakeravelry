@@ -1,6 +1,7 @@
 import uniqid from "uniqid";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Colorways, Yarnweight, Currency } from "./SelectOptions";
+import type { Yarn } from "../common/types";
 
 interface YarnSelects {
     [key: string]: string;
@@ -13,6 +14,7 @@ interface YarnSelects {
 
 const YarnInfo = function(props: {
     yarnID: string;
+    yarninfo: Yarn;
     handler: (
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
@@ -20,11 +22,11 @@ const YarnInfo = function(props: {
     // select needs to have a local handler
 
     const [selectValue, setSelectValue] = useState<YarnSelects>({
-        closestcolor: "color0",
-        yarnweight: "yarnweight0",
-        skeinmeterageunit: "meters",
-        skeinweightunit: "grams",
-        currency: "currency0",
+        closestcolor: "",
+        yarnweight: "",
+        skeinmeterageunit: "",
+        skeinweightunit: "",
+        currency: "",
     });
 
     const changeSelect = function(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -36,6 +38,64 @@ const YarnInfo = function(props: {
         });
         props.handler(event);
     };
+
+    const [yarnName, setYarnName] = useState<string>();
+    const [colorway, setColorway] = useState<string>();
+    const [dyelot, setDyelot] = useState<string>();
+    const [meterage, setMeterage] = useState<number | undefined>();
+    const [skeinWeight, setSkeinWeight] = useState<number | undefined>();
+    const [numberSkeins, setNumberSkeins] = useState<number | undefined>();
+    const [purchasedAt, setPurchasedAt] = useState<string>();
+    const [purchaseDate, setPurchaseDate] = useState<string>();
+    const [totalPaid, setTotalPaid] = useState<number | undefined>();
+
+    useEffect(() => {
+        setYarnName(props.yarninfo.yarnname);
+        setColorway(props.yarninfo.colorway);
+        setDyelot(props.yarninfo.dyelot);
+        setMeterage(props.yarninfo.meterage);
+        setSkeinWeight(props.yarninfo.skeinweight);
+        setNumberSkeins(props.yarninfo.numberskeins);
+        setPurchasedAt(props.yarninfo.purchasedat);
+        setPurchaseDate(props.yarninfo.purchasedate);
+        setTotalPaid(props.yarninfo.totalpaid);
+
+        setSelectValue((prevState) => {
+            let previousselectvalues = Object.assign({}, prevState);
+            previousselectvalues.closestcolor = props.yarninfo.closestcolor;
+            previousselectvalues.yarnweight = props.yarninfo.yarnweight;
+            previousselectvalues.skeinmeterageunit = props.yarninfo.skeinmeterageunit;
+            previousselectvalues.currency = props.yarninfo.currency;
+            return previousselectvalues;
+        });
+    }, [props]);
+
+    const setFunctions = new Map<string, any>([
+        ["yarnname", setYarnName],
+        ["colorway", setColorway],
+        ["dyelot", setDyelot],
+        ["meterage", setMeterage],
+        ["skeinweight", setSkeinWeight],
+        ["numberskeins", setNumberSkeins],
+        ["purchasedat", setPurchasedAt],
+        ["purchasedate", setPurchaseDate],
+        ["totalpaid", setTotalPaid],
+    ]);
+
+    const localChangeHandler = function(
+        event: React.ChangeEvent<HTMLInputElement>
+    ) {
+        const elementId: string = event.target.id;
+        const newvalue = event.target.value;
+        const elementStateFunction = setFunctions.get(elementId);
+        if (elementStateFunction !== undefined) {
+            elementStateFunction(newvalue);
+        }
+        {
+            props.handler(event);
+        }
+    };
+
     return (
         <fieldset id={props.yarnID}>
             <label htmlFor="yarnname">
@@ -45,7 +105,8 @@ const YarnInfo = function(props: {
                     name="yarnname"
                     id="yarnname"
                     data-project="yarn"
-                    onChange={props.handler}
+                    value={yarnName}
+                    onChange={localChangeHandler}
                 />
             </label>
             <label htmlFor="colorway">
@@ -54,8 +115,9 @@ const YarnInfo = function(props: {
                     type="text"
                     name="colorway"
                     id="colorway"
+                    value={colorway}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
             </label>
             <select
@@ -77,8 +139,9 @@ const YarnInfo = function(props: {
                     name="dyelot"
                     id="dyelot"
                     type="text"
+                    value={dyelot}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
             </label>
             <select
@@ -100,7 +163,8 @@ const YarnInfo = function(props: {
                     id="meterage"
                     name="meterage"
                     type="number"
-                    onChange={props.handler}
+                    value={meterage}
+                    onChange={localChangeHandler}
                     data-project="yarn"
                 />
                 <select
@@ -117,8 +181,9 @@ const YarnInfo = function(props: {
                     id="skeinweight"
                     name="skeinweight"
                     type="number"
+                    value={skeinWeight}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
                 <select
                     name="skeinweightunit"
@@ -137,8 +202,9 @@ const YarnInfo = function(props: {
                     type="number"
                     id="numberskeins"
                     name="numberskeins"
+                    value={numberSkeins}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
             </label>
             <label htmlFor="purchasedat">
@@ -147,8 +213,9 @@ const YarnInfo = function(props: {
                     id="purchasedat"
                     name="purchasedat"
                     type="text"
+                    value={purchasedAt}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
             </label>
             <label htmlFor="purchasedate">
@@ -157,8 +224,9 @@ const YarnInfo = function(props: {
                     name="purchasedate"
                     id="purchasedate"
                     type="date"
+                    value={purchaseDate}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
             </label>
             <label htmlFor="totalpaid">
@@ -167,8 +235,9 @@ const YarnInfo = function(props: {
                     type="number"
                     name="totalpaid"
                     id="totalpaid"
+                    value={totalPaid}
                     data-project="yarn"
-                    onChange={props.handler}
+                    onChange={localChangeHandler}
                 />
                 <select
                     name="currency"

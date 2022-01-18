@@ -20,13 +20,13 @@ const initialState = [
             needles: [],
             hooks: [],
             gauge: {
-                numberStsOrRepeats: null,
+                numberStsOrRepeats: undefined,
                 horizontalunits: "stitches",
-                numberRows: null,
+                numberRows: undefined,
                 gaugesize: "",
                 gaugepattern: "",
             },
-            yarn: [],
+            yarn: "",
             projectnotes: "",
         },
         projectstatus: {
