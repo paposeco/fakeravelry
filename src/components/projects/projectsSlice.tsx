@@ -60,6 +60,66 @@ const projectsSlice = createSlice({
                 state.push(initialstateCopy);
             }
         },
+        projectFetchedFromDB(state, action) {
+            let initialstateCopy = Object.assign({}, initialState[0]);
+            const {
+                projectid,
+                crafttype,
+                projectname,
+                patternused,
+                patternname,
+                about,
+                madefor,
+                linktoraveler,
+                finishby,
+                sizemade,
+                patternfrom,
+                patterncategory,
+                selectedtags,
+                needles,
+                hooks,
+                numberStsOrRepeats,
+                horizontalunits,
+                numberRows,
+                gaugesize,
+                gaugepattern,
+                yarn,
+                projectnotes,
+                progressstatus,
+                progressrange,
+                happiness,
+                starteddate,
+                completeddate,
+            } = action.payload;
+            initialstateCopy.projectid = projectid;
+            initialstateCopy.crafttype = crafttype;
+            initialstateCopy.projectname = projectname;
+            initialstateCopy.patternused = patternused;
+            initialstateCopy.pattern.name = patternname;
+            initialstateCopy.pattern.about = about;
+            initialstateCopy.projectinfo.madefor = madefor;
+            initialstateCopy.projectinfo.linktoraveler = linktoraveler;
+            initialstateCopy.projectinfo.finishby = finishby;
+            initialstateCopy.projectinfo.sizemade = sizemade;
+            initialstateCopy.projectinfo.patternfrom = patternfrom;
+            initialstateCopy.projectinfo.patterncategory = patterncategory;
+            initialstateCopy.projectinfo.selectedtags = selectedtags;
+            initialstateCopy.projectinfo.needles = needles;
+            initialstateCopy.projectinfo.hooks = hooks;
+            initialstateCopy.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
+            initialstateCopy.projectinfo.gauge.horizontalunits = horizontalunits;
+            initialstateCopy.projectinfo.gauge.numberRows = numberRows;
+            initialstateCopy.projectinfo.gauge.gaugesize = gaugesize;
+            initialstateCopy.projectinfo.gauge.gaugepattern = gaugepattern;
+            initialstateCopy.projectinfo.yarn = yarn;
+            initialstateCopy.projectinfo.projectnotes = projectnotes;
+            initialstateCopy.projectstatus.progressstatus = progressstatus;
+            initialstateCopy.projectstatus.progressrange = progressrange;
+            initialstateCopy.projectstatus.happiness = happiness;
+            initialstateCopy.projectstatus.starteddate = starteddate;
+            initialstateCopy.projectstatus.completeddate = completeddate;
+            state.push(initialstateCopy);
+        },
         projectPhotoAdded(state, action) {
             const { projectid, imageUrl } = action.payload;
             const existingProject = state.find(
@@ -136,6 +196,7 @@ const projectsSlice = createSlice({
 
 export const {
     projectAdded,
+    projectFetchedFromDB,
     projectUpdated,
     projectPhotoAdded,
 } = projectsSlice.actions;

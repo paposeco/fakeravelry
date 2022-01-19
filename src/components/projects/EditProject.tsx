@@ -25,19 +25,23 @@ import DisplaySingleHook from "./DisplaySingleHook";
 //need to handle refreshes
 
 const EditProject = function() {
+    // project id is available on state
     const { state } = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { projectid } = state;
     const [projectID, setProjectID] = useState(state.projectid);
     const [username, setUsername] = useState<string>("");
+    // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
+    // fetches project data from store
     const projectData:
         | ProjectFromStore
         | undefined = useSelector((state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
         );
 
+    // local state hooks for form
     const [craftType, setCraftType] = useState<string>();
     const [projectName, setProjectName] = useState<string>();
     const [patternAbout, setPatternAbout] = useState<string>();
@@ -47,14 +51,6 @@ const EditProject = function() {
     const [happinessChecked, setHappinessChecked] = useState<string>();
     const [needleCollection, setNeedleCollection] = useState<Needles[]>([]);
     const [hookCollection, setHookCollection] = useState<Hooks[]>([]);
-
-    //on refresh, store gets cleared ?? if state already exists, shouldn't read from redux, but from local state, should create new item in storage then
-    /* const currentProject: any = useSelector((state: RootState) =>
-     *     selectProjectById(state, projectID)
-     * ); */
-
-    // when it gets here, if current project doesn't exist, must create a new store
-
     const [selectNeedlesToRender, setSelectNeedlesToRender] = useState<
         JSX.Element[]
     >([]);
@@ -66,24 +62,17 @@ const EditProject = function() {
     const [showYarnForm, setShowYarnForm] = useState<JSX.Element[]>([]);
     const [yarncollection, setYarnCollection] = useState<Yarn[]>([]);
 
+    // easier access to correct hook for event target id
     const setFunctions = new Map([
         ["projectname", setProjectName],
         ["craft-select", setCraftType],
         ["patternName", setPatternName],
     ]);
 
-    /* const [state, setState] = useState({});
-     * setState(prevState => {
-     *   // Object.assign would also work
-     *   return {...prevState, ...updatedValues};
-     * })
-     *  */
-
-    // if I refresh the page I values won't be placed on input etc because there isn't value there
     const handlerOfChange = function(
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ): void {
-        const elementId: string = event.target.id; // event target or currenttarget=
+        const elementId: string = event.target.id;
         const elementDataSet = event.target.dataset.project;
         const newvalue = event.target.value;
         if (elementDataSet === "newproject") {
@@ -182,107 +171,102 @@ const EditProject = function() {
         }
     };
 
-    /*
-     *   handleInputChange(event) {
-     *     const target = event.target;
-     *     const value = target.type === 'checkbox' ? target.checked : target.value;
-     *     const name = target.name;
-     *     this.setState({
-     *       [name]: value    });
-     *    }*/
-
     const handlerOfSubmit = async function(
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        // need to return empty string for editing project
-        /* const ravelerpath: string = await linkToRaveler(
-         *     projectInformation!.linktoraveler
-         * ); */
+        if (projectInformation !== undefined) {
+            let ravelerpath: string = "";
+            if (projectInformation.madefor !== "") {
+                // looks for user in db
+                ravelerpath = await linkToRaveler(projectInformation.linktoraveler);
+            }
+            // update project in db
+            updateProjectInDB(
+                projectID,
+                craftType!,
+                projectName!,
+                state.patternused,
+                patternName!,
+                patternAbout!,
+                projectInformation.madefor,
+                ravelerpath,
+                projectInformation.finishby,
+                projectInformation.sizemade,
+                projectInformation.patternfrom,
+                selectedCategory,
+                projectInformation.selectedtags,
+                needleCollection,
+                projectInformation.hooks,
+                projectInformation.gauge.numberStsOrRepeats,
+                projectInformation.gauge.horizontalunits,
+                projectInformation.gauge.numberRows,
+                projectInformation.gauge.gaugesize,
+                projectInformation.gauge.gaugepattern,
+                JSON.stringify(projectInformation.yarn),
+                projectInformation.projectnotes,
+                projectStatus!.progressstatus,
+                projectStatus!.progressrange,
+                projectStatus!.happiness,
+                projectStatus!.starteddate,
+                projectStatus!.completeddate
+            );
 
-        /* updateProjectInDB(
-         *     projectID,
-         *     craftType!,
-         *     projectName!,
-         *     state.patternused,
-         *     patternName!,
-         *     patternAbout!,
-         *     projectInformation!.madefor,
-         *     ravelerpath,
-         *     projectInformation!.finishby,
-         *     projectInformation!.sizemade,
-         *     projectInformation!.patternfrom,
-         *     selectedCategory,
-         *     projectInformation!.selectedtags,
-         *     needleCollection,
-         *     projectInformation!.hooks,
-         *     projectInformation!.gauge.numberStsOrRepeats,
-         *     projectInformation!.gauge.horizontalunits,
-         *     projectInformation!.gauge.numberRows,
-         *     projectInformation!.gauge.gaugesize,
-         *     projectInformation!.gauge.gaugepattern,
-         *     JSON.stringify(projectInformation!.yarn),
-         *     projectInformation!.projectnotes,
-         *     projectStatus!.progressstatus,
-         *     projectStatus!.progressrange,
-         *     projectStatus!.happiness,
-         *     projectStatus!.starteddate,
-         *     projectStatus!.completeddate
-         * ); */
-        //pattern used is not correct
-        // redux store
-        dispatch(
-            projectUpdated({
-                projectid: projectID,
-                crafttype: craftType,
-                projectname: projectName,
-                patternused: state.patternused,
-                patternname: patternName,
-                about: patternAbout,
-                madefor: projectInformation!.madefor,
-                /* linktoraveler: ravelerpath, */
-                linktoraveler: "",
-                finishby: projectInformation!.finishby,
-                sizemade: projectInformation!.sizemade,
-                patternfrom: projectInformation!.patternfrom,
-                patterncategory: selectedCategory,
-                selectedtags: projectInformation!.selectedtags,
-                needles: needleCollection,
-                hooks: hookCollection,
-                numberStsOrRepeats: projectInformation!.gauge.numberStsOrRepeats,
-                horizontalunits: projectInformation!.gauge.horizontalunits,
-                numberRows: projectInformation!.gauge.numberRows,
-                gaugesize: projectInformation!.gauge.gaugesize,
-                gaugepattern: projectInformation!.gauge.gaugepattern,
-                yarn: JSON.stringify(yarncollection),
-                projectnotes: projectInformation!.projectnotes,
-                progressstatus: projectStatus!.progressstatus,
-                progressrange: projectStatus!.progressrange,
-                happiness: projectStatus!.happiness,
-                starteddate: projectStatus!.starteddate,
-                completeddate: projectStatus!.completeddate,
-            })
-        );
-        const cleanProjectName = projectName!
-            .toLowerCase()
-            .trim()
-            .replace(/ /g, "-");
+            // update project in store
+            dispatch(
+                projectUpdated({
+                    projectid: projectID,
+                    crafttype: craftType,
+                    projectname: projectName,
+                    patternused: state.patternused,
+                    patternname: patternName,
+                    about: patternAbout,
+                    madefor: projectInformation.madefor,
+                    linktoraveler: ravelerpath,
+                    finishby: projectInformation.finishby,
+                    sizemade: projectInformation.sizemade,
+                    patternfrom: projectInformation.patternfrom,
+                    patterncategory: selectedCategory,
+                    selectedtags: projectInformation.selectedtags,
+                    needles: needleCollection,
+                    hooks: hookCollection,
+                    numberStsOrRepeats: projectInformation.gauge.numberStsOrRepeats,
+                    horizontalunits: projectInformation.gauge.horizontalunits,
+                    numberRows: projectInformation.gauge.numberRows,
+                    gaugesize: projectInformation.gauge.gaugesize,
+                    gaugepattern: projectInformation.gauge.gaugepattern,
+                    yarn: JSON.stringify(yarncollection),
+                    projectnotes: projectInformation.projectnotes,
+                    progressstatus: projectStatus!.progressstatus,
+                    progressrange: projectStatus!.progressrange,
+                    happiness: projectStatus!.happiness,
+                    starteddate: projectStatus!.starteddate,
+                    completeddate: projectStatus!.completeddate,
+                })
+            );
+            const cleanProjectName = projectName!
+                .toLowerCase()
+                .trim()
+                .replace(/ /g, "-");
 
-        const path = "/notebook/" + username + "/" + cleanProjectName;
-        navigate(path, {
-            state: { projectid: projectID },
-        });
+            // redirects to project page
+            const path = "/notebook/" + username + "/" + cleanProjectName;
+            navigate(path, {
+                state: { projectid: projectID },
+            });
+        }
     };
-    // const teste = JSON.stringify(a);
-    // const aocontrario = JSON.parse(teste);
 
+    // needles', hooks' and yarn's forms are only displayed if the user clicks their respective buttons.
     const addNeedle = function(event: React.MouseEvent) {
         setNeedlesAdded(needlesAdded + 1);
         const newneedlealias = "selectneedles" + needlesAdded;
+        // sets an initial needle value
         setNeedleCollection((prevState) => [
             ...prevState,
             { selectid: newneedlealias, value: "43" },
         ]);
+        // renders the needle select form
         setSelectNeedlesToRender((prevState) => [
             ...prevState,
             <DisplaySingleNeedle
@@ -292,6 +276,7 @@ const EditProject = function() {
         ]);
     };
 
+    // if the user is editing a project that already existed, the needles, hooks and yarn need to be rendered differently, since they are rendered with individual components
     const addNeedlesFromStorage = function(needles: Needles[]) {
         for (let i = 0; i < needles.length; i++) {
             setNeedlesAdded(needlesAdded + 1);
@@ -345,7 +330,6 @@ const EditProject = function() {
     const addYarn = function(event: React.MouseEvent): void {
         const newYarnCollectionLength: number = yarncollection.length + 1;
         const newyarn = new YarnEntry("yarn" + newYarnCollectionLength);
-        console.log(newyarn);
         setYarnCollection((prevState) => [...prevState, newyarn]);
         setShowYarnForm((prevState) => [
             ...prevState,
@@ -360,6 +344,7 @@ const EditProject = function() {
 
     const renderYarnFromStorage = function(yarncollection: string) {
         if (yarncollection !== "") {
+            // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
             const parseCollection: Yarn[] = JSON.parse(yarncollection);
             console.log(parseCollection);
             for (let i = 0; i < parseCollection.length; i++) {
@@ -377,6 +362,7 @@ const EditProject = function() {
         }
     };
 
+    // handles adding images to projects
     const [imageSelected, setImageSelected] = useState<FileList | null>();
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
     const [
@@ -389,8 +375,10 @@ const EditProject = function() {
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         if (imageSelected !== (null && undefined)) {
+            // uploads image to firebase storage and returns a public url
             const publicUrl = await uploadPhoto(projectID, imageSelected![0]);
             setPublicImgUrl(publicUrl);
+            // updates store with publicurl
             dispatch(
                 projectPhotoAdded({ projectid: projectID, imageUrl: publicUrl })
             );
@@ -403,6 +391,7 @@ const EditProject = function() {
         }
     };
 
+    // on page load, sets project information with info from store
     useEffect(() => {
         if (projectData !== undefined) {
             setCraftType(projectData.crafttype);
@@ -426,9 +415,6 @@ const EditProject = function() {
     useEffect(() => {
         setUsername(user);
     }, [user]);
-    //display project about
-    //useEffect on load should fetch obj from store and set project info as component state. on input change update the elements on state; fetch last element on store
-    //see how to fetch data form store
 
     if (projectInformation !== undefined) {
         return (
@@ -782,3 +768,15 @@ export default EditProject;
 // very happy <i class="las la-laugh"></i>
 
 // /notebook should redirect to /notebook/username or something
+
+/*
+ *   handleInputChange(event) {
+ *     const target = event.target;
+ *     const value = target.type === 'checkbox' ? target.checked : target.value;
+ *     const name = target.name;
+ *     this.setState({
+ *       [name]: value    });
+ *    }*/
+
+// const teste = JSON.stringify(a);
+// const aocontrario = JSON.parse(teste);

@@ -4,6 +4,8 @@ import {
     doc,
     setDoc,
     getDoc,
+    getDocs,
+    collection,
     updateDoc,
     arrayUnion,
 } from "firebase/firestore";
@@ -19,9 +21,14 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
+    onAuthStateChanged,
+    initializeAuth,
 } from "firebase/auth";
 
-import type { Needles, Hooks, Yarn } from "./components/common/types";
+import { User as FirebaseUser } from "firebase/auth";
+
+import type { Needles, Hooks } from "./components/common/types";
+import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA1i11bP3s4ppzKH2MYBEkdjIlt8yW-KeU",
@@ -35,11 +42,13 @@ const firebaseConfig = {
 const startDB = function() {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    initFirebaseAuth();
     return db;
 };
 
-const database = startDB();
-let auth = getAuth();
+const initFirebaseAuth = function() {
+    onAuthStateChanged(getAuth(), authStateObserver);
+};
 
 const uploadPhoto = async function(projectid: string, file: File) {
     try {
@@ -110,11 +119,24 @@ const startEmptyProfile = async function(
     });
 };
 
+const authStateObserver = function() {
+    const user = auth.currentUser;
+    if (user !== null) {
+        fetchUserInfo(user);
+    }
+};
+const fetchUserInfo = async function(user: FirebaseUser) {
+    const querySnapshot = await getDocs(
+        collection(database, "users", user.uid, "projects")
+    );
+};
+
 const signIn = async function(email: string, password: string) {
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
+            //fetchUserInfo(user);
             // ...
         })
         .catch((error) => {
@@ -198,9 +220,9 @@ const addProjectToNotebook = async function(
                 needles: [],
                 hooks: [],
                 gauge: {
-                    numberStsOrRepeats: null,
+                    numberStsOrRepeats: undefined,
                     horizontalunits: "stitches",
-                    numberRows: null,
+                    numberRows: undefined,
                     gaugesize: "",
                     gaugepattern: "",
                 },
@@ -239,7 +261,7 @@ const linkToRaveler = async function(username: string) {
             //when someone tries to access someone elses profiles, it needs to query the db and get everything about the user and place it in store maybe
             return `/people/${username}`;
         } else {
-            return "can't find user";
+            return "";
         }
     } else {
         return "error in db";
@@ -263,9 +285,9 @@ const updateProjectInDB = async function(
     tagsUpdated: string,
     needlesUpdated: Needles[],
     hooksUpdated: Hooks[],
-    numberStsOrRepeatsUpdated: number | null,
+    numberStsOrRepeatsUpdated: number | undefined,
     horizontalunitsUpdated: string,
-    numberRowsUpdated: number | null,
+    numberRowsUpdated: number | undefined,
     gaugesizeUpdated: string,
     gaugepatternUpdated: string,
     yarnUpdated: string,
@@ -320,6 +342,9 @@ const updateProjectInDB = async function(
         });
     }
 };
+
+const database = startDB();
+let auth = getAuth();
 
 export default startDB;
 export {

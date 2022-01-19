@@ -1,45 +1,14 @@
 // create new project
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { projectAdded } from "./projects/projectsSlice";
-// should create a new type for yarn only
-
 import { addProjectToNotebook, getInfo } from "../Firebase";
 
 const NewProject = function() {
     const navigate = useNavigate();
-
     const dispatch = useDispatch();
-    //need to save to redux store and db
-    /* const handlerSubmit = function(event: React.FormEvent<HTMLFormElement>) {
-     *     event.preventDefault();
-     *     //HTMLElement type is the base type for the other tag types of the DOM. For example, the type HTMLInputElement extends HTMLElement and have the property value that the type HTMLElement doesn't have.
-     *     const crafttype: string = (event.currentTarget.elements.namedItem(
-     *         "crafts"
-     *     ) as HTMLInputElement).value;
-     *     const projectname: string = (event.currentTarget.elements.namedItem(
-     *         "projectname"
-     *     ) as HTMLInputElement).value;
-     *     const patternused: string = (event.currentTarget.elements.namedItem(
-     *         "patternused"
-     *     ) as HTMLInputElement).value;
-     *     const patternname: string = (event.currentTarget.elements.namedItem(
-     *         "patternname"
-     *     ) as HTMLInputElement).value;
-     *     const newproject = new Project(
-     *         crafttype,
-     *         projectname,
-     *         patternused,
-     *         patternname
-     *     ); */
-
-    // create project on db
-    // return obj of project info
-    // save newproject to store and send it to editproject with the id on navigate to easily fetch it from store. id could be number total number of projects +1
-
     const [projectID, setProjectID] = useState<string>(nanoid());
     const [craftType, setCraftType] = useState<string>("knitting");
     const [projectName, setProjectName] = useState<string>("");
@@ -74,13 +43,13 @@ const NewProject = function() {
             .trim()
             .replace(/ /g, "-");
         const newpath = await getUsername(cleanProjectName);
-        /* await addProjectToNotebook(
-         *     projectID,
-         *     craftType,
-         *     projectName,
-         *     patternUsed,
-         *     patternName
-         * ); */
+        await addProjectToNotebook(
+            projectID,
+            craftType,
+            projectName,
+            patternUsed,
+            patternName
+        );
 
         dispatch(
             projectAdded({
@@ -105,27 +74,6 @@ const NewProject = function() {
             "/notebook/" + username + "/" + selectedprojectname + "/editproject";
         return path;
     };
-
-    /*
-     *       dispatch(
-     *             projectAdded({
-     *                 projectid: projectID,
-     *                 photo: newproject.photo,
-     *                 crafttype: newproject.crafttype,
-     *                 projectname: newproject.projectname,
-     *                 pattern: newproject.pattern,
-     *                 projectinfo: newproject.projectinfo,
-     *                 projectstatus: newproject.projectstatus,
-     *             })
-     *         );
-     *
-     *         const newpath: string = "/notebook/editproject/" + projectname;
-     *         navigate(newpath, {
-     *             state: {
-     *                 projectid: projectID,
-     *             },
-     *         });
-     *     }; */
 
     return (
         <div>

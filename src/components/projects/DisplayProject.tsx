@@ -123,13 +123,13 @@ const DisplayProject = function() {
                             itemvalue={projectData!.projectinfo.patterncategory}
                         />
                     )}
-                    {displayMadefor && (
+                    {displayMadefor && !displayLinkToRaveler && (
                         <ProjectItem
                             itemdescription="Made for"
                             itemvalue={projectData!.projectinfo.madefor}
                         />
                     )}
-
+                    {/* need to beautify link */}
                     {displayMadefor && displayLinkToRaveler && (
                         <ProjectItem
                             itemdescription="Made for"
