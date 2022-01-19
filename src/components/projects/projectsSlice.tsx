@@ -61,9 +61,9 @@ const projectsSlice = createSlice({
             }
         },
         projectFetchedFromDB(state, action) {
-            let initialstateCopy = Object.assign({}, initialState[0]);
             const {
                 projectid,
+                imageUrl,
                 crafttype,
                 projectname,
                 patternused,
@@ -91,34 +91,72 @@ const projectsSlice = createSlice({
                 starteddate,
                 completeddate,
             } = action.payload;
-            initialstateCopy.projectid = projectid;
-            initialstateCopy.crafttype = crafttype;
-            initialstateCopy.projectname = projectname;
-            initialstateCopy.patternused = patternused;
-            initialstateCopy.pattern.name = patternname;
-            initialstateCopy.pattern.about = about;
-            initialstateCopy.projectinfo.madefor = madefor;
-            initialstateCopy.projectinfo.linktoraveler = linktoraveler;
-            initialstateCopy.projectinfo.finishby = finishby;
-            initialstateCopy.projectinfo.sizemade = sizemade;
-            initialstateCopy.projectinfo.patternfrom = patternfrom;
-            initialstateCopy.projectinfo.patterncategory = patterncategory;
-            initialstateCopy.projectinfo.selectedtags = selectedtags;
-            initialstateCopy.projectinfo.needles = needles;
-            initialstateCopy.projectinfo.hooks = hooks;
-            initialstateCopy.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
-            initialstateCopy.projectinfo.gauge.horizontalunits = horizontalunits;
-            initialstateCopy.projectinfo.gauge.numberRows = numberRows;
-            initialstateCopy.projectinfo.gauge.gaugesize = gaugesize;
-            initialstateCopy.projectinfo.gauge.gaugepattern = gaugepattern;
-            initialstateCopy.projectinfo.yarn = yarn;
-            initialstateCopy.projectinfo.projectnotes = projectnotes;
-            initialstateCopy.projectstatus.progressstatus = progressstatus;
-            initialstateCopy.projectstatus.progressrange = progressrange;
-            initialstateCopy.projectstatus.happiness = happiness;
-            initialstateCopy.projectstatus.starteddate = starteddate;
-            initialstateCopy.projectstatus.completeddate = completeddate;
-            state.push(initialstateCopy);
+            if (state.length === 1 && state[0].projectid === "") {
+                state[0].projectid = projectid;
+                state[0].crafttype = crafttype;
+                state[0].projectname = projectname;
+                state[0].patternused = patternused;
+                state[0].pattern.name = patternname;
+                state[0].pattern.about = about;
+                state[0].projectinfo.madefor = madefor;
+                state[0].projectinfo.linktoraveler = linktoraveler;
+                state[0].projectinfo.finishby = finishby;
+                state[0].projectinfo.sizemade = sizemade;
+                state[0].projectinfo.patternfrom = patternfrom;
+                state[0].projectinfo.patterncategory = patterncategory;
+                state[0].projectinfo.selectedtags = selectedtags;
+                state[0].projectinfo.needles = needles;
+                state[0].projectinfo.hooks = hooks;
+                state[0].projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
+                state[0].projectinfo.gauge.horizontalunits = horizontalunits;
+                state[0].projectinfo.gauge.numberRows = numberRows;
+                state[0].projectinfo.gauge.gaugesize = gaugesize;
+                state[0].projectinfo.gauge.gaugepattern = gaugepattern;
+                state[0].projectinfo.yarn = yarn;
+                state[0].projectinfo.projectnotes = projectnotes;
+                state[0].projectstatus.progressstatus = progressstatus;
+                state[0].projectstatus.progressrange = progressrange;
+                state[0].projectstatus.happiness = happiness;
+                state[0].projectstatus.starteddate = starteddate;
+                state[0].projectstatus.completeddate = completeddate;
+            } else {
+                const project = {
+                    projectid: projectid,
+                    imageUrl: imageUrl,
+                    crafttype: crafttype,
+                    projectname: projectname,
+                    patternused: patternused,
+                    pattern: { name: patternname, about: about },
+                    projectinfo: {
+                        madefor: madefor,
+                        linktoraveler: linktoraveler,
+                        finishby: finishby,
+                        sizemade: sizemade,
+                        patternfrom: patternfrom,
+                        patterncategory: patterncategory,
+                        selectedtags: selectedtags,
+                        needles: needles,
+                        hooks: hooks,
+                        gauge: {
+                            numberStsOrRepeats: numberStsOrRepeats,
+                            horizontalunits: horizontalunits,
+                            numberRows: numberRows,
+                            gaugesize: gaugesize,
+                            gaugepattern: gaugepattern,
+                        },
+                        yarn: yarn,
+                        projectnotes: projectnotes,
+                    },
+                    projectstatus: {
+                        progressstatus: progressstatus,
+                        progressrange: progressrange,
+                        happiness: happiness,
+                        starteddate: starteddate,
+                        completeddate: completeddate,
+                    },
+                };
+                state.push(project);
+            }
         },
         projectPhotoAdded(state, action) {
             const { projectid, imageUrl } = action.payload;
@@ -177,7 +215,8 @@ const projectsSlice = createSlice({
                 existingProject.projectinfo.selectedtags = selectedtags;
                 existingProject.projectinfo.needles = needles;
                 existingProject.projectinfo.hooks = hooks;
-                existingProject.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
+                existingProject.projectinfo.gauge.numberStsOrRepeats =
+                    numberStsOrRepeats;
                 existingProject.projectinfo.gauge.horizontalunits = horizontalunits;
                 existingProject.projectinfo.gauge.numberRows = numberRows;
                 existingProject.projectinfo.gauge.gaugesize = gaugesize;

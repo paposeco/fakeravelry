@@ -7,12 +7,13 @@ import Notebook from "./components/Notebook";
 import Profile from "./components/Profile";
 import Welcome from "./components/Welcome";
 import Signup from "./components/Signup";
-import { auth, getInfo } from "./Firebase";
+import { auth, getInfo, fetchUserInfo } from "./Firebase";
 import NewProject from "./components/NewProject";
 import EditProject from "./components/projects/EditProject";
 import DisplayProject from "./components/projects/DisplayProject";
 import { useDispatch } from "react-redux";
 import { userAdded } from "./components/store/userInfoSlice";
+import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -26,6 +27,53 @@ const App = function() {
     const [peoplepath, setPeoplePath] = useState<string>("");
     const [notebookpath, setNotebookpath] = useState<string>("");
     const dispatch = useDispatch();
+    const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
+    const fetchUserData = async function() {
+        const projectsInDb = await fetchUserInfo();
+        if (projectsInDb !== undefined) {
+            const addallprojects = new Promise((resolve, reject) => {
+                projectsInDb.forEach((project) => {
+                    dispatch(
+                        projectFetchedFromDB({
+                            projectid: project.id,
+                            imageUrl: project.data().imageUrl,
+                            crafttype: project.data().crafttype,
+                            projectname: project.data().projectname,
+                            patternused: project.data().patternused,
+                            patternname: project.data().pattern.name,
+                            about: project.data().pattern.about,
+                            madefor: project.data().projectinfo.madefor,
+                            linktoraveler: project.data().projectinfo.linktoraveler,
+                            finishby: project.data().projectinfo.finishby,
+                            sizemade: project.data().projectinfo.sizemade,
+                            patternfrom: project.data().projectinfo.patternfrom,
+                            patterncategory: project.data().projectinfo.patterncategory,
+                            selectedtags: project.data().projectinfo.tags,
+                            needles: project.data().projectinfo.needles,
+                            hooks: project.data().projectinfo.hooks,
+                            numberStsOrRepeats:
+                                project.data().projectinfo.gauge.numberStsOrRepeats,
+                            horizontalunits: project.data().projectinfo.gauge.horizontalunits,
+                            numberRows: project.data().projectinfo.gauge.numberRows,
+                            gaugesize: project.data().projectinfo.gauge.gaugesize,
+                            gaugepattern: project.data().projectinfo.gauge.gaugepattern,
+                            yarn: project.data().projectinfo.yarn,
+                            projectnotes: project.data().projectinfo.projectnotes,
+                            progressstatus: project.data().projectstatus.progressstatus,
+                            progressrange: project.data().projectstatus.progressrange,
+                            happiness: project.data().projectstatus.happiness,
+                            starteddate: project.data().projectstatus.starteddate,
+                            completeddate: project.data().projectstatus.completeddate,
+                        })
+                    );
+                });
+            });
+            addallprojects
+                .then((resolve) => setProjectsFetched(true))
+                .catch((reject) => console.log("error"));
+        }
+    };
+
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -41,6 +89,12 @@ const App = function() {
             }
         });
     });
+
+    useEffect(() => {
+        if (userSignedIn && !projectsFetched) {
+            fetchUserData();
+        }
+    }, [userSignedIn]);
 
     useEffect(() => {
         if (userID !== "") {

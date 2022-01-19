@@ -25,10 +25,9 @@ import {
     initializeAuth,
 } from "firebase/auth";
 
-import { User as FirebaseUser } from "firebase/auth";
+//import { User as FirebaseUser } from "firebase/auth";
 
 import type { Needles, Hooks } from "./components/common/types";
-import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA1i11bP3s4ppzKH2MYBEkdjIlt8yW-KeU",
@@ -120,15 +119,19 @@ const startEmptyProfile = async function(
 };
 
 const authStateObserver = function() {
+    /* const user = auth.currentUser;
+     * if (user !== null) {
+     *     fetchUserInfo(user);
+     * } */
+};
+const fetchUserInfo = async function() {
     const user = auth.currentUser;
     if (user !== null) {
-        fetchUserInfo(user);
+        const querySnapshot = await getDocs(
+            collection(database, "users", user.uid, "projects")
+        );
+        return querySnapshot;
     }
-};
-const fetchUserInfo = async function(user: FirebaseUser) {
-    const querySnapshot = await getDocs(
-        collection(database, "users", user.uid, "projects")
-    );
 };
 
 const signIn = async function(email: string, password: string) {
@@ -356,6 +359,7 @@ export {
     addProjectToNotebook,
     updateProjectInDB,
     uploadPhoto,
+    fetchUserInfo,
     linkToRaveler,
 };
 

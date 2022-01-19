@@ -10,16 +10,18 @@ import AboutPattern from "./AboutPattern";
 
 // fetches project com store and displays it with help from modules: displayprojectimage for project image and projectitem that displays each block of information. projectitem gets help from DisplayYarn for rendering the yarn elements
 
+// need to think about what happens if a user writes de name of a project on url. maybe each project needs to check if user already has a project with the same name, and have an alias. but i think that that's an edge case, and that even in ravelry you would have to write the url with the alias. but i think ill create the alias just the same.
+
+// this page would have to be loaded from dispatch from edit (that carries projectid) or if only the projectnamealias is provided, need to search db for the project. might create a separate collection with projectalias/project id for ease of access.
 const DisplayProject = function() {
     const { state } = useLocation();
     const navigate = useNavigate();
     const { projectid } = state;
     const user = useSelector((state: RootState) => state.userinfo.username);
-    const projectData:
-        | ProjectFromStore
-        | undefined = useSelector((state: RootState) =>
+    const projectData: ProjectFromStore | undefined = useSelector(
+        (state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        );
+    );
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
     const [displayMadefor, setDisplayMadeFor] = useState<boolean>(true);
@@ -31,9 +33,8 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
-        false
-    );
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
+        useState<boolean>(false);
 
     const editProject = function(event: React.MouseEvent) {
         console.log(event);
