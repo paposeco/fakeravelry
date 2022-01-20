@@ -8,6 +8,10 @@ import {
     collection,
     updateDoc,
     arrayUnion,
+    query,
+    where,
+    increment,
+    addDoc,
 } from "firebase/firestore";
 import {
     getDownloadURL,
@@ -177,6 +181,51 @@ const checkUniqueUsername = async function(desiredusername: string) {
     }
 };
 
+const checkUniqueProjectName = async function(desiredprojectname: string) {
+    const cleanProjectName = desiredprojectname
+        .toLowerCase()
+        .trim()
+        .replace(/ /g, "-");
+    const user = auth.currentUser;
+    if (user !== null) {
+        const projectNamesRef = collection(
+            database,
+            "users",
+            user.uid,
+            "projectnames"
+        );
+        const q = query(projectNamesRef, where("name", "==", cleanProjectName));
+        const docSnap = await getDocs(q);
+        if (docSnap.docs.length !== 0) {
+            // return count+1, and update count on db
+            let currentCount: number = 1;
+            let docId: string = "";
+            docSnap.forEach((doc) => {
+                docId = doc.id;
+                currentCount += doc.data().count;
+            });
+            const projectNameRef = doc(
+                database,
+                "users",
+                user.uid,
+                "projectnames",
+                docId
+            );
+            await updateDoc(projectNameRef, { count: increment(1) });
+            return cleanProjectName + "-" + currentCount;
+        } else {
+            // create new entry on db for choosen name
+            await addDoc(collection(database, "users", user.uid, "projectnames"), {
+                name: cleanProjectName,
+                count: 1,
+            });
+            return cleanProjectName;
+        }
+    } else {
+        return "error";
+    }
+};
+
 const getInfo = async function(infotofetch: string) {
     const user = auth.currentUser;
     if (user !== null) {
@@ -199,6 +248,7 @@ const getInfo = async function(infotofetch: string) {
 const addProjectToNotebook = async function(
     projectid: string,
     craftType: string,
+    projectslug: string,
     projectname: string,
     patternused: string,
     patternname: string
@@ -209,6 +259,7 @@ const addProjectToNotebook = async function(
             imageUrl: "",
             storageUri: "",
             crafttype: craftType,
+            projectslug: projectslug,
             projectname: projectname,
             patternused: patternused,
             pattern: { name: patternname, about: "" },
@@ -223,9 +274,9 @@ const addProjectToNotebook = async function(
                 needles: [],
                 hooks: [],
                 gauge: {
-                    numberStsOrRepeats: undefined,
+                    numberStsOrRepeats: null,
                     horizontalunits: "stitches",
-                    numberRows: undefined,
+                    numberRows: null,
                     gaugesize: "",
                     gaugepattern: "",
                 },
@@ -275,6 +326,7 @@ const linkToRaveler = async function(username: string) {
 const updateProjectInDB = async function(
     currentprojectid: string,
     crafttypeUpdated: string,
+    projectslugUpdated: string,
     projectnameUpdated: string,
     patternusedUpdated: string,
     patternnameUpdated: string,
@@ -288,9 +340,9 @@ const updateProjectInDB = async function(
     tagsUpdated: string,
     needlesUpdated: Needles[],
     hooksUpdated: Hooks[],
-    numberStsOrRepeatsUpdated: number | undefined,
+    numberStsOrRepeatsUpdated: number | null,
     horizontalunitsUpdated: string,
-    numberRowsUpdated: number | undefined,
+    numberRowsUpdated: number | null,
     gaugesizeUpdated: string,
     gaugepatternUpdated: string,
     yarnUpdated: string,
@@ -312,6 +364,7 @@ const updateProjectInDB = async function(
         );
         await updateDoc(projectRef, {
             crafttype: crafttypeUpdated,
+            projectslug: projectslugUpdated,
             projectname: projectnameUpdated,
             patternused: patternusedUpdated,
             pattern: { name: patternnameUpdated, about: aboutUpdated },
@@ -361,6 +414,7 @@ export {
     uploadPhoto,
     fetchUserInfo,
     linkToRaveler,
+    checkUniqueProjectName,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

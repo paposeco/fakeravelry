@@ -38,6 +38,7 @@ const App = function() {
                             projectid: project.id,
                             imageUrl: project.data().imageUrl,
                             crafttype: project.data().crafttype,
+                            projectslug: project.data().projectslug,
                             projectname: project.data().projectname,
                             patternused: project.data().patternused,
                             patternname: project.data().pattern.name,
@@ -51,8 +52,8 @@ const App = function() {
                             selectedtags: project.data().projectinfo.tags,
                             needles: project.data().projectinfo.needles,
                             hooks: project.data().projectinfo.hooks,
-                            numberStsOrRepeats:
-                                project.data().projectinfo.gauge.numberStsOrRepeats,
+                            numberStsOrRepeats: project.data().projectinfo.gauge
+                                .numberStsOrRepeats,
                             horizontalunits: project.data().projectinfo.gauge.horizontalunits,
                             numberRows: project.data().projectinfo.gauge.numberRows,
                             gaugesize: project.data().projectinfo.gauge.gaugesize,
@@ -73,7 +74,6 @@ const App = function() {
                 .catch((reject) => console.log("error"));
         }
     };
-
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {

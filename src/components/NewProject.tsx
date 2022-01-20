@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { projectAdded } from "./projects/projectsSlice";
-import { addProjectToNotebook, getInfo } from "../Firebase";
+import {
+    addProjectToNotebook,
+    getInfo,
+    checkUniqueProjectName,
+} from "../Firebase";
 
 const NewProject = function() {
     const navigate = useNavigate();
@@ -42,36 +46,42 @@ const NewProject = function() {
             .toLowerCase()
             .trim()
             .replace(/ /g, "-");
-        const newpath = await getUsername(cleanProjectName);
-        await addProjectToNotebook(
-            projectID,
-            craftType,
-            projectName,
-            patternUsed,
-            patternName
-        );
+        const uniqueProjectSlug = await checkUniqueProjectName(cleanProjectName);
+        if (uniqueProjectSlug !== "error") {
+            const newpath = await getPathWithUsername(uniqueProjectSlug);
+            await addProjectToNotebook(
+                projectID,
+                craftType,
+                uniqueProjectSlug,
+                projectName,
+                patternUsed,
+                patternName
+            );
 
-        dispatch(
-            projectAdded({
-                projectid: projectID,
-                crafttype: craftType,
-                projectname: projectName,
-                patternused: patternUsed,
-                patternname: patternName,
-            })
-        );
+            dispatch(
+                projectAdded({
+                    projectid: projectID,
+                    crafttype: craftType,
+                    projectslug: uniqueProjectSlug,
+                    projectname: projectName,
+                    patternused: patternUsed,
+                    patternname: patternName,
+                })
+            );
 
-        navigate(newpath, {
-            state: {
-                projectid: projectID,
-            },
-        });
+            navigate(newpath, {
+                state: {
+                    projectid: projectID,
+                },
+            });
+        } else {
+            console.log("error creating project");
+        }
     };
 
-    const getUsername = async function(selectedprojectname: string) {
+    const getPathWithUsername = async function(projectslug: string) {
         const username = await getInfo("username");
-        const path =
-            "/notebook/" + username + "/" + selectedprojectname + "/editproject";
+        const path = "/notebook/" + username + "/" + projectslug + "/editproject";
         return path;
     };
 

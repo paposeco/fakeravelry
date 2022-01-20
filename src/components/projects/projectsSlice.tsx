@@ -6,6 +6,7 @@ const initialState = [
         projectid: "",
         imageUrl: "",
         crafttype: "",
+        projectslug: "",
         projectname: "",
         patternused: "",
         pattern: { name: "", about: "" },
@@ -47,17 +48,48 @@ const projectsSlice = createSlice({
             if (state.length === 1 && state[0].projectid === "") {
                 state[0].projectid = action.payload.projectid;
                 state[0].crafttype = action.payload.crafttype;
+                state[0].projectslug = action.payload.projectslug;
                 state[0].projectname = action.payload.projectname;
                 state[0].patternused = action.payload.patternused;
                 state[0].pattern.name = action.payload.patternname;
             } else {
-                let initialstateCopy = Object.assign({}, initialState[0]);
-                initialstateCopy.projectid = action.payload.projectid;
-                initialstateCopy.crafttype = action.payload.crafttype;
-                initialstateCopy.projectname = action.payload.projectname;
-                initialstateCopy.patternused = action.payload.patternused;
-                initialstateCopy.pattern.name = action.payload.patternname;
-                state.push(initialstateCopy);
+                const project = {
+                    projectid: action.payload.projectid,
+                    imageUrl: "",
+                    crafttype: action.payload.crafttype,
+                    projectslug: action.payload.projectslug,
+                    projectname: action.payload.projectname,
+                    patternused: action.payload.patternused,
+                    pattern: { name: action.payload.patternname, about: "" },
+                    projectinfo: {
+                        madefor: "",
+                        linktoraveler: "",
+                        finishby: "",
+                        sizemade: "",
+                        patternfrom: "",
+                        patterncategory: "",
+                        selectedtags: "",
+                        needles: [],
+                        hooks: [],
+                        gauge: {
+                            numberStsOrRepeats: undefined,
+                            horizontalunits: "stitches",
+                            numberRows: undefined,
+                            gaugesize: "",
+                            gaugepattern: "",
+                        },
+                        yarn: "",
+                        projectnotes: "",
+                    },
+                    projectstatus: {
+                        progressstatus: "In progress",
+                        progressrange: "0",
+                        happiness: "",
+                        starteddate: "",
+                        completeddate: "",
+                    },
+                };
+                state.push(project);
             }
         },
         projectFetchedFromDB(state, action) {
@@ -65,6 +97,7 @@ const projectsSlice = createSlice({
                 projectid,
                 imageUrl,
                 crafttype,
+                projectslug,
                 projectname,
                 patternused,
                 patternname,
@@ -94,6 +127,7 @@ const projectsSlice = createSlice({
             if (state.length === 1 && state[0].projectid === "") {
                 state[0].projectid = projectid;
                 state[0].crafttype = crafttype;
+                state[0].projectslug = projectslug;
                 state[0].projectname = projectname;
                 state[0].patternused = patternused;
                 state[0].pattern.name = patternname;
@@ -124,6 +158,7 @@ const projectsSlice = createSlice({
                     projectid: projectid,
                     imageUrl: imageUrl,
                     crafttype: crafttype,
+                    projectslug: projectslug,
                     projectname: projectname,
                     patternused: patternused,
                     pattern: { name: patternname, about: about },
@@ -171,6 +206,7 @@ const projectsSlice = createSlice({
             const {
                 projectid,
                 crafttype,
+                projectslug,
                 projectname,
                 patternused,
                 patternname,
@@ -202,6 +238,7 @@ const projectsSlice = createSlice({
             );
             if (existingProject) {
                 existingProject.crafttype = crafttype;
+                existingProject.projectslug = projectslug;
                 existingProject.projectname = projectname;
                 existingProject.patternused = patternused;
                 existingProject.pattern.name = patternname;
@@ -215,8 +252,7 @@ const projectsSlice = createSlice({
                 existingProject.projectinfo.selectedtags = selectedtags;
                 existingProject.projectinfo.needles = needles;
                 existingProject.projectinfo.hooks = hooks;
-                existingProject.projectinfo.gauge.numberStsOrRepeats =
-                    numberStsOrRepeats;
+                existingProject.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
                 existingProject.projectinfo.gauge.horizontalunits = horizontalunits;
                 existingProject.projectinfo.gauge.numberRows = numberRows;
                 existingProject.projectinfo.gauge.gaugesize = gaugesize;

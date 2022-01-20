@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getInfo } from "../Firebase";
 
+// ir buscar username a store em vez de ir a db.
 const Notebook = function() {
     const [newprojectpath, setnewprojectpath] = useState<string>("");
     const getUsername = async function() {

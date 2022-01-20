@@ -98,6 +98,7 @@ export interface ProjectFromStore {
     | ProjectInfo
     | Status;
     projectid: string;
+    projectslug: string;
     imageUrl: string;
     crafttype: string;
     projectname: string;

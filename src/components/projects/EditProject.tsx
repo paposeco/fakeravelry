@@ -61,6 +61,7 @@ const EditProject = function() {
     const [hooksAdded, setHooksAdded] = useState<number>(0);
     const [showYarnForm, setShowYarnForm] = useState<JSX.Element[]>([]);
     const [yarncollection, setYarnCollection] = useState<Yarn[]>([]);
+    const [projectSlug, setProjectSlug] = useState<string>();
 
     // easier access to correct hook for event target id
     const setFunctions = new Map([
@@ -182,9 +183,18 @@ const EditProject = function() {
                 ravelerpath = await linkToRaveler(projectInformation.linktoraveler);
             }
             // update project in db
+            let gaugeNumberSts: number | null;
+            let gaugeNumberRows: number | null;
+            projectInformation.gauge.numberStsOrRepeats === undefined
+                ? (gaugeNumberSts = null)
+                : (gaugeNumberSts = projectInformation.gauge.numberStsOrRepeats);
+            projectInformation.gauge.numberRows === undefined
+                ? (gaugeNumberRows = null)
+                : (gaugeNumberRows = projectInformation.gauge.numberRows);
             updateProjectInDB(
                 projectID,
                 craftType!,
+                projectSlug!,
                 projectName!,
                 state.patternused,
                 patternName!,
@@ -198,9 +208,9 @@ const EditProject = function() {
                 projectInformation.selectedtags,
                 needleCollection,
                 projectInformation.hooks,
-                projectInformation.gauge.numberStsOrRepeats,
+                gaugeNumberSts,
                 projectInformation.gauge.horizontalunits,
-                projectInformation.gauge.numberRows,
+                gaugeNumberRows,
                 projectInformation.gauge.gaugesize,
                 projectInformation.gauge.gaugepattern,
                 JSON.stringify(projectInformation.yarn),
@@ -217,6 +227,7 @@ const EditProject = function() {
                 projectUpdated({
                     projectid: projectID,
                     crafttype: craftType,
+                    projectslug: projectSlug,
                     projectname: projectName,
                     patternused: state.patternused,
                     patternname: patternName,
@@ -406,6 +417,7 @@ const EditProject = function() {
             addHooksFromStorage(projectData.projectinfo.hooks);
             setHooksAdded(projectData.projectinfo.hooks.length);
             setPublicImgUrl(projectData.imageUrl);
+            setProjectSlug(projectData.projectslug);
         }
     }, [projectData]);
 
