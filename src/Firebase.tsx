@@ -280,11 +280,11 @@ const addProjectToNotebook = async function(
                     gaugesize: "",
                     gaugepattern: "",
                 },
-                yarn: [],
+                yarn: "",
                 projectnotes: "",
             },
             projectstatus: {
-                progresstatus: "In progress",
+                progressstatus: "In progress",
                 progressrange: "0",
                 happiness: "",
                 starteddate: "",

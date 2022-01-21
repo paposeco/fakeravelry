@@ -38,15 +38,12 @@ const ProjectItem = function(props: {
 
     useEffect(() => {
         if (props.itemdescription === "Gauge" && !gaugeReady) {
-            console.log(props.itemvalue);
             let numberSts: number | undefined = undefined;
             let horizontalunits: string = "";
             let numberRows: number | undefined = undefined;
             let gaugesize: string = "";
             let gaugepattern: string = "";
             for (const [key, value] of Object.entries(props.itemvalue)) {
-                console.log(key);
-                console.log(value);
                 if (key === "numberStsOrRepeats") {
                     numberSts = value;
                 } else if (key === "horizontalunits") {
@@ -139,114 +136,115 @@ const ProjectItem = function(props: {
     useEffect(() => {
         if (props.itemdescription === "Yarn" && !yarnReady) {
             const yarncollectionjson: any = props.itemvalue;
-            const yarncollection: Yarn[] = JSON.parse(yarncollectionjson);
-            yarncollection.forEach((yarn) => {
-                let yarnID = yarn.yarnID;
-                let yarnname = yarn.yarnname;
-                let howmuch = "";
-                let purchasedat = yarn.purchasedat;
-                let purchasedate = yarn.purchasedate;
-                if (yarn.numberskeins !== undefined) {
-                    console.log("yarn meterage: " + yarn.meterage);
-                    console.log("yarn weight: " + yarn.skeinweight);
+            if (yarncollectionjson !== "") {
+                const yarncollection: Yarn[] = JSON.parse(yarncollectionjson);
+                yarncollection.forEach((yarn) => {
+                    let yarnID = yarn.yarnID;
+                    let yarnname = yarn.yarnname;
+                    let howmuch = "";
+                    let purchasedat = yarn.purchasedat;
+                    let purchasedate = yarn.purchasedate;
+                    if (yarn.numberskeins !== undefined) {
+                        console.log("yarn meterage: " + yarn.meterage);
+                        console.log("yarn weight: " + yarn.skeinweight);
 
-                    const numberofskeins = Number(yarn.numberskeins);
-                    const skeinweight = Number(yarn.skeinweight);
-                    const skeinWeightUnit = yarn.skeinweightunit;
-                    if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
-                        const yarnmeterage = Number(yarn.meterage);
-                        console.log(yarn.skeinmeterageunit);
-                        if (yarn.skeinmeterageunit === "meters") {
+                        const numberofskeins = Number(yarn.numberskeins);
+                        const skeinweight = Number(yarn.skeinweight);
+                        const skeinWeightUnit = yarn.skeinweightunit;
+                        if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
+                            const yarnmeterage = Number(yarn.meterage);
+                            console.log(yarn.skeinmeterageunit);
+                            if (yarn.skeinmeterageunit === "meters") {
+                                howmuch = `${numberofskeins} skeins = ${Math.round(
+                                    numberofskeins * yarnmeterage
+                                )} meters (${Math.round(
+                                    numberofskeins * yarnmeterage * 1.09
+                                )} yards), ${Math.round(
+                                    numberofskeins * skeinweight
+                                )} ${skeinWeightUnit}`;
+                            } else if (yarn.skeinmeterageunit === "yards") {
+                                howmuch = `${numberofskeins} skeins = ${Math.round(
+                                    numberofskeins * yarnmeterage
+                                )} yards (${Math.round(
+                                    numberofskeins * yarnmeterage * 0.914
+                                )} meters), ${Math.round(
+                                    numberofskeins * skeinweight
+                                )} ${skeinWeightUnit}`;
+                            }
+                        } else if (
+                            yarn.meterage === undefined &&
+                            yarn.skeinweight !== undefined
+                        ) {
                             howmuch = `${numberofskeins} skeins = ${Math.round(
-                                numberofskeins * yarnmeterage
-                            )} meters (${Math.round(
-                                numberofskeins * yarnmeterage * 1.09
-                            )} yards), ${Math.round(
                                 numberofskeins * skeinweight
                             )} ${skeinWeightUnit}`;
-                        } else if (yarn.skeinmeterageunit === "yards") {
-                            howmuch = `${numberofskeins} skeins = ${Math.round(
-                                numberofskeins * yarnmeterage
-                            )} yards (${Math.round(
-                                numberofskeins * yarnmeterage * 0.914
-                            )} meters), ${Math.round(
-                                numberofskeins * skeinweight
-                            )} ${skeinWeightUnit}`;
+                        } else if (
+                            yarn.meterage !== undefined &&
+                            yarn.skeinweight === undefined
+                        ) {
+                            const yarnmeterage = Number(yarn.meterage);
+                            if (yarn.skeinmeterageunit === "meters") {
+                                howmuch = `${numberofskeins} skeins = ${Math.round(
+                                    numberofskeins * yarnmeterage
+                                )} meters (${Math.round(
+                                    numberofskeins * yarnmeterage * 1.09
+                                )} yards)`;
+                            } else if (yarn.skeinmeterageunit === "yards") {
+                                howmuch = `${numberofskeins} skeins = ${Math.round(
+                                    numberofskeins * yarnmeterage
+                                )} yards (${Math.round(
+                                    numberofskeins * yarnmeterage * 0.914
+                                )} meters)`;
+                            }
                         }
-                    } else if (
-                        yarn.meterage === undefined &&
-                        yarn.skeinweight !== undefined
-                    ) {
-                        howmuch = `${numberofskeins} skeins = ${Math.round(
-                            numberofskeins * skeinweight
-                        )} ${skeinWeightUnit}`;
-                    } else if (
-                        yarn.meterage !== undefined &&
-                        yarn.skeinweight === undefined
-                    ) {
-                        const yarnmeterage = Number(yarn.meterage);
-                        if (yarn.skeinmeterageunit === "meters") {
-                            howmuch = `${numberofskeins} skeins = ${Math.round(
-                                numberofskeins * yarnmeterage
-                            )} meters (${Math.round(
-                                numberofskeins * yarnmeterage * 1.09
-                            )} yards)`;
-                        } else if (yarn.skeinmeterageunit === "yards") {
-                            howmuch = `${numberofskeins} skeins = ${Math.round(
-                                numberofskeins * yarnmeterage
-                            )} yards (${Math.round(
-                                numberofskeins * yarnmeterage * 0.914
-                            )} meters)`;
-                        }
-                    }
-                } else {
-                    if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
-                        if (yarn.skeinmeterageunit === "meters") {
-                            howmuch = `${yarn.meterage} meters (${Math.round(
-                                Number(yarn.yarnmeterage) * 1.09
-                            )} yards), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
-                        } else if (yarn.skeinmeterageunit === "yards") {
-                            howmuch = `${yarn.meterage} yards (${Math.round(
-                                Number(yarn.yarnmeterage) * 0.914
-                            )} meters), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
-                        }
-                    } else if (
-                        yarn.meterage === undefined &&
-                        yarn.skeinweight !== undefined
-                    ) {
-                        howmuch = `${yarn.skeinweight} ${yarn.skeinweightunit}`;
-                    } else if (
-                        yarn.meterage !== undefined &&
-                        yarn.skeinweight === undefined
-                    ) {
-                        if (yarn.skeinmeterageunit === "meters") {
-                            howmuch = `${yarn.meterage} meters (${Math.round(
-                                Number(yarn.yarnmeterage) * 1.09
-                            )} yards)`;
-                        } else if (yarn.skeinmeterageunit === "yards") {
-                            howmuch = `${yarn.meterage} yards (${Math.round(
-                                Number(yarn.yarnmeterage) * 0.914
-                            )} meters)`;
+                    } else {
+                        if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
+                            if (yarn.skeinmeterageunit === "meters") {
+                                howmuch = `${yarn.meterage} meters (${Math.round(
+                                    Number(yarn.yarnmeterage) * 1.09
+                                )} yards), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                            } else if (yarn.skeinmeterageunit === "yards") {
+                                howmuch = `${yarn.meterage} yards (${Math.round(
+                                    Number(yarn.yarnmeterage) * 0.914
+                                )} meters), ${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                            }
+                        } else if (
+                            yarn.meterage === undefined &&
+                            yarn.skeinweight !== undefined
+                        ) {
+                            howmuch = `${yarn.skeinweight} ${yarn.skeinweightunit}`;
+                        } else if (
+                            yarn.meterage !== undefined &&
+                            yarn.skeinweight === undefined
+                        ) {
+                            if (yarn.skeinmeterageunit === "meters") {
+                                howmuch = `${yarn.meterage} meters (${Math.round(
+                                    Number(yarn.yarnmeterage) * 1.09
+                                )} yards)`;
+                            } else if (yarn.skeinmeterageunit === "yards") {
+                                howmuch = `${yarn.meterage} yards (${Math.round(
+                                    Number(yarn.yarnmeterage) * 0.914
+                                )} meters)`;
+                            }
                         }
                     }
-                }
-                console.log(howmuch);
-                setYarnToDisplay((yarnToDisplay) => [
-                    ...yarnToDisplay,
-                    {
-                        yarnID: yarnID,
-                        yarnname: yarnname,
-                        howmuch: howmuch,
-                        colorway: yarn.colorway,
-                        dyelot: yarn.dyelot,
-                        colorfamily: yarn.closestcolor,
-                        purchasedat: purchasedat,
-                        purchasedate: purchasedate,
-                    },
-                ]);
-            });
+                    setYarnToDisplay((yarnToDisplay) => [
+                        ...yarnToDisplay,
+                        {
+                            yarnID: yarnID,
+                            yarnname: yarnname,
+                            howmuch: howmuch,
+                            colorway: yarn.colorway,
+                            dyelot: yarn.dyelot,
+                            colorfamily: yarn.closestcolor,
+                            purchasedat: purchasedat,
+                            purchasedate: purchasedate,
+                        },
+                    ]);
+                });
+            }
+            setYarnReady(true);
         }
-        setYarnReady(true);
     }, [props]);
 
     if (

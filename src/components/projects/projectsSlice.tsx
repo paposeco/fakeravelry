@@ -126,6 +126,7 @@ const projectsSlice = createSlice({
             } = action.payload;
             if (state.length === 1 && state[0].projectid === "") {
                 state[0].projectid = projectid;
+                state[0].imageUrl = imageUrl;
                 state[0].crafttype = crafttype;
                 state[0].projectslug = projectslug;
                 state[0].projectname = projectname;

@@ -18,10 +18,11 @@ const DisplayProject = function() {
     const navigate = useNavigate();
     const { projectid } = state;
     const user = useSelector((state: RootState) => state.userinfo.username);
-    const projectData: ProjectFromStore | undefined = useSelector(
-        (state: RootState) =>
+    const projectData:
+        | ProjectFromStore
+        | undefined = useSelector((state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-    );
+        );
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
     const [displayMadefor, setDisplayMadeFor] = useState<boolean>(true);
@@ -33,11 +34,11 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
-        useState<boolean>(false);
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
+        false
+    );
 
     const editProject = function(event: React.MouseEvent) {
-        console.log(event);
         const cleanProjectName = projectData!.projectname
             .toLowerCase()
             .trim()

@@ -1,14 +1,11 @@
 // create new project
 import React, { useState, useEffect } from "react";
+import { RootState } from "./store/store";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { projectAdded } from "./projects/projectsSlice";
-import {
-    addProjectToNotebook,
-    getInfo,
-    checkUniqueProjectName,
-} from "../Firebase";
+import { addProjectToNotebook, checkUniqueProjectName } from "../Firebase";
 
 const NewProject = function() {
     const navigate = useNavigate();
@@ -17,7 +14,8 @@ const NewProject = function() {
     const [craftType, setCraftType] = useState<string>("knitting");
     const [projectName, setProjectName] = useState<string>("");
     const [patternName, setPatternName] = useState<string>("");
-
+    const user = useSelector((state: RootState) => state.userinfo.username);
+    const [username, setUsername] = useState<string>("");
     const setFunctions = new Map([
         ["craft-select", setCraftType],
         ["projectname", setProjectName],
@@ -48,7 +46,7 @@ const NewProject = function() {
             .replace(/ /g, "-");
         const uniqueProjectSlug = await checkUniqueProjectName(cleanProjectName);
         if (uniqueProjectSlug !== "error") {
-            const newpath = await getPathWithUsername(uniqueProjectSlug);
+            const newpath = getPathWithUsername(uniqueProjectSlug);
             await addProjectToNotebook(
                 projectID,
                 craftType,
@@ -79,11 +77,14 @@ const NewProject = function() {
         }
     };
 
-    const getPathWithUsername = async function(projectslug: string) {
-        const username = await getInfo("username");
+    const getPathWithUsername = function(projectslug: string) {
         const path = "/notebook/" + username + "/" + projectslug + "/editproject";
         return path;
     };
+
+    useEffect(() => {
+        setUsername(user);
+    }, [user]);
 
     return (
         <div>

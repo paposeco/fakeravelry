@@ -29,10 +29,12 @@ const App = function() {
     const dispatch = useDispatch();
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
     const fetchUserData = async function() {
+        console.log("fetching user data ");
         const projectsInDb = await fetchUserInfo();
         if (projectsInDb !== undefined) {
             const addallprojects = new Promise((resolve, reject) => {
                 projectsInDb.forEach((project) => {
+                    console.log(project.data());
                     dispatch(
                         projectFetchedFromDB({
                             projectid: project.id,

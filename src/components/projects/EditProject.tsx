@@ -42,13 +42,14 @@ const EditProject = function() {
         );
 
     // local state hooks for form
-    const [craftType, setCraftType] = useState<string>();
-    const [projectName, setProjectName] = useState<string>();
-    const [patternAbout, setPatternAbout] = useState<string>();
-    const [patternName, setPatternName] = useState<string>();
+    const [craftType, setCraftType] = useState<string>("");
+    const [projectName, setProjectName] = useState<string>("");
+    const [patternAbout, setPatternAbout] = useState<string>("");
+    const [patternName, setPatternName] = useState<string>("");
+    const [patternUsed, setPatternUsed] = useState<string>("");
     const [projectInformation, setProjectInformation] = useState<ProjectInfo>();
     const [projectStatus, setProjectStatus] = useState<Status>();
-    const [happinessChecked, setHappinessChecked] = useState<string>();
+    const [happinessChecked, setHappinessChecked] = useState<string>("");
     const [needleCollection, setNeedleCollection] = useState<Needles[]>([]);
     const [hookCollection, setHookCollection] = useState<Hooks[]>([]);
     const [selectNeedlesToRender, setSelectNeedlesToRender] = useState<
@@ -61,13 +62,13 @@ const EditProject = function() {
     const [hooksAdded, setHooksAdded] = useState<number>(0);
     const [showYarnForm, setShowYarnForm] = useState<JSX.Element[]>([]);
     const [yarncollection, setYarnCollection] = useState<Yarn[]>([]);
-    const [projectSlug, setProjectSlug] = useState<string>();
+    const [projectSlug, setProjectSlug] = useState<string>("");
 
     // easier access to correct hook for event target id
     const setFunctions = new Map([
         ["projectname", setProjectName],
         ["craft-select", setCraftType],
-        ["patternName", setPatternName],
+        ["patternname", setPatternName],
     ]);
 
     const handlerOfChange = function(
@@ -78,6 +79,7 @@ const EditProject = function() {
         const newvalue = event.target.value;
         if (elementDataSet === "newproject") {
             const elementStateFunction = setFunctions.get(elementId);
+            console.log(elementId);
             if (elementStateFunction !== undefined) {
                 elementStateFunction(newvalue);
             }
@@ -102,8 +104,9 @@ const EditProject = function() {
                 });
             } else {
                 setProjectInformation((prevState) => {
+                    console.log(newvalue);
                     let previousInfo = Object.assign({}, prevState);
-                    previousInfo[elementId] = event.target.value;
+                    previousInfo[elementId] = newvalue;
                     return previousInfo;
                 });
             }
@@ -131,6 +134,7 @@ const EditProject = function() {
                 if (event.target.name === "happiness") {
                     setHappinessChecked(elementId);
                     previousStatus.happiness = elementId;
+                    console.log(elementId);
                 } else {
                     previousStatus[elementId] = event.target.value;
                 }
@@ -196,7 +200,7 @@ const EditProject = function() {
                 craftType!,
                 projectSlug!,
                 projectName!,
-                state.patternused,
+                patternUsed,
                 patternName!,
                 patternAbout!,
                 projectInformation.madefor,
@@ -207,13 +211,13 @@ const EditProject = function() {
                 selectedCategory,
                 projectInformation.selectedtags,
                 needleCollection,
-                projectInformation.hooks,
+                hookCollection,
                 gaugeNumberSts,
                 projectInformation.gauge.horizontalunits,
                 gaugeNumberRows,
                 projectInformation.gauge.gaugesize,
                 projectInformation.gauge.gaugepattern,
-                JSON.stringify(projectInformation.yarn),
+                JSON.stringify(yarncollection),
                 projectInformation.projectnotes,
                 projectStatus!.progressstatus,
                 projectStatus!.progressrange,
@@ -229,7 +233,7 @@ const EditProject = function() {
                     crafttype: craftType,
                     projectslug: projectSlug,
                     projectname: projectName,
-                    patternused: state.patternused,
+                    patternused: patternUsed,
                     patternname: patternName,
                     about: patternAbout,
                     madefor: projectInformation.madefor,
@@ -357,7 +361,6 @@ const EditProject = function() {
         if (yarncollection !== "") {
             // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
             const parseCollection: Yarn[] = JSON.parse(yarncollection);
-            console.log(parseCollection);
             for (let i = 0; i < parseCollection.length; i++) {
                 setYarnCollection((prevState) => [...prevState, parseCollection[i]]);
                 setShowYarnForm((prevState) => [
@@ -418,7 +421,9 @@ const EditProject = function() {
             setHooksAdded(projectData.projectinfo.hooks.length);
             setPublicImgUrl(projectData.imageUrl);
             setProjectSlug(projectData.projectslug);
+            setPatternUsed(projectData.patternused);
         }
+        console.log(projectData);
     }, [projectData]);
 
     useEffect(() => {
@@ -550,7 +555,7 @@ const EditProject = function() {
                             placeholder="select category..."
                             onClick={displaycategories}
                             onChange={handlerOfChange}
-                            value={projectInformation.patterncategory}
+                            value={selectedCategory}
                             data-project="info"
                         />
                         <ul id="selectcategory"></ul>
