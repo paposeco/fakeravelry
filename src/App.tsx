@@ -29,12 +29,19 @@ const App = function() {
     const dispatch = useDispatch();
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
     const fetchUserData = async function() {
-        console.log("fetching user data ");
         const projectsInDb = await fetchUserInfo();
         if (projectsInDb !== undefined) {
             const addallprojects = new Promise((resolve, reject) => {
                 projectsInDb.forEach((project) => {
-                    console.log(project.data());
+                    let gaugeNumberSts: number;
+                    let gaugeNumberRows: number;
+                    project.data().projectinfo.gauge.numberStsOrRepeats === null
+                        ? (gaugeNumberSts = 0)
+                        : (gaugeNumberSts = project.data().projectinfo.gauge
+                            .numberStsOrRepeats);
+                    project.data().projectinfo.gauge.numberRows === null
+                        ? (gaugeNumberRows = 0)
+                        : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
                     dispatch(
                         projectFetchedFromDB({
                             projectid: project.id,
@@ -54,10 +61,9 @@ const App = function() {
                             selectedtags: project.data().projectinfo.tags,
                             needles: project.data().projectinfo.needles,
                             hooks: project.data().projectinfo.hooks,
-                            numberStsOrRepeats: project.data().projectinfo.gauge
-                                .numberStsOrRepeats,
+                            numberStsOrRepeats: gaugeNumberSts,
                             horizontalunits: project.data().projectinfo.gauge.horizontalunits,
-                            numberRows: project.data().projectinfo.gauge.numberRows,
+                            numberRows: gaugeNumberRows,
                             gaugesize: project.data().projectinfo.gauge.gaugesize,
                             gaugepattern: project.data().projectinfo.gauge.gaugepattern,
                             yarn: project.data().projectinfo.yarn,

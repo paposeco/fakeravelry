@@ -79,7 +79,6 @@ const EditProject = function() {
         const newvalue = event.target.value;
         if (elementDataSet === "newproject") {
             const elementStateFunction = setFunctions.get(elementId);
-            console.log(elementId);
             if (elementStateFunction !== undefined) {
                 elementStateFunction(newvalue);
             }
@@ -104,7 +103,6 @@ const EditProject = function() {
                 });
             } else {
                 setProjectInformation((prevState) => {
-                    console.log(newvalue);
                     let previousInfo = Object.assign({}, prevState);
                     previousInfo[elementId] = newvalue;
                     return previousInfo;
@@ -112,11 +110,7 @@ const EditProject = function() {
             }
         } else if (elementDataSet === "yarn") {
             let indexYarnAdded = event.target.parentElement!.parentElement!.id;
-            if (
-                elementId === "closestcolor" ||
-                elementId === "yarnweight" ||
-                elementId === "currency"
-            ) {
+            if (elementId === "closestcolor" || elementId === "yarnweight") {
                 indexYarnAdded = event.target.parentElement!.id;
             }
             setYarnCollection((prevState) => {
@@ -134,7 +128,6 @@ const EditProject = function() {
                 if (event.target.name === "happiness") {
                     setHappinessChecked(elementId);
                     previousStatus.happiness = elementId;
-                    console.log(elementId);
                 } else {
                     previousStatus[elementId] = event.target.value;
                 }
@@ -423,7 +416,6 @@ const EditProject = function() {
             setProjectSlug(projectData.projectslug);
             setPatternUsed(projectData.patternused);
         }
-        console.log(projectData);
     }, [projectData]);
 
     useEffect(() => {
@@ -578,8 +570,13 @@ const EditProject = function() {
                             <button id="addhook" onClick={addHook} type="button">
                                 add hook
                             </button>
+                            {/* {selectNeedlesToRender.map((select) => (
+                                <div key={uniqid()}>{select}</div>
+                            ))} */}
                             {selectNeedlesToRender}
-                            {selectHooksToRender}
+                            {selectHooksToRender.map((select) => (
+                                <div key={uniqid()}>{select}</div>
+                            ))}
                         </div>
                         <fieldset>
                             <label htmlFor="gaugehorizontal">

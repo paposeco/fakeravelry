@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DisplayProjectImage from "./DisplayProjectImage";
+import uniqid from "uniqid";
 
 const ProjectThumbnail = function(props: {
     projectname: string;
@@ -35,7 +36,7 @@ const ProjectThumbnail = function(props: {
     };
     // edit and display should look for the project in store for a certain projectslug
     return (
-        <div onClick={handleClicks}>
+        <div onClick={handleClicks} key={uniqid()}>
             <div>
                 <h3>{props.projectname}</h3>
                 <div>

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import type { YarnDisplay } from "../common/types";
 import { Colorways } from "./SelectOptions";
+import uniqid from "uniqid";
 
-const DisplayYarn = function(props: { yarn: YarnDisplay; uniqid: string }) {
+const DisplayYarn = function(props: { yarn: YarnDisplay }) {
     const [displayHowMuch, setDisplayHowMuch] = useState(false);
     const [displayColorway, setDisplayColorway] = useState(false);
     const [colorfamilyname, setColorfamilyname] = useState("");
@@ -43,7 +44,7 @@ const DisplayYarn = function(props: { yarn: YarnDisplay; uniqid: string }) {
         return colorfamilyname;
     };
     return (
-        <div key={props.uniqid}>
+        <div key={uniqid()}>
             <div className="itemDescription">Yarn</div>
             <div className="itemValue">{props.yarn.yarnname}</div>
             {displayHowMuch && (

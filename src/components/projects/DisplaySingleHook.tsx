@@ -20,7 +20,7 @@ const DisplaySingleHook = function(props: {
         setSelectValue(props.hook.value);
     }, [props]);
     return (
-        <div>
+        <div key={uniqid()}>
             <select
                 name={props.hook.selectid}
                 id={props.hook.selectid}

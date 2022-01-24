@@ -59,5 +59,6 @@ const Notebook = function() {
 export default Notebook;
 
 // need to add more projects and check it is works.
-// issues on yarn on edit -> one of the items is going from uncontrolled to controlled
+
 // project should be notebook/username/projects/project maybe
+// catch on db

@@ -36,18 +36,22 @@ const YarnInfo = function(props: {
             prevSelects[elementID] = event.target.value;
             return prevSelects;
         });
-        props.handler(event);
+        {
+            props.handler(event);
+        }
     };
 
-    const [yarnName, setYarnName] = useState<string>();
-    const [colorway, setColorway] = useState<string>();
-    const [dyelot, setDyelot] = useState<string>();
-    const [meterage, setMeterage] = useState<number | undefined>();
-    const [skeinWeight, setSkeinWeight] = useState<number | undefined>();
-    const [numberSkeins, setNumberSkeins] = useState<number | undefined>();
-    const [purchasedAt, setPurchasedAt] = useState<string>();
-    const [purchaseDate, setPurchaseDate] = useState<string>();
-    const [totalPaid, setTotalPaid] = useState<number | undefined>();
+    const [yarnName, setYarnName] = useState<string>("");
+    const [colorway, setColorway] = useState<string>("");
+    const [dyelot, setDyelot] = useState<string>("");
+    const [meterage, setMeterage] = useState<number | undefined>(undefined);
+    const [skeinWeight, setSkeinWeight] = useState<number | undefined>(undefined);
+    const [numberSkeins, setNumberSkeins] = useState<number | undefined>(
+        undefined
+    );
+    const [purchasedAt, setPurchasedAt] = useState<string>("");
+    const [purchaseDate, setPurchaseDate] = useState<string>("");
+    const [totalPaid, setTotalPaid] = useState<number | undefined>(undefined);
 
     useEffect(() => {
         setYarnName(props.yarninfo.yarnname);

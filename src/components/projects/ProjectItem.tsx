@@ -145,15 +145,11 @@ const ProjectItem = function(props: {
                     let purchasedat = yarn.purchasedat;
                     let purchasedate = yarn.purchasedate;
                     if (yarn.numberskeins !== undefined) {
-                        console.log("yarn meterage: " + yarn.meterage);
-                        console.log("yarn weight: " + yarn.skeinweight);
-
                         const numberofskeins = Number(yarn.numberskeins);
                         const skeinweight = Number(yarn.skeinweight);
                         const skeinWeightUnit = yarn.skeinweightunit;
                         if (yarn.meterage !== undefined && yarn.skeinweight !== undefined) {
                             const yarnmeterage = Number(yarn.meterage);
-                            console.log(yarn.skeinmeterageunit);
                             if (yarn.skeinmeterageunit === "meters") {
                                 howmuch = `${numberofskeins} skeins = ${Math.round(
                                     numberofskeins * yarnmeterage
@@ -311,7 +307,9 @@ const ProjectItem = function(props: {
         return (
             <div className="projectinfodiv">
                 {yarnToDisplay.map((yarn: YarnDisplay) => (
-                    <DisplayYarn yarn={yarn} uniqid={uniqid()} />
+                    <div key={uniqid()}>
+                        <DisplayYarn yarn={yarn} />
+                    </div>
                 ))}
             </div>
         );

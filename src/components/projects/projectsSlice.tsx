@@ -21,9 +21,9 @@ const initialState = [
             needles: [],
             hooks: [],
             gauge: {
-                numberStsOrRepeats: undefined,
+                numberStsOrRepeats: 0,
                 horizontalunits: "stitches",
-                numberRows: undefined,
+                numberRows: 0,
                 gaugesize: "",
                 gaugepattern: "",
             },
@@ -72,9 +72,9 @@ const projectsSlice = createSlice({
                         needles: [],
                         hooks: [],
                         gauge: {
-                            numberStsOrRepeats: undefined,
+                            numberStsOrRepeats: 0,
                             horizontalunits: "stitches",
-                            numberRows: undefined,
+                            numberRows: 0,
                             gaugesize: "",
                             gaugepattern: "",
                         },
