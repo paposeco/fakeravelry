@@ -11,8 +11,10 @@ const DisplaySingleNeedle = function(props: {
 }) {
     const [selectValue, setSelectValue] = useState<string>("");
     const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
-        props.handler(event);
         setSelectValue(event.target.value);
+        {
+            props.handler(event);
+        }
     };
     useEffect(() => {
         setSelectValue(props.needle.value);

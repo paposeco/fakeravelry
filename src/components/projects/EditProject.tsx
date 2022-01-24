@@ -35,11 +35,10 @@ const EditProject = function() {
     // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
     // fetches project data from store
-    const projectData:
-        | ProjectFromStore
-        | undefined = useSelector((state: RootState) =>
+    const projectData: ProjectFromStore | undefined = useSelector(
+        (state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        );
+    );
 
     // local state hooks for form
     const [craftType, setCraftType] = useState<string>("");
@@ -63,6 +62,7 @@ const EditProject = function() {
     const [showYarnForm, setShowYarnForm] = useState<JSX.Element[]>([]);
     const [yarncollection, setYarnCollection] = useState<Yarn[]>([]);
     const [projectSlug, setProjectSlug] = useState<string>("");
+    const [madefor, setMadeFor] = useState<string>("");
 
     // easier access to correct hook for event target id
     const setFunctions = new Map([
@@ -101,6 +101,13 @@ const EditProject = function() {
                     previousInfo[selectedhook].value = newvalue;
                     return previousInfo;
                 });
+            } else if (elementId === "madefor") {
+                setProjectInformation((prevState) => {
+                    let previousInfo = Object.assign({}, prevState);
+                    previousInfo.madefor = newvalue;
+                    return previousInfo;
+                });
+                setMadeFor(newvalue);
             } else {
                 setProjectInformation((prevState) => {
                     let previousInfo = Object.assign({}, prevState);
@@ -174,11 +181,11 @@ const EditProject = function() {
     ) {
         event.preventDefault();
         if (projectInformation !== undefined) {
-            let ravelerpath: string = "";
-            if (projectInformation.madefor !== "") {
-                // looks for user in db
-                ravelerpath = await linkToRaveler(projectInformation.linktoraveler);
-            }
+            /* let ravelerpath: string = "";
+             * if (projectInformation.madefor !== "") {
+             *     // looks for user in db
+             *     ravelerpath = await linkToRaveler(projectInformation.madefor);
+             * } */
             // update project in db
             let gaugeNumberSts: number | null;
             let gaugeNumberRows: number | null;
@@ -197,7 +204,7 @@ const EditProject = function() {
                 patternName!,
                 patternAbout!,
                 projectInformation.madefor,
-                ravelerpath,
+                projectInformation.linktoraveler,
                 projectInformation.finishby,
                 projectInformation.sizemade,
                 projectInformation.patternfrom,
@@ -230,7 +237,7 @@ const EditProject = function() {
                     patternname: patternName,
                     about: patternAbout,
                     madefor: projectInformation.madefor,
-                    linktoraveler: ravelerpath,
+                    linktoraveler: projectInformation.linktoraveler,
                     finishby: projectInformation.finishby,
                     sizemade: projectInformation.sizemade,
                     patternfrom: projectInformation.patternfrom,
@@ -258,7 +265,7 @@ const EditProject = function() {
                 .replace(/ /g, "-");
 
             // redirects to project page
-            const path = "/notebook/" + username + "/" + cleanProjectName;
+            const path = "/notebook/" + username + "/projects/" + cleanProjectName;
             navigate(path, {
                 state: { projectid: projectID },
             });
@@ -280,6 +287,7 @@ const EditProject = function() {
             <DisplaySingleNeedle
                 needle={{ selectid: newneedlealias, value: "43" }}
                 handler={handlerOfChange}
+                key={uniqid()}
             />,
         ]);
     };
@@ -297,6 +305,7 @@ const EditProject = function() {
                 <DisplaySingleNeedle
                     needle={{ selectid: needles[i].selectid, value: needles[i].value }}
                     handler={handlerOfChange}
+                    key={uniqid()}
                 />,
             ]);
         }
@@ -314,6 +323,7 @@ const EditProject = function() {
             <DisplaySingleHook
                 hook={{ selectid: newhookalias, value: "43" }}
                 handler={handlerOfChange}
+                key={uniqid()}
             />,
         ]);
     };
@@ -330,6 +340,7 @@ const EditProject = function() {
                 <DisplaySingleHook
                     hook={{ selectid: hooks[i].selectid, value: hooks[i].value }}
                     handler={handlerOfChange}
+                    key={uniqid()}
                 />,
             ]);
         }
@@ -372,10 +383,8 @@ const EditProject = function() {
     // handles adding images to projects
     const [imageSelected, setImageSelected] = useState<FileList | null>();
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
-    const [
-        displayImageComponent,
-        setDisplayImageComponent,
-    ] = useState<JSX.Element>();
+    const [displayImageComponent, setDisplayImageComponent] =
+        useState<JSX.Element>();
     const imageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setImageSelected(event.target.files);
     };
@@ -384,11 +393,13 @@ const EditProject = function() {
         if (imageSelected !== (null && undefined)) {
             // uploads image to firebase storage and returns a public url
             const publicUrl = await uploadPhoto(projectID, imageSelected![0]);
-            setPublicImgUrl(publicUrl);
-            // updates store with publicurl
-            dispatch(
-                projectPhotoAdded({ projectid: projectID, imageUrl: publicUrl })
-            );
+            if (publicUrl !== false) {
+                setPublicImgUrl(publicUrl);
+                // updates store with publicurl
+                dispatch(
+                    projectPhotoAdded({ projectid: projectID, imageUrl: publicUrl })
+                );
+            }
         }
     };
 
@@ -425,6 +436,17 @@ const EditProject = function() {
         setUsername(user);
     }, [user]);
 
+    useEffect(() => {
+        if (madefor !== "") {
+            linkToRaveler(projectInformation!.madefor).then((value) => {
+                setProjectInformation((prevState) => {
+                    let previousInfo = Object.assign({}, prevState);
+                    previousInfo.linktoraveler = value;
+                    return previousInfo;
+                });
+            });
+        }
+    }, [madefor]);
     if (projectInformation !== undefined) {
         return (
             <div>
@@ -574,9 +596,7 @@ const EditProject = function() {
                                 <div key={uniqid()}>{select}</div>
                             ))} */}
                             {selectNeedlesToRender}
-                            {selectHooksToRender.map((select) => (
-                                <div key={uniqid()}>{select}</div>
-                            ))}
+                            {selectHooksToRender}
                         </div>
                         <fieldset>
                             <label htmlFor="gaugehorizontal">

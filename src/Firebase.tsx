@@ -78,6 +78,7 @@ const uploadPhoto = async function(projectid: string, file: File) {
         }
     } catch (error) {
         console.log(error);
+        return false;
     }
 };
 
@@ -111,15 +112,24 @@ const startEmptyProfile = async function(
     username: string,
     nameSelected: string
 ) {
-    await setDoc(doc(database, "users", userId), {
-        username: username,
-        name: nameSelected,
-        email: email,
-    });
+    try {
+        await setDoc(doc(database, "users", userId), {
+            username: username,
+            name: nameSelected,
+            email: email,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
     const docRef = doc(database, "usernames", "usernamescollection");
-    await updateDoc(docRef, {
-        all: arrayUnion({ userid: userId, username: username }),
-    });
+    try {
+        await updateDoc(docRef, {
+            all: arrayUnion({ userid: userId, username: username }),
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const authStateObserver = function() {
@@ -131,10 +141,15 @@ const authStateObserver = function() {
 const fetchUserInfo = async function() {
     const user = auth.currentUser;
     if (user !== null) {
-        const querySnapshot = await getDocs(
-            collection(database, "users", user.uid, "projects")
-        );
-        return querySnapshot;
+        try {
+            const querySnapshot = await getDocs(
+                collection(database, "users", user.uid, "projects")
+            );
+            return querySnapshot;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
 };
 
@@ -162,6 +177,7 @@ const signOutUser = async function() {
         });
 };
 
+// no spaces
 const checkUniqueUsername = async function(desiredusername: string) {
     const docRef = doc(database, "usernames", "usernamescollection");
     const docSnap = await getDoc(docRef);
@@ -211,15 +227,25 @@ const checkUniqueProjectName = async function(desiredprojectname: string) {
                 "projectnames",
                 docId
             );
-            await updateDoc(projectNameRef, { count: increment(1) });
-            return cleanProjectName + "-" + currentCount;
+            try {
+                await updateDoc(projectNameRef, { count: increment(1) });
+                return cleanProjectName + "-" + currentCount;
+            } catch (error) {
+                console.log(error);
+                return false;
+            }
         } else {
             // create new entry on db for choosen name
-            await addDoc(collection(database, "users", user.uid, "projectnames"), {
-                name: cleanProjectName,
-                count: 1,
-            });
-            return cleanProjectName;
+            try {
+                await addDoc(collection(database, "users", user.uid, "projectnames"), {
+                    name: cleanProjectName,
+                    count: 1,
+                });
+                return cleanProjectName;
+            } catch (error) {
+                console.log(error);
+                return false;
+            }
         }
     } else {
         return "error";
@@ -255,42 +281,46 @@ const addProjectToNotebook = async function(
 ) {
     const user = auth.currentUser;
     if (user !== null) {
-        await setDoc(doc(database, "users", user.uid, "projects", projectid), {
-            imageUrl: "",
-            storageUri: "",
-            crafttype: craftType,
-            projectslug: projectslug,
-            projectname: projectname,
-            patternused: patternused,
-            pattern: { name: patternname, about: "" },
-            projectinfo: {
-                madefor: "",
-                linktoraveler: "",
-                finishby: "",
-                sizemade: "",
-                patternfrom: "",
-                patterncategory: "",
-                tags: "",
-                needles: [],
-                hooks: [],
-                gauge: {
-                    numberStsOrRepeats: null,
-                    horizontalunits: "stitches",
-                    numberRows: null,
-                    gaugesize: "",
-                    gaugepattern: "",
+        try {
+            await setDoc(doc(database, "users", user.uid, "projects", projectid), {
+                imageUrl: "",
+                storageUri: "",
+                crafttype: craftType,
+                projectslug: projectslug,
+                projectname: projectname,
+                patternused: patternused,
+                pattern: { name: patternname, about: "" },
+                projectinfo: {
+                    madefor: "",
+                    linktoraveler: "",
+                    finishby: "",
+                    sizemade: "",
+                    patternfrom: "",
+                    patterncategory: "",
+                    tags: "",
+                    needles: [],
+                    hooks: [],
+                    gauge: {
+                        numberStsOrRepeats: null,
+                        horizontalunits: "stitches",
+                        numberRows: null,
+                        gaugesize: "",
+                        gaugepattern: "",
+                    },
+                    yarn: "",
+                    projectnotes: "",
                 },
-                yarn: "",
-                projectnotes: "",
-            },
-            projectstatus: {
-                progressstatus: "In progress",
-                progressrange: "0",
-                happiness: "",
-                starteddate: "",
-                completeddate: "",
-            },
-        });
+                projectstatus: {
+                    progressstatus: "In progress",
+                    progressrange: "0",
+                    happiness: "",
+                    starteddate: "",
+                    completeddate: "",
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 
@@ -362,40 +392,44 @@ const updateProjectInDB = async function(
             "projects",
             currentprojectid
         );
-        await updateDoc(projectRef, {
-            crafttype: crafttypeUpdated,
-            projectslug: projectslugUpdated,
-            projectname: projectnameUpdated,
-            patternused: patternusedUpdated,
-            pattern: { name: patternnameUpdated, about: aboutUpdated },
-            projectinfo: {
-                madefor: madeforUpdated,
-                linktoraveler: linktoravelerUpdated,
-                finishby: finishbyUpdated,
-                sizemade: sizemadeUpdated,
-                patternfrom: patternfromUpdated,
-                patterncategory: patterncategoryUpdated,
-                tags: tagsUpdated,
-                needles: needlesUpdated,
-                hooks: hooksUpdated,
-                gauge: {
-                    numberStsOrRepeats: numberStsOrRepeatsUpdated,
-                    horizontalunits: horizontalunitsUpdated,
-                    numberRows: numberRowsUpdated,
-                    gaugesize: gaugesizeUpdated,
-                    gaugepattern: gaugepatternUpdated,
+        try {
+            await updateDoc(projectRef, {
+                crafttype: crafttypeUpdated,
+                projectslug: projectslugUpdated,
+                projectname: projectnameUpdated,
+                patternused: patternusedUpdated,
+                pattern: { name: patternnameUpdated, about: aboutUpdated },
+                projectinfo: {
+                    madefor: madeforUpdated,
+                    linktoraveler: linktoravelerUpdated,
+                    finishby: finishbyUpdated,
+                    sizemade: sizemadeUpdated,
+                    patternfrom: patternfromUpdated,
+                    patterncategory: patterncategoryUpdated,
+                    tags: tagsUpdated,
+                    needles: needlesUpdated,
+                    hooks: hooksUpdated,
+                    gauge: {
+                        numberStsOrRepeats: numberStsOrRepeatsUpdated,
+                        horizontalunits: horizontalunitsUpdated,
+                        numberRows: numberRowsUpdated,
+                        gaugesize: gaugesizeUpdated,
+                        gaugepattern: gaugepatternUpdated,
+                    },
+                    yarn: yarnUpdated,
+                    projectnotes: projectnotesUpdated,
                 },
-                yarn: yarnUpdated,
-                projectnotes: projectnotesUpdated,
-            },
-            projectstatus: {
-                progressstatus: progressstatusUpdated,
-                progressrange: progressrangeUpdated,
-                happiness: happinessUpdated,
-                starteddate: starteddateUpdated,
-                completeddate: completeddateUpdated,
-            },
-        });
+                projectstatus: {
+                    progressstatus: progressstatusUpdated,
+                    progressrange: progressrangeUpdated,
+                    happiness: happinessUpdated,
+                    starteddate: starteddateUpdated,
+                    completeddate: completeddateUpdated,
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 

@@ -30,15 +30,15 @@ const App = function() {
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
     const fetchUserData = async function() {
         const projectsInDb = await fetchUserInfo();
-        if (projectsInDb !== undefined) {
+        if (projectsInDb !== undefined && projectsInDb !== false) {
             const addallprojects = new Promise((resolve, reject) => {
                 projectsInDb.forEach((project) => {
                     let gaugeNumberSts: number;
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts = project.data().projectinfo.gauge
-                            .numberStsOrRepeats);
+                        : (gaugeNumberSts =
+                            project.data().projectinfo.gauge.numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -159,10 +159,13 @@ const App = function() {
                     <Route path="/notebook/:id/" element={<Notebook />} />
                     <Route path="/notebook/:id/newproject/*" element={<NewProject />} />
                     <Route
-                        path="/notebook/:id/:id/editproject/"
+                        path="/notebook/:id/projects/:id/editproject/"
                         element={<EditProject />}
                     />
-                    <Route path="/notebook/:id/:id" element={<DisplayProject />} />
+                    <Route
+                        path="/notebook/:id/projects/:id"
+                        element={<DisplayProject />}
+                    />
                 </Routes>
             </BrowserRouter>
         );

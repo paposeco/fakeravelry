@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Needles, Hooks, Yarn, Gauge, YarnDisplay } from "../common/types";
 import { NeedleMap, HookMap } from "./SelectOptions";
 import uniqid from "uniqid";
 import DisplayYarn from "./DisplayYarn";
+import { isJSDocLinkLike } from "typescript";
 
 const ProjectItem = function(props: {
     itemdescription: string;
@@ -18,6 +20,9 @@ const ProjectItem = function(props: {
     const [hooksReady, setHooksReady] = useState<boolean>(false);
     const [yarnReady, setYarnReady] = useState<boolean>(false);
     const [yarnToDisplay, setYarnToDisplay] = useState<YarnDisplay[]>([]);
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
+        useState<boolean>(false);
+    const [madeforusername, setMadeforusername] = useState<string>("");
 
     useEffect(() => {
         if (
@@ -33,6 +38,14 @@ const ProjectItem = function(props: {
             }
             setSeparateTags(tagsArray);
             setTagsSeparated(true);
+        } else if (
+            props.itemdescription === "Made for" &&
+            typeof props.itemvalue === "string"
+        ) {
+            if (props.itemvalue.substring(0, 4) === "/peo") {
+                setDisplayLinkToRaveler(true);
+                setMadeforusername(props.itemvalue.substring(8));
+            }
         }
     }, [props]);
 
@@ -249,12 +262,22 @@ const ProjectItem = function(props: {
         props.itemdescription !== "Hook" &&
         props.itemdescription !== "Yarn" &&
         props.itemdescription !== "Tags" &&
-        props.itemdescription !== "Notes"
+        props.itemdescription !== "Notes" &&
+        !displayLinkToRaveler
     ) {
         return (
             <div className="projectinfodiv">
                 <div className="itemDescription">{props.itemdescription}</div>
                 <div className="itemValue">{props.itemvalue}</div>
+            </div>
+        );
+    } else if (displayLinkToRaveler && typeof props.itemvalue === "string") {
+        return (
+            <div className="projectinfodiv">
+                <div className="itemDescription">Made For</div>
+                <div className="itemValue">
+                    <Link to={props.itemvalue}>{madeforusername}</Link>
+                </div>
             </div>
         );
     } else if (props.itemdescription === "Notes") {

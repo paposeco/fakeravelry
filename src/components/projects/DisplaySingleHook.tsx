@@ -9,7 +9,7 @@ const DisplaySingleHook = function(props: {
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
 }) {
-    const [selectValue, setSelectValue] = useState<string>();
+    const [selectValue, setSelectValue] = useState<string>("");
     const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
         setSelectValue(event.target.value);
         {

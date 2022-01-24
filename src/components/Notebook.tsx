@@ -57,8 +57,3 @@ const Notebook = function() {
 };
 
 export default Notebook;
-
-// need to add more projects and check it is works.
-
-// project should be notebook/username/projects/project maybe
-// catch on db

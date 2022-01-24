@@ -25,7 +25,9 @@ const ProjectThumbnail = function(props: {
     }, [props.projectprogress]);
 
     useEffect(() => {
-        setProjectpath("/notebook/" + props.username + "/" + props.projectslug);
+        setProjectpath(
+            "/notebook/" + props.username + "/projects/" + props.projectslug
+        );
     }, [props.projectslug]);
     useEffect(() => {
         setProjectID(props.projectid);

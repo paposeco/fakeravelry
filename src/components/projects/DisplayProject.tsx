@@ -18,11 +18,10 @@ const DisplayProject = function() {
     const navigate = useNavigate();
     const { projectid } = state;
     const user = useSelector((state: RootState) => state.userinfo.username);
-    const projectData:
-        | ProjectFromStore
-        | undefined = useSelector((state: RootState) =>
+    const projectData: ProjectFromStore | undefined = useSelector(
+        (state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        );
+    );
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
     const [displayMadefor, setDisplayMadeFor] = useState<boolean>(true);
@@ -34,9 +33,8 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
-        false
-    );
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
+        useState<boolean>(false);
 
     const editProject = function(event: React.MouseEvent) {
         const cleanProjectName = projectData!.projectname
@@ -44,7 +42,8 @@ const DisplayProject = function() {
             .trim()
             .replace(/ /g, "-");
 
-        const path = "/notebook/" + user + "/" + cleanProjectName + "/editproject";
+        const path =
+            "/notebook/" + user + "/projects/" + cleanProjectName + "/editproject";
         navigate(path, {
             state: { projectid: projectData!.projectid },
         });
@@ -213,3 +212,5 @@ const DisplayProject = function() {
 };
 
 export default DisplayProject;
+
+// need to work on displaying someone else's projects. maybe store should be currentuser{userinfo, projects} and then any time a user checks other user, fetches info projectinfo from that user. or leave store as is, and add new slice for each viewed user.

@@ -37,15 +37,15 @@ const NewProject = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        const patternUsed: string = (event.currentTarget.elements.namedItem(
-            "patternused"
-        ) as HTMLInputElement).value;
+        const patternUsed: string = (
+            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
+        ).value;
         const cleanProjectName = projectName
             .toLowerCase()
             .trim()
             .replace(/ /g, "-");
         const uniqueProjectSlug = await checkUniqueProjectName(cleanProjectName);
-        if (uniqueProjectSlug !== "error") {
+        if (uniqueProjectSlug !== false) {
             const newpath = getPathWithUsername(uniqueProjectSlug);
             await addProjectToNotebook(
                 projectID,
