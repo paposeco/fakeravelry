@@ -14,7 +14,7 @@ const Notebook = function() {
     const projectData: ProjectFromStore[] | undefined = useSelector(
         (state: RootState) => state.projects
     );
-
+    //const location = useLocation();
     const [username, setUsername] = useState<string>("");
     const [displayProjects, setDisplayProjects] = useState<boolean>(false);
 
@@ -28,6 +28,7 @@ const Notebook = function() {
             setDisplayProjects(true);
         }
     }, [projectData]);
+
     return (
         <div>
             <div>

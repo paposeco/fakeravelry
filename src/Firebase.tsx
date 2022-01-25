@@ -138,6 +138,8 @@ const authStateObserver = function() {
      *     fetchUserInfo(user);
      * } */
 };
+
+// projects
 const fetchUserInfo = async function() {
     const user = auth.currentUser;
     if (user !== null) {
@@ -149,6 +151,21 @@ const fetchUserInfo = async function() {
         } catch (error) {
             console.log(error);
             return false;
+        }
+    }
+};
+
+const fetchOtherUserInfo = async function(username: string) {
+    const loggedInUser = auth.currentUser;
+    if (loggedInUser !== null) {
+        const userid = await getUserID(username);
+        if (userid === false) {
+            return "user not found"; //404
+        } else if (userid !== undefined) {
+            const querySnapshot = await getDocs(
+                collection(database, "users", userid!, "projects")
+            );
+            return querySnapshot;
         }
     }
 };
@@ -178,13 +195,31 @@ const signOutUser = async function() {
 };
 
 // no spaces
+const getUserID = async function(username: string) {
+    const docRef = doc(database, "usernames", "usernamescollection");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        const usernames = docSnap.data();
+        const usernamesarray: { userid: string; username: string }[] =
+            usernames.all;
+        const userOnArray = usernamesarray.find(
+            (element) => element.username === username
+        );
+        if (userOnArray !== undefined) {
+            return userOnArray.userid;
+        } else {
+            return false;
+        }
+    }
+};
+
 const checkUniqueUsername = async function(desiredusername: string) {
     const docRef = doc(database, "usernames", "usernamescollection");
     const docSnap = await getDoc(docRef);
     const lowercaseusername = desiredusername.toLowerCase();
     if (docSnap.exists()) {
         const usernames = docSnap.data();
-        const usernamesarray: { userird: string; username: string }[] =
+        const usernamesarray: { userid: string; username: string }[] =
             usernames.all;
         let usernameisunique: boolean = true;
         for (let i = 0; i < usernamesarray.length; i++) {
@@ -266,6 +301,24 @@ const getInfo = async function(infotofetch: string) {
                 return userinfo.name;
             } else if (infotofetch === "both") {
                 return [userinfo.username, userinfo.name, user.uid];
+            }
+        }
+    }
+};
+
+// name and username
+const getOtherUserInfo = async function(username: string) {
+    const loggedInUser = auth.currentUser;
+    if (loggedInUser !== null) {
+        const userid = await getUserID(username);
+        if (userid === false) {
+            return "user not found"; //404
+        } else if (userid !== undefined) {
+            const docRef = doc(database, "users", userid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const userinfo = docSnap.data();
+                return [userinfo.username, userinfo.name, userid];
             }
         }
     }
@@ -443,10 +496,12 @@ export {
     signIn,
     signOutUser,
     getInfo,
+    getOtherUserInfo,
     addProjectToNotebook,
     updateProjectInDB,
     uploadPhoto,
     fetchUserInfo,
+    fetchOtherUserInfo,
     linkToRaveler,
     checkUniqueProjectName,
 };

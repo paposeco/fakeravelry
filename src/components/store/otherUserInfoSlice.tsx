@@ -1,22 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../store/store";
 
-export interface UserInfo {
+interface OtherUserInfo {
     username: string;
     name: string;
     userID: string;
 }
 
-const initialState: UserInfo = {
+const initialState: OtherUserInfo = {
     username: "",
     name: "",
     userID: "",
 };
-const userInfoSlice = createSlice({
-    name: "userinfo",
+const otherUserInfoSlice = createSlice({
+    name: "otheruserinfo",
     initialState,
     reducers: {
-        userAdded(state, action) {
+        otherUserAdded(state, action) {
             const { username, name, userID } = action.payload;
             state.username = username;
             state.name = name;
@@ -25,5 +24,5 @@ const userInfoSlice = createSlice({
     },
 });
 
-export const { userAdded } = userInfoSlice.actions;
-export default userInfoSlice.reducer;
+export const { otherUserAdded } = otherUserInfoSlice.actions;
+export default otherUserInfoSlice.reducer;
