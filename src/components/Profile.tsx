@@ -6,6 +6,7 @@ import { RootState } from "./store/store";
 import { otherUserProjectFetchedFromDB } from "./projects/projectsSliceOtherUser";
 import { otherUserAdded } from "./store/otherUserInfoSlice";
 import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
+import type { UserInfo } from "./store/userInfoSlice";
 
 const Profile = function() {
     const navigate = useNavigate();
@@ -21,14 +22,12 @@ const Profile = function() {
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>(true);
     const [userOnPath, setUserOnPath] = useState<string>("");
     const [userType, setUserType] = useState<string>("user");
-    const [
-        otherUserProjectsFetched,
-        setOtherUserProjectsFetched,
-    ] = useState<boolean>(false);
-    const [
-        otherUserDetailsFetched,
-        setOtherUserDetailsFetched,
-    ] = useState<boolean>(false);
+    const [otherUserProjectsFetched, setOtherUserProjectsFetched] =
+        useState<boolean>(false);
+    const [otherUserDetailsFetched, setOtherUserDetailsFetched] =
+        useState<boolean>(false);
+
+    const [infoready, setinfoready] = useState<boolean>(false);
 
     useEffect(() => {
         setUsername(user.username);
@@ -41,14 +40,19 @@ const Profile = function() {
             setUserMatchesPath(false);
             setUserOnPath(usernameOnPath);
             setUserType("otheruser");
+        } else {
+            setinfotodisplay(user);
+            setinfoready(true);
         }
     }, [username]);
 
     useEffect(() => {
-        if (!otherUserDetailsFetched) {
+        if (!otherUserDetailsFetched && userOnPath !== "") {
             fetchUserOtherDetails();
         }
     }, [userOnPath]);
+
+    const [infotodisplay, setinfotodisplay] = useState<UserInfo>();
 
     const fetchUserOtherDetails = async function() {
         const otheruserdetails = await getOtherUserInfo(userOnPath);
@@ -56,18 +60,20 @@ const Profile = function() {
             otheruserdetails !== undefined &&
             otheruserdetails !== "user not found"
         ) {
-            const adddetailstostore = new Promise((Resolve, reject) => {
-                dispatch(
-                    otherUserAdded({
-                        username: otheruserdetails[0],
-                        name: otheruserdetails[1],
-                        userID: otheruserdetails[2],
-                    })
-                );
+            dispatch(
+                otherUserAdded({
+                    username: otheruserdetails[0],
+                    name: otheruserdetails[1],
+                    userID: otheruserdetails[2],
+                })
+            );
+            setOtherUserDetailsFetched(true);
+            setinfotodisplay({
+                username: otheruserdetails[0],
+                name: otheruserdetails[1],
+                userID: otheruserdetails[2],
             });
-            adddetailstostore
-                .then((resolve) => setOtherUserDetailsFetched(true))
-                .catch((reject) => console.log("error"));
+            setinfoready(true);
         }
     };
 
@@ -83,8 +89,8 @@ const Profile = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts = project.data().projectinfo.gauge
-                            .numberStsOrRepeats);
+                        : (gaugeNumberSts =
+                            project.data().projectinfo.gauge.numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -130,7 +136,6 @@ const Profile = function() {
     };
     useEffect(() => {
         if (!userMatchesPath && !otherUserProjectsFetched) {
-            // fetch projects from db for user on path and place them on store
             fetchProjectsOtherUser();
         }
     }, [userMatchesPath]);
@@ -139,10 +144,14 @@ const Profile = function() {
         <div>
             <h2>Profile</h2>
             <p>Hello username</p>
-            <DisplayProfileDetails usertype={userType} />
+            {infotodisplay !== undefined && (
+                <DisplayProfileDetails userinfo={infotodisplay} />
+            )}
             <button onClick={signOut}>Sign Out</button>
         </div>
     );
 };
 
 export default Profile;
+
+// need to create more info per profile and buttons to display user's notebook (for accessing other people's notebooks)
