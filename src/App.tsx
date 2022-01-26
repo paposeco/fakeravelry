@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Community from "./components/Community.js";
 import Login from "./components/Login";
@@ -7,7 +7,7 @@ import Notebook from "./components/Notebook";
 import Profile from "./components/Profile";
 import Welcome from "./components/Welcome";
 import Signup from "./components/Signup";
-import { auth, getInfo, fetchUserInfo } from "./Firebase";
+import { auth, getInfo, fetchUserInfo, signOutUser } from "./Firebase";
 import NewProject from "./components/NewProject";
 import EditProject from "./components/projects/EditProject";
 import DisplayProject from "./components/projects/DisplayProject";
@@ -17,8 +17,7 @@ import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
-//redux
-// sign out button across all pages
+
 const App = function() {
     const [userSignedIn, setUserSignedIn] = useState<boolean>(false);
     const [username, setUsername] = useState<string>("");
@@ -37,8 +36,8 @@ const App = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts =
-                            project.data().projectinfo.gauge.numberStsOrRepeats);
+                        : (gaugeNumberSts = project.data().projectinfo.gauge
+                            .numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -116,22 +115,26 @@ const App = function() {
         }
     }, [userID]);
 
+    const signOut = async function() {
+        await signOutUser();
+        setUserSignedIn(false);
+        window.location.reload();
+    };
+
     if (!userSignedIn) {
         return (
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/people/*" element={<Login />} />
-                    <Route path="/community" element={<Login />} />
-                    <Route path="/messages" element={<Login />} />
-                    <Route path="/notebook/*" element={<Login />} />
-                </Routes>
-            </BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/people/*" element={<Login />} />
+                <Route path="/community" element={<Login />} />
+                <Route path="/messages" element={<Login />} />
+                <Route path="/notebook/*" element={<Login />} />
+            </Routes>
         );
     } else {
         return (
-            <BrowserRouter>
+            <div>
                 <div>
                     <nav>
                         <ul>
@@ -147,10 +150,12 @@ const App = function() {
                             <li>
                                 <Link to={peoplepath}>Profile</Link>
                             </li>
+                            <li>
+                                <button onClick={signOut}>Sign Out</button>
+                            </li>
                         </ul>
                     </nav>
                 </div>
-                {/* /* should probably be /user/wtv */}
                 <Routes>
                     <Route path="/" element={<Welcome />} />
                     <Route path="/people/:id" element={<Profile />} />
@@ -167,7 +172,7 @@ const App = function() {
                         element={<DisplayProject />}
                     />
                 </Routes>
-            </BrowserRouter>
+            </div>
         );
     }
 };

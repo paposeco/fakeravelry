@@ -1,7 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { signOutUser, fetchOtherUserInfo, getOtherUserInfo } from "../Firebase";
+import { useLocation } from "react-router-dom";
+import { fetchOtherUserInfo, getOtherUserInfo } from "../Firebase";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { RootState } from "./store/store";
 import { otherUserProjectFetchedFromDB } from "./projects/projectsSliceOtherUser";
 import { otherUserAdded } from "./store/otherUserInfoSlice";
@@ -9,29 +10,28 @@ import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
 import type { UserInfo } from "./store/userInfoSlice";
 
 const Profile = function() {
-    const navigate = useNavigate();
-    const signOut = async function() {
-        await signOutUser();
-        navigate("/");
-    };
     const dispatch = useDispatch();
     const location = useLocation();
     const user = useSelector((state: RootState) => state.userinfo);
     const [username, setUsername] = useState<string>("");
-    const [userSelectedName, setUserSelectedName] = useState<string>("");
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>(true);
     const [userOnPath, setUserOnPath] = useState<string>("");
     const [userType, setUserType] = useState<string>("user");
-    const [otherUserProjectsFetched, setOtherUserProjectsFetched] =
-        useState<boolean>(false);
-    const [otherUserDetailsFetched, setOtherUserDetailsFetched] =
-        useState<boolean>(false);
+    const [
+        otherUserProjectsFetched,
+        setOtherUserProjectsFetched,
+    ] = useState<boolean>(false);
+    const [
+        otherUserDetailsFetched,
+        setOtherUserDetailsFetched,
+    ] = useState<boolean>(false);
 
     const [infoready, setinfoready] = useState<boolean>(false);
+    const [infotodisplay, setinfotodisplay] = useState<UserInfo>();
+    const [notebookpath, setnotebookpath] = useState<string>("");
 
     useEffect(() => {
         setUsername(user.username);
-        setUserSelectedName(user.name);
     }, [user]);
 
     useEffect(() => {
@@ -40,19 +40,19 @@ const Profile = function() {
             setUserMatchesPath(false);
             setUserOnPath(usernameOnPath);
             setUserType("otheruser");
+            setnotebookpath("/notebook/" + usernameOnPath);
         } else {
             setinfotodisplay(user);
             setinfoready(true);
+            setnotebookpath("/notebook/" + username);
         }
-    }, [username]);
+    });
 
     useEffect(() => {
         if (!otherUserDetailsFetched && userOnPath !== "") {
             fetchUserOtherDetails();
         }
     }, [userOnPath]);
-
-    const [infotodisplay, setinfotodisplay] = useState<UserInfo>();
 
     const fetchUserOtherDetails = async function() {
         const otheruserdetails = await getOtherUserInfo(userOnPath);
@@ -89,8 +89,8 @@ const Profile = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts =
-                            project.data().projectinfo.gauge.numberStsOrRepeats);
+                        : (gaugeNumberSts = project.data().projectinfo.gauge
+                            .numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -142,12 +142,24 @@ const Profile = function() {
 
     return (
         <div>
-            <h2>Profile</h2>
-            <p>Hello username</p>
-            {infotodisplay !== undefined && (
-                <DisplayProfileDetails userinfo={infotodisplay} />
-            )}
-            <button onClick={signOut}>Sign Out</button>
+            <h2>{userMatchesPath ? username : userOnPath}</h2>
+            <div id="profile">
+                <div id="profileleft">
+                    <div>photos</div>
+                    <div>if someone else's profile: add friend, message</div>
+                    <div>groups</div>
+                </div>
+                {infotodisplay !== undefined && (
+                    <DisplayProfileDetails userinfo={infotodisplay} />
+                )}
+                <div id="profileright">
+                    <div>
+                        <Link to={notebookpath}>Projects</Link>
+                        queued, library, posts
+                    </div>
+                    <div>stash, faves, friends, comments</div>
+                </div>
+            </div>
         </div>
     );
 };

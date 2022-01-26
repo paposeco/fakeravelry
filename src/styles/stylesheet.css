@@ -8,6 +8,24 @@ body{
     gap: 10px;
 }
 
+#profile{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#profileleft{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#profileright{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
 #project{
     display: flex;
     flex-direction: row;
@@ -42,4 +60,15 @@ input[name="happiness"] {
 
 input[name="happiness"]:checked + label{
     color: orange;
+}
+
+nav ul{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding-left: 10px;
+}
+
+nav ul li{
+    list-style: none;
 }
