@@ -10,18 +10,38 @@ import AboutPattern from "./AboutPattern";
 
 // fetches project com store and displays it with help from modules: displayprojectimage for project image and projectitem that displays each block of information. projectitem gets help from DisplayYarn for rendering the yarn elements
 
-// need to think about what happens if a user writes de name of a project on url. maybe each project needs to check if user already has a project with the same name, and have an alias. but i think that that's an edge case, and that even in ravelry you would have to write the url with the alias. but i think ill create the alias just the same.
-
-// this page would have to be loaded from dispatch from edit (that carries projectid) or if only the projectnamealias is provided, need to search db for the project. might create a separate collection with projectalias/project id for ease of access.
+// i will assume that the user doesn't access a single project from the url, but instead through the notebook
 const DisplayProject = function() {
     const { state } = useLocation();
     const navigate = useNavigate();
-    const { projectid } = state;
+    const { projectid, useronpath } = state;
     const user = useSelector((state: RootState) => state.userinfo.username);
-    const projectData: ProjectFromStore | undefined = useSelector(
-        (state: RootState) =>
-            state.projects.find((element) => element.projectid === projectid)
+    const [usermatchespath, setusermatchespath] = useState<boolean>(true);
+
+    const selectProject = function(currentstate: RootState) {
+        if (useronpath === user) {
+            return currentstate.projects.find(
+                (element) => element.projectid === projectid
+            );
+        } else {
+            return currentstate.otheruserprojects.find(
+                (element) => element.projectid === projectid
+            );
+        }
+    };
+
+    let projectdatafromstore = useSelector((state: RootState) =>
+        selectProject(state)
     );
+
+    useEffect(() => {
+        if (user === useronpath) {
+            setusermatchespath(true);
+        } else {
+            setusermatchespath(false);
+        }
+    }, [user]);
+
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
     const [displayMadefor, setDisplayMadeFor] = useState<boolean>(true);
@@ -33,11 +53,12 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
-        useState<boolean>(false);
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
+        false
+    );
 
     const editProject = function(event: React.MouseEvent) {
-        const cleanProjectName = projectData!.projectname
+        const cleanProjectName = projectdatafromstore!.projectname
             .toLowerCase()
             .trim()
             .replace(/ /g, "-");
@@ -45,115 +66,116 @@ const DisplayProject = function() {
         const path =
             "/notebook/" + user + "/projects/" + cleanProjectName + "/editproject";
         navigate(path, {
-            state: { projectid: projectData!.projectid },
+            state: { projectid: projectdatafromstore!.projectid },
         });
     };
 
     useEffect(() => {
-        if (projectData !== undefined) {
-            if (projectData.pattern.name === "") {
+        if (projectdatafromstore !== undefined) {
+            if (projectdatafromstore.pattern.name === "") {
                 setDisplayPattern(false);
             }
-            if (projectData.projectinfo.patterncategory === "") {
+            if (projectdatafromstore.projectinfo.patterncategory === "") {
                 setDisplayCategory(false);
             }
-            if (projectData.projectinfo.madefor === "") {
+            if (projectdatafromstore.projectinfo.madefor === "") {
                 setDisplayMadeFor(false);
             }
-            if (projectData.projectinfo.finishby === "") {
+            if (projectdatafromstore.projectinfo.finishby === "") {
                 setDisplayFinishby(false);
             }
-            if (projectData.projectinfo.sizemade === "") {
+            if (projectdatafromstore.projectinfo.sizemade === "") {
                 setDisplaySize(false);
             }
-            if (projectData.projectinfo.selectedtags === "") {
+            if (projectdatafromstore.projectinfo.selectedtags === "") {
                 setDisplayTags(false);
             }
 
-            if (projectData.projectinfo.hooks.length === 0) {
+            if (projectdatafromstore.projectinfo.hooks.length === 0) {
                 setDisplayHooks(false);
             }
-            if (projectData.projectinfo.needles.length === 0) {
+            if (projectdatafromstore.projectinfo.needles.length === 0) {
                 setDisplayNeedles(false);
             }
             if (
-                projectData.projectinfo.gauge.numberStsOrRepeats === undefined &&
-                projectData.projectinfo.gauge.numberRows === undefined &&
-                projectData.projectinfo.gauge.gaugesize === ""
+                projectdatafromstore.projectinfo.gauge.numberStsOrRepeats ===
+                undefined &&
+                projectdatafromstore.projectinfo.gauge.numberRows === undefined &&
+                projectdatafromstore.projectinfo.gauge.gaugesize === ""
             ) {
                 setDisplayGauge(false);
             }
-            if (projectData.projectinfo.yarn.length === 0) {
+            if (projectdatafromstore.projectinfo.yarn.length === 0) {
                 setDisplayYarn(false);
             }
-            if (projectData.projectinfo.projectnotes === "") {
+            if (projectdatafromstore.projectinfo.projectnotes === "") {
                 setDisplayNotes(false);
             }
             if (
-                projectData.projectinfo.linktoraveler !== "can't find user" &&
-                projectData.projectinfo.linktoraveler !== "error in db"
+                projectdatafromstore.projectinfo.linktoraveler !== "can't find user" &&
+                projectdatafromstore.projectinfo.linktoraveler !== "error in db"
             ) {
                 setDisplayLinkToRaveler(true);
             }
         }
-    }, [projectData]);
+    }, [projectdatafromstore]);
 
     return (
         <div id="project">
             <div id="projectphoto">
-                <DisplayProjectImage imageurl={projectData!.imageUrl} />
+                <DisplayProjectImage imageurl={projectdatafromstore!.imageUrl} />
             </div>
             <div id="projectdescription">
-                <h2>{projectData!.projectName}</h2>
+                <h2>{projectdatafromstore!.projectname}</h2>
 
                 <div id="projectinfo">
                     <h3>Project info</h3>
                     {displayPattern && (
                         <ProjectItem
                             itemdescription="Pattern"
-                            itemvalue={projectData!.pattern.name}
+                            itemvalue={projectdatafromstore!.pattern.name}
                         />
                     )}
                     <ProjectItem
                         itemdescription="Craft"
-                        itemvalue={projectData!.crafttype}
+                        itemvalue={projectdatafromstore!.crafttype}
                     />
                     {displayCategory && (
                         <ProjectItem
                             itemdescription="Category"
-                            itemvalue={projectData!.projectinfo.patterncategory}
+                            itemvalue={projectdatafromstore!.projectinfo.patterncategory}
                         />
                     )}
                     {displayMadefor && !displayLinkToRaveler && (
                         <ProjectItem
                             itemdescription="Made for"
-                            itemvalue={projectData!.projectinfo.madefor}
+                            itemvalue={projectdatafromstore!.projectinfo.madefor}
                         />
                     )}
                     {/* need to beautify link */}
                     {displayMadefor && displayLinkToRaveler && (
                         <ProjectItem
                             itemdescription="Made for"
-                            itemvalue={projectData!.projectinfo.linktoraveler}
+                            itemvalue={projectdatafromstore!.projectinfo.linktoraveler}
                         />
                     )}
 
                     {displayFinishby && (
                         <ProjectItem
                             itemdescription="Finish by"
-                            itemvalue={projectData!.projectinfo.finishby}
+                            itemvalue={projectdatafromstore!.projectinfo.finishby}
                         />
                     )}
                     {displaySize && (
                         <ProjectItem
                             itemdescription="Size"
-                            itemvalue={projectData!.projectinfo.sizemade}
+                            itemvalue={projectdatafromstore!.projectinfo.sizemade}
                         />
                     )}
                     {displayTags && (
                         <ProjectItem
                             itemdescription="Tags"
-                            itemvalue={projectData!.projectinfo.selectedtags}
+                            itemvalue={projectdatafromstore!.projectinfo.selectedtags}
                         />
                     )}
                 </div>
@@ -162,25 +184,25 @@ const DisplayProject = function() {
                     {displayNeedles && (
                         <ProjectItem
                             itemdescription="Needle"
-                            itemvalue={projectData!.projectinfo.needles}
+                            itemvalue={projectdatafromstore!.projectinfo.needles}
                         />
                     )}
                     {displayHooks && (
                         <ProjectItem
                             itemdescription="Hook"
-                            itemvalue={projectData!.projectinfo.hooks}
+                            itemvalue={projectdatafromstore!.projectinfo.hooks}
                         />
                     )}
                     {displayGauge && (
                         <ProjectItem
                             itemdescription="Gauge"
-                            itemvalue={projectData!.projectinfo.gauge}
+                            itemvalue={projectdatafromstore!.projectinfo.gauge}
                         />
                     )}
                     {displayYarn && (
                         <ProjectItem
                             itemdescription="Yarn"
-                            itemvalue={projectData!.projectinfo.yarn}
+                            itemvalue={projectdatafromstore!.projectinfo.yarn}
                         />
                     )}
                 </div>
@@ -189,7 +211,7 @@ const DisplayProject = function() {
                     {displayNotes && (
                         <ProjectItem
                             itemdescription="Notes"
-                            itemvalue={projectData!.projectinfo.projectnotes}
+                            itemvalue={projectdatafromstore!.projectinfo.projectnotes}
                         />
                     )}
                 </div>
@@ -197,14 +219,16 @@ const DisplayProject = function() {
             </div>
             <div id="projectsidebar">
                 <div id="projectbuttons">
-                    <button id="editproject" onClick={editProject}>
-                        edit project
-                    </button>
+                    {usermatchespath && (
+                        <button id="editproject" onClick={editProject}>
+                            edit project
+                        </button>
+                    )}
                 </div>
-                <DisplayProgress status={projectData!.projectstatus} />
+                <DisplayProgress status={projectdatafromstore!.projectstatus} />
                 <AboutPattern
-                    pattern={projectData!.pattern}
-                    patternfrom={projectData!.projectinfo.patternfrom}
+                    pattern={projectdatafromstore!.pattern}
+                    patternfrom={projectdatafromstore!.projectinfo.patternfrom}
                 />
             </div>
         </div>
@@ -212,5 +236,3 @@ const DisplayProject = function() {
 };
 
 export default DisplayProject;
-
-// need to work on displaying someone else's projects. maybe store should be currentuser{userinfo, projects} and then any time a user checks other user, fetches info projectinfo from that user. or leave store as is, and add new slice for each viewed user.

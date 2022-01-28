@@ -4,6 +4,7 @@ import DisplayProjectImage from "./DisplayProjectImage";
 import uniqid from "uniqid";
 
 const ProjectThumbnail = function(props: {
+    useronpath: string;
     projectname: string;
     projectphoto: string;
     projectslug: string;
@@ -34,7 +35,9 @@ const ProjectThumbnail = function(props: {
     }, [props.projectid]);
 
     const handleClicks = function(event: React.MouseEvent) {
-        navigate(projectpath, { state: { projectid: projectID } });
+        navigate(projectpath, {
+            state: { projectid: projectID, useronpath: props.useronpath },
+        });
     };
     // edit and display should look for the project in store for a certain projectslug
     return (

@@ -1,7 +1,7 @@
 //show project collection from (db -> store redux)
 import { RootState } from "./store/store";
 import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ProjectThumbnail from "./projects/ProjectThumbnail";
 import type { ProjectFromStore } from "./common/types";
@@ -20,23 +20,18 @@ const Notebook = function() {
     const otherUserProjectData: ProjectFromStore[] | undefined = useSelector(
         (state: RootState) => state.otheruserprojects
     );
-    const [username, setUsername] = useState<string>("");
-    const [displayProjects, setDisplayProjects] = useState<boolean>(false);
     const [projectsToDisplay, setprojectsToDisplay] = useState<
         ProjectFromStore[]
     >([]);
-    const [projectsready, setprojectsready] = useState<boolean>(false);
 
-    // check if path matches signed in user
-    // if it doesn't, display projects, but don't display new project
-
-    const [usermatchespath, setusermatchespath] = useState<boolean>(true);
     const [useronpath, setuseronpath] = useState<string>("");
+    const [usermatchespath, setusermatchespath] = useState<boolean>(true);
 
     const [
         otherUserProjectsFetched,
         setOtherUserProjectsFetched,
     ] = useState<boolean>(false);
+
     const fetchProjectsOtherUser = async function(usernameonpath: string) {
         const otheruserprojects = await fetchOtherUserInfo(usernameonpath);
         if (
@@ -87,22 +82,6 @@ const Notebook = function() {
                             completeddate: project.data().projectstatus.completeddate,
                         })
                     );
-                    setprojectsToDisplay((prevState) => {
-                        let updateState = Array.from(prevState);
-                        const currentprojectfromstore: ProjectFromStore = {
-                            projectid: project.id,
-                            projectslug: project.data().projectslug,
-                            imageUrl: project.data().imageUrl,
-                            crafttype: project.data().crafttype,
-                            projectname: project.data().projectname,
-                            patternused: project.data().patternused,
-                            pattern: project.data().pattern,
-                            projectinfo: project.data().projectinfo,
-                            projectstatus: project.data().projectstatus,
-                        };
-                        updateState.push(currentprojectfromstore);
-                        return updateState;
-                    });
                 });
             });
             addallprojects
@@ -112,150 +91,78 @@ const Notebook = function() {
     };
 
     useEffect(() => {
-        setprojectsToDisplay((prevState) => {
-            let updateState = Array.from(prevState);
-            projectData!.forEach((project) => {
-                const currentprojectid = project.projectid;
-                const checkifexists = updateState.find(
-                    (element: ProjectFromStore) => element.projectid === currentprojectid
-                );
-                if (checkifexists === undefined && project.projectid !== "") {
-                    updateState = [...updateState, project];
-                }
+        const usernameonpath = location.pathname.substring(10);
+        if (useronpath !== usernameonpath) {
+            setprojectsToDisplay([]);
+            if (usernameonpath === user) {
+                setusermatchespath(true);
+            }
+        }
+        setuseronpath(usernameonpath);
+    }, [location]);
+
+    useEffect(() => {
+        const usernameonpath = location.pathname.substring(10);
+        if (usernameonpath === user) {
+            setprojectsToDisplay((prevState) => {
+                let updateState = Array.from(prevState);
+                projectData!.forEach((project) => {
+                    const currentprojectid = project.projectid;
+                    const checkifexists = updateState.find(
+                        (element: ProjectFromStore) =>
+                            element.projectid === currentprojectid
+                    );
+                    if (checkifexists === undefined && project.projectid !== "") {
+                        updateState = [...updateState, project];
+                    }
+                });
+                return updateState;
             });
-            return updateState;
-        });
-    }, [projectData]);
+        }
+    }, [projectData, useronpath]);
 
-    // need to consider the other user now
+    useEffect(() => {
+        const usernameonpath = location.pathname.substring(10);
+        if (usernameonpath !== user) {
+            if (
+                otherUserProjectData[0].projectid === "" &&
+                !otherUserProjectsFetched
+            ) {
+                fetchProjectsOtherUser(usernameonpath);
+            } else {
+                setprojectsToDisplay((prevState) => {
+                    let updateState = Array.from(prevState);
+                    otherUserProjectData!.forEach((project) => {
+                        const currentprojectid = project.projectid;
+                        const checkifexists = updateState.find(
+                            (element: ProjectFromStore) =>
+                                element.projectid === currentprojectid
+                        );
+                        if (checkifexists === undefined && project.projectid !== "") {
+                            updateState = [...updateState, project];
+                        }
+                    });
+                    return updateState;
+                });
+            }
+            setusermatchespath(false);
+        }
+    }, [otherUserProjectData, useronpath]);
 
-    /* const [projectdataready, setprojectdataready] = useState<boolean>(false);
-                              * const [projectdatalength, setprojectdatalength] = useState<number>(0);
-                              
-                              * const prevdatalengthRef = useRef<number>();
-                              * useEffect(() => {
-                              *     prevdatalengthRef.current = projectdatalength;
-                              * });
-                              
-                              * const prevDataLength = prevdatalengthRef.current;
-                              
-                              * useEffect(() => {
-                              *     if (projectData !== undefined) {
-                              *         console.log("updated project data length");
-                              *         setprojectdatalength(projectData.length);
-                              *     }
-                              * }, [projectData]);
-                              
-                              * useEffect(() => {
-                              *     if (prevDataLength === projectdatalength) {
-                              *         console.log("Set");
-                              *         console.log(projectData);
-                              *         setprojectdataready(true);
-                              *     }
-                              * }); */
-    /*
-                                                         const [projectdatalength, setprojectdatalength] = useState<number>(0);
-                                                         const [projectdataready, setprojectdataready] = useState<boolean>(false);
-                                                         useEffect(() => {
-                                                             console.log("checks if project data is ready");
-                                                             if (projectdataready) {
-                                                                 const usernameonpath = location.pathname.substring(10);
-                                                                 if (usernameonpath !== user) {
-                                                                     setusermatchespath(false);
-                                                                     setuseronpath(usernameonpath);
-                                                                     if (
-                                                                         otherUserProjectData[0].projectid === "" &&
-                                                                         !otherUserProjectsFetched
-                                                                     ) {
-                                                                         fetchProjectsOtherUser(usernameonpath); // places projects on store
-                                                                     } else {
-                                                                         setprojectsToDisplay((prevState) => {
-                                                                             let updateState = Array.from(prevState);
-                                                                             otherUserProjectData.forEach((project) =>
-                                                                                 updateState.push(project)
-                                                                             );
-                                                                             return updateState;
-                                                                         });
-                                                                     }
-                                                                 } else {
-                                                                     setprojectsToDisplay((prevState) => {
-                                                                         let updateState = Array.from(prevState);
-                                                                         projectData!.forEach((project) => updateState.push(project));
-                                                                         return updateState;
-                                                                     });
-                                                                     setprojectsready(true);
-                                                                 }
-                                                             }
-                                                         }, [projectdataready]);
-                                                    
-                                                        /* useEffect(() => {
-                                                      *     if (projectData !== undefined) {
-                                                      *         console.log("updated project data length");
-                                                      *         setprojectdatalength(projectdatalength + projectData.length);
-                                                      *     }
-                                                      * }, [projectData]);
-                                                      
-                                                      * const prevdatalengthRef = useRef<number>();
-                                                      * useEffect(() => {
-                                                      *     console.log("updated previous value");
-                                                      *     prevdatalengthRef.current = projectdatalength;
-                                                      * });
-                                                      * const prevDataLength = prevdatalengthRef.current;
-                                                      
-                                                      * useEffect(() => {
-                                                      *     if (projectData !== undefined) {
-                                                      *         console.log("check array length");
-                                                      *         if (prevDataLength === projectData.length) {
-                                                      *             console.log("projects are ready");
-                                                      *             setprojectdataready(true);
-                                                      *         }
-                                                      *     }
-                                                      * }); */
+    useEffect(() => {
+        setnewprojectpath("/notebook/" + user + "/newproject");
+    }, [user]);
 
-    /* useEffect(() => {
-                                                            *     if (projectsready) {
-                                                            *         const currentnameonpath = location.pathname.substring(10);
-                                                            *         if (useronpath !== "" && useronpath !== currentnameonpath) {
-                                                            *             setprojectsready(false);
-                                                            *             setDisplayProjects(false);
-                                                            *             setprojectsToDisplay([]);
-                                                            *             setprojectdataready(false);
-                                                            *         }
-                                                            *     }
-                                                            * }, [useronpath]);
-                                                            
-                                                            * useEffect(() => {
-                                                            *     const usernameonpath = location.pathname.substring(10);
-                                                            *     setuseronpath(usernameonpath);
-                                                            *     if (user === usernameonpath) {
-                                                            *         setusermatchespath(true);
-                                                            *     } else {
-                                                            *         setusermatchespath(false);
-                                                            *     }
-                                                            * });
-                                                             */
-    /* useEffect(() => {
-     *     setUsername(user);
-     *     setnewprojectpath("/notebook/" + user + "/newproject");
-     * }, [user]); */
-
-    // ou faço o fetch da db aqui ou entao nao sei. se fizer aqui, como é que a app sabe se tb tem de fazer?
-
-    /* useEffect(() => {
-     *     if (projectsready) {
-     *         setDisplayProjects(true);
-     *     }
-     * }, [projectsready]); */
-
-    return (
-        <div>
+    if (usermatchespath) {
+        return (
             <div>
-                <Link to={newprojectpath}>Add new project</Link>
-            </div>
-            <div>
+                <div>
+                    <Link to={newprojectpath}>Add new project</Link>
+                </div>
                 {projectsToDisplay.map((project: ProjectFromStore) => (
                     <div key={uniqid()}>
                         <ProjectThumbnail
+                            useronpath={useronpath}
                             projectname={project.projectname}
                             projectphoto={project.imageUrl}
                             projectslug={project.projectslug}
@@ -267,10 +174,27 @@ const Notebook = function() {
                     </div>
                 ))}
             </div>
-        </div>
-    );
+        );
+    } else {
+        return (
+            <div>
+                {projectsToDisplay.map((project: ProjectFromStore) => (
+                    <div key={uniqid()}>
+                        <ProjectThumbnail
+                            useronpath={useronpath}
+                            projectname={project.projectname}
+                            projectphoto={project.imageUrl}
+                            projectslug={project.projectslug}
+                            projectstatus={project.projectstatus.progressstatus}
+                            projectprogress={project.projectstatus.progressrange}
+                            projectid={project.projectid}
+                            username={user}
+                        />
+                    </div>
+                ))}
+            </div>
+        );
+    }
 };
 
 export default Notebook;
-
-// something funky is going on
