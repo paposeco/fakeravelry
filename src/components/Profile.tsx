@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchOtherUserInfo, getOtherUserInfo } from "../Firebase";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,11 +7,12 @@ import { RootState } from "./store/store";
 import { otherUserProjectFetchedFromDB } from "./projects/projectsSliceOtherUser";
 import { otherUserAdded } from "./store/otherUserInfoSlice";
 import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
-import type { UserInfo } from "./store/userInfoSlice";
+import type { UserInfo } from "./common/types";
 
 const Profile = function() {
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.userinfo);
     const [username, setUsername] = useState<string>("");
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>(true);
@@ -140,9 +141,13 @@ const Profile = function() {
         }
     }, [userMatchesPath]);
 
+    const editProfile = function() { };
     return (
         <div>
             <h2>{userMatchesPath ? username : userOnPath}</h2>
+
+            {userMatchesPath && <button onClick={editProfile}>edit profile</button>}
+
             <div id="profile">
                 <div id="profileleft">
                     <div>photos</div>

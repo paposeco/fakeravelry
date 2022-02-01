@@ -53,6 +53,8 @@ const initFirebaseAuth = function() {
     onAuthStateChanged(getAuth(), authStateObserver);
 };
 
+const authStateObserver = function() { };
+
 const uploadPhoto = async function(projectid: string, file: File) {
     try {
         if (auth.currentUser !== null) {
@@ -74,6 +76,22 @@ const uploadPhoto = async function(projectid: string, file: File) {
                 imageUrl: publicImageUrl,
                 storageUri: fileSnapshot.metadata.fullPath,
             });
+            return publicImageUrl;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+};
+
+const uploadProfilePhoto = async function(file: File) {
+    try {
+        if (auth.currentUser !== null) {
+            //upload file to storage bucket
+            const filePath = `${auth.currentUser.uid}/${file.name}`;
+            const newImageRef = ref(getStorage(), filePath);
+            const fileSnapshot = await uploadBytesResumable(newImageRef, file);
+            const publicImageUrl = await getDownloadURL(newImageRef);
             return publicImageUrl;
         }
     } catch (error) {
@@ -132,11 +150,38 @@ const startEmptyProfile = async function(
     }
 };
 
-const authStateObserver = function() {
-    /* const user = auth.currentUser;
-     * if (user !== null) {
-     *     fetchUserInfo(user);
-     * } */
+const addInfoToProfile = async function(
+    imageurl: string,
+    name: string,
+    personalsite: string,
+    selectedcountry: string,
+    yearsknitting: string,
+    yearscrocheting: string,
+    petskids: string,
+    favoritecolors: string,
+    favecurseword: string,
+    aboutme: string
+) {
+    try {
+        const user = auth.currentUser;
+        if (user !== null) {
+            const userRef = doc(database, "users", user.uid);
+            await updateDoc(userRef, {
+                imageurl: imageurl,
+                name: name,
+                personalsite: personalsite,
+                selectedcountry: selectedcountry,
+                yearsknitting: yearsknitting,
+                yearscrocheting: yearscrocheting,
+                petskids: petskids,
+                favoritecolors: favoritecolors,
+                favecurseword: favecurseword,
+                aboutme: aboutme,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 // projects
@@ -301,6 +346,9 @@ const getInfo = async function(infotofetch: string) {
                 return userinfo.name;
             } else if (infotofetch === "both") {
                 return [userinfo.username, userinfo.name, user.uid];
+            } else {
+                //return email
+                return userinfo.email;
             }
         }
     }
@@ -500,10 +548,12 @@ export {
     addProjectToNotebook,
     updateProjectInDB,
     uploadPhoto,
+    uploadProfilePhoto,
     fetchUserInfo,
     fetchOtherUserInfo,
     linkToRaveler,
     checkUniqueProjectName,
+    addInfoToProfile,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

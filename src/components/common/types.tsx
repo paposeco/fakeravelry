@@ -108,12 +108,34 @@ export interface ProjectFromStore {
     projectstatus: Status;
 }
 
-const instanceOfNeedle = function(object: any): object is Needles {
-    return "selectid" in object;
-};
+export interface ProfileInformation {
+    username: string;
+    name: string;
+    userID: string;
+    email: string;
+    personalsite: string;
+    selectedcountry: string;
+    yearsknitting: string;
+    yearscrocheting: string;
+    petskids: string;
+    favoritecolors: string;
+    favecurseword: string;
+    aboutme: string;
+}
 
-const instanceOfHook = function(object: any): object is Hooks {
-    return "selectid" in object;
-};
+export interface UserInfo {
+    username: string;
+    name: string;
+    userID: string;
+}
 
-export { instanceOfNeedle, instanceOfHook };
+/*
+ * const instanceOfNeedle = function(object: any): object is Needles {
+ *     return "selectid" in object;
+ * };
+ *
+ * const instanceOfHook = function(object: any): object is Hooks {
+ *     return "selectid" in object;
+ * };
+ *
+ * export { instanceOfNeedle, instanceOfHook }; */

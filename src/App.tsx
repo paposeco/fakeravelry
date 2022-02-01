@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Messages from "./components/Messages.js";
 import Notebook from "./components/Notebook";
 import Profile from "./components/Profile";
+import EditProfile from "./components/profiledetails/EditProfile";
 import Welcome from "./components/Welcome";
 import Signup from "./components/Signup";
 import { auth, getInfo, fetchUserInfo, signOutUser } from "./Firebase";
@@ -159,6 +160,7 @@ const App = function() {
                 <Routes>
                     <Route path="/" element={<Welcome />} />
                     <Route path="/people/:id" element={<Profile />} />
+                    <Route path="/people/:id/edit" element={<EditProfile />} />
                     <Route path="/community" element={<Community />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/notebook/:id/" element={<Notebook />} />
