@@ -31,7 +31,11 @@ import {
 
 //import { User as FirebaseUser } from "firebase/auth";
 
-import type { Needles, Hooks } from "./components/common/types";
+import type {
+    Needles,
+    Hooks,
+    ProfileInformation,
+} from "./components/common/types";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA1i11bP3s4ppzKH2MYBEkdjIlt8yW-KeU",
@@ -253,6 +257,36 @@ const getUserID = async function(username: string) {
         if (userOnArray !== undefined) {
             return userOnArray.userid;
         } else {
+            return false;
+        }
+    }
+};
+
+const getUserProfileInformation = async function(userId: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        try {
+            const docRef = doc(database, "users", userId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const alldata = docSnap.data();
+                const profileinfo: ProfileInformation = {
+                    username: alldata.username,
+                    imageurl: alldata.imageurl,
+                    name: alldata.name,
+                    personalsite: alldata.personalsite,
+                    selectedcountry: alldata.selectedcountry,
+                    yearsknitting: alldata.yearsknitting,
+                    yearscrocheting: alldata.yearscrocheting,
+                    petskids: alldata.petskids,
+                    favoritecolors: alldata.favoritecolors,
+                    favecurseword: alldata.favecurseword,
+                    aboutme: alldata.aboutme,
+                };
+                return profileinfo;
+            }
+        } catch (error) {
+            console.log(error);
             return false;
         }
     }
@@ -554,6 +588,7 @@ export {
     linkToRaveler,
     checkUniqueProjectName,
     addInfoToProfile,
+    getUserProfileInformation,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

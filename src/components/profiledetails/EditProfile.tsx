@@ -2,12 +2,19 @@ import { Country } from "../projects/SelectOptions";
 import { RootState } from "../store/store";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { addInfoToProfile, getInfo, uploadProfilePhoto } from "../../Firebase";
+import { useNavigate } from "react-router-dom";
+import {
+    addInfoToProfile,
+    getInfo,
+    uploadProfilePhoto,
+    getUserProfileInformation,
+} from "../../Firebase";
 import uniqid from "uniqid";
 import DisplayProfileImage from "./DisplayProfileImage";
+import type { ProfileInformation } from "../common/types";
 
 const EditProfile = function() {
-    // fetch info from db
+    const navigate = useNavigate();
     const [selectedcountry, setselectedcountry] = useState<string>("notselected");
     const [personalsite, setpersonalsite] = useState<string>("");
     const [firstname, setfirstname] = useState<string>("");
@@ -19,6 +26,7 @@ const EditProfile = function() {
     const [aboutme, setaboutme] = useState<string>("");
     const [email, setemail] = useState<string>("");
     const [emailready, setemailready] = useState<boolean>(false);
+    const [infofetched, setinfofecthed] = useState<boolean>(false);
 
     const functionmap = new Map([
         ["personalsite", setpersonalsite],
@@ -48,6 +56,34 @@ const EditProfile = function() {
             fetchEmail();
         }
     });
+    const fetchUserProfileInformation = async function() {
+        const profileinfo:
+            | ProfileInformation
+            | false
+            | undefined = await getUserProfileInformation(user.userID);
+
+        return profileinfo;
+    };
+
+    useEffect(() => {
+        if (!infofetched) {
+            const profileinfo = fetchUserProfileInformation();
+            profileinfo.then(function(dbinfo) {
+                if (dbinfo !== false && dbinfo !== undefined) {
+                    setselectedcountry(dbinfo.selectedcountry);
+                    setpersonalsite(dbinfo.personalsite);
+                    setyearsknitting(dbinfo.yearsknitting);
+                    setyearscrocheting(dbinfo.yearscrocheting);
+                    setpetskids(dbinfo.petskids);
+                    setfavoritecolors(dbinfo.favoritecolors);
+                    setfavecurseword(dbinfo.favecurseword);
+                    setaboutme(dbinfo.aboutme);
+                    setPublicImgUrl(dbinfo.imageurl);
+                }
+                setinfofecthed(true);
+            });
+        }
+    });
     const [imageSelected, setImageSelected] = useState<FileList | null>();
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
 
@@ -64,6 +100,18 @@ const EditProfile = function() {
             const publicUrl = await uploadProfilePhoto(imageSelected![0]);
             if (publicUrl !== false && publicUrl !== undefined) {
                 setPublicImgUrl(publicUrl);
+                await addInfoToProfile(
+                    publicUrl,
+                    firstname,
+                    personalsite,
+                    selectedcountry,
+                    yearsknitting,
+                    yearscrocheting,
+                    petskids,
+                    favoritecolors,
+                    favecurseword,
+                    aboutme
+                );
             }
         }
     };
@@ -75,7 +123,6 @@ const EditProfile = function() {
     const handleSubmit = async function(
         event: React.FormEvent<HTMLFormElement>
     ) {
-        // save to db. on display profile fetch info ?
         event.preventDefault();
         await addInfoToProfile(
             publicImgUrl,
@@ -89,6 +136,7 @@ const EditProfile = function() {
             favecurseword,
             aboutme
         );
+        navigate("/people/" + user.username);
     };
 
     const handleChange = function(
@@ -217,6 +265,3 @@ const EditProfile = function() {
 };
 
 export default EditProfile;
-// cancel button
-// should be able to upload info to db and add profile pics
-// need to work on displaying info

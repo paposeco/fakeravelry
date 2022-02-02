@@ -1,7 +1,7 @@
 import emptyprojectphoto from "../../images/emptyprojectphoto.svg";
 
 const DisplayProfileImage = function(props: { imageurl: string }) {
-    if (props.imageurl === "") {
+    if (props.imageurl === "" || props.imageurl === undefined) {
         return (
             <div>
                 <img src={emptyprojectphoto} alt="emptyprofilephoto" />

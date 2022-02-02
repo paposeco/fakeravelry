@@ -110,9 +110,8 @@ export interface ProjectFromStore {
 
 export interface ProfileInformation {
     username: string;
+    imageurl: string;
     name: string;
-    userID: string;
-    email: string;
     personalsite: string;
     selectedcountry: string;
     yearsknitting: string;

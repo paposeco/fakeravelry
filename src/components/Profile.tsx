@@ -1,5 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchOtherUserInfo, getOtherUserInfo } from "../Firebase";
+import {
+    fetchOtherUserInfo,
+    getOtherUserInfo,
+    getUserProfileInformation,
+} from "../Firebase";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -7,7 +11,8 @@ import { RootState } from "./store/store";
 import { otherUserProjectFetchedFromDB } from "./projects/projectsSliceOtherUser";
 import { otherUserAdded } from "./store/otherUserInfoSlice";
 import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
-import type { UserInfo } from "./common/types";
+import DisplayProfileImage from "./profiledetails/DisplayProfileImage";
+import type { ProfileInformation } from "./common/types";
 
 const Profile = function() {
     const dispatch = useDispatch();
@@ -17,7 +22,8 @@ const Profile = function() {
     const [username, setUsername] = useState<string>("");
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>(true);
     const [userOnPath, setUserOnPath] = useState<string>("");
-    const [userType, setUserType] = useState<string>("user");
+    const [userIDOnPath, setUserIDOnPath] = useState<string>("");
+    const [publicImgUrl, setPublicImgUrl] = useState<string>("");
     const [
         otherUserProjectsFetched,
         setOtherUserProjectsFetched,
@@ -27,8 +33,7 @@ const Profile = function() {
         setOtherUserDetailsFetched,
     ] = useState<boolean>(false);
 
-    const [infoready, setinfoready] = useState<boolean>(false);
-    const [infotodisplay, setinfotodisplay] = useState<UserInfo>();
+    const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
 
     useEffect(() => {
@@ -37,23 +42,43 @@ const Profile = function() {
 
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
-        if (usernameOnPath !== username) {
-            setUserMatchesPath(false);
+        if (username !== "") {
+            if (usernameOnPath !== username) {
+                setUserMatchesPath(false);
+                setnotebookpath("/notebook/" + usernameOnPath);
+            } else {
+                setnotebookpath("/notebook/" + username);
+                setUserIDOnPath(user.userID);
+            }
             setUserOnPath(usernameOnPath);
-            setUserType("otheruser");
-            setnotebookpath("/notebook/" + usernameOnPath);
-        } else {
-            setinfotodisplay(user);
-            setinfoready(true);
-            setnotebookpath("/notebook/" + username);
         }
-    });
+    }, [username]);
+
+    const fetchUserProfileInformation = async function() {
+        if (userIDOnPath !== "") {
+            const profileinfo:
+                | ProfileInformation
+                | false
+                | undefined = await getUserProfileInformation(userIDOnPath);
+            return profileinfo;
+        }
+    };
 
     useEffect(() => {
-        if (!otherUserDetailsFetched && userOnPath !== "") {
+        if (!otherUserDetailsFetched && userOnPath !== username) {
             fetchUserOtherDetails();
         }
     }, [userOnPath]);
+
+    useEffect(() => {
+        const profileinfo = fetchUserProfileInformation();
+        profileinfo.then(function(dbinfo) {
+            if (dbinfo !== false && dbinfo !== undefined) {
+                setinfotodisplay(dbinfo);
+                setPublicImgUrl(dbinfo.imageurl);
+            }
+        });
+    }, [userIDOnPath]);
 
     const fetchUserOtherDetails = async function() {
         const otheruserdetails = await getOtherUserInfo(userOnPath);
@@ -61,6 +86,7 @@ const Profile = function() {
             otheruserdetails !== undefined &&
             otheruserdetails !== "user not found"
         ) {
+            setUserIDOnPath(otheruserdetails[2]);
             dispatch(
                 otherUserAdded({
                     username: otheruserdetails[0],
@@ -69,12 +95,6 @@ const Profile = function() {
                 })
             );
             setOtherUserDetailsFetched(true);
-            setinfotodisplay({
-                username: otheruserdetails[0],
-                name: otheruserdetails[1],
-                userID: otheruserdetails[2],
-            });
-            setinfoready(true);
         }
     };
 
@@ -141,7 +161,9 @@ const Profile = function() {
         }
     }, [userMatchesPath]);
 
-    const editProfile = function() { };
+    const editProfile = function(event: React.MouseEvent) {
+        navigate("/people/" + username + "/edit");
+    };
     return (
         <div>
             <h2>{userMatchesPath ? username : userOnPath}</h2>
@@ -150,7 +172,7 @@ const Profile = function() {
 
             <div id="profile">
                 <div id="profileleft">
-                    <div>photos</div>
+                    <DisplayProfileImage imageurl={publicImgUrl} />
                     <div>if someone else's profile: add friend, message</div>
                     <div>groups</div>
                 </div>
@@ -171,4 +193,6 @@ const Profile = function() {
 
 export default Profile;
 
-// need to create more info per profile and buttons to display user's notebook (for accessing other people's notebooks)
+// add friend
+// cancel button
+// add multiple images?
