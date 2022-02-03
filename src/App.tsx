@@ -1,6 +1,6 @@
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Community from "./components/Community.js";
+import Community from "./components/Community";
 import Login from "./components/Login";
 import Messages from "./components/Messages.js";
 import Notebook from "./components/Notebook";
@@ -15,6 +15,7 @@ import DisplayProject from "./components/projects/DisplayProject";
 import { useDispatch } from "react-redux";
 import { userAdded } from "./components/store/userInfoSlice";
 import { projectFetchedFromDB } from "./components/projects/projectsSlice";
+import Friends from "./components/Friends";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -162,6 +163,7 @@ const App = function() {
                     <Route path="/people/:id" element={<Profile />} />
                     <Route path="/people/:id/edit" element={<EditProfile />} />
                     <Route path="/community" element={<Community />} />
+                    <Route path="/people/:id/friends" element={<Friends />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/notebook/:id/" element={<Notebook />} />
                     <Route path="/notebook/:id/newproject/*" element={<NewProject />} />

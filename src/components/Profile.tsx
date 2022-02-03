@@ -3,6 +3,8 @@ import {
     fetchOtherUserInfo,
     getOtherUserInfo,
     getUserProfileInformation,
+    addFriendDB,
+    getFriends,
 } from "../Firebase";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,7 +22,7 @@ const Profile = function() {
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.userinfo);
     const [username, setUsername] = useState<string>("");
-    const [userMatchesPath, setUserMatchesPath] = useState<boolean>(true);
+    const [userMatchesPath, setUserMatchesPath] = useState<boolean>();
     const [userOnPath, setUserOnPath] = useState<string>("");
     const [userIDOnPath, setUserIDOnPath] = useState<string>("");
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
@@ -35,24 +37,37 @@ const Profile = function() {
 
     const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
-
-    useEffect(() => {
-        setUsername(user.username);
-    }, [user]);
+    const [friendslist, setfriendslist] = useState<string[]>([]);
 
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
-        if (username !== "") {
-            if (usernameOnPath !== username) {
+        setUserOnPath(usernameOnPath);
+        // wait for user from store
+        if (user.username !== "") {
+            setUsername(user.username);
+            if (user.username !== usernameOnPath) {
                 setUserMatchesPath(false);
                 setnotebookpath("/notebook/" + usernameOnPath);
+                if (!otherUserDetailsFetched) {
+                    fetchUserOtherDetails(usernameOnPath);
+                }
             } else {
+                setUserMatchesPath(true);
                 setnotebookpath("/notebook/" + username);
                 setUserIDOnPath(user.userID);
+                fetchFriendsList(user.userID);
             }
-            setUserOnPath(usernameOnPath);
         }
-    }, [username]);
+    }, [location, user]);
+
+    const fetchFriendsList = async function(userIDtoFetch: string) {
+        const friends = await getFriends(userIDtoFetch);
+        if (friends === undefined) {
+            setfriendslist([]);
+        } else {
+            setfriendslist(friends);
+        }
+    };
 
     const fetchUserProfileInformation = async function() {
         if (userIDOnPath !== "") {
@@ -63,25 +78,32 @@ const Profile = function() {
             return profileinfo;
         }
     };
+    const [infofetched, setinfofetched] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!otherUserDetailsFetched && userOnPath !== username) {
-            fetchUserOtherDetails();
+        if (userIDOnPath !== "" && !infofetched) {
+            const profileinfo = fetchUserProfileInformation();
+            profileinfo.then(function(dbinfo) {
+                if (dbinfo !== false && dbinfo !== undefined) {
+                    setinfotodisplay(dbinfo);
+                    setPublicImgUrl(dbinfo.imageurl);
+                    setinfofetched(true);
+                }
+            });
         }
-    }, [userOnPath]);
+    });
 
     useEffect(() => {
-        const profileinfo = fetchUserProfileInformation();
-        profileinfo.then(function(dbinfo) {
-            if (dbinfo !== false && dbinfo !== undefined) {
-                setinfotodisplay(dbinfo);
-                setPublicImgUrl(dbinfo.imageurl);
-            }
-        });
-    }, [userIDOnPath]);
+        setinfofetched(false);
+    }, [location]);
 
-    const fetchUserOtherDetails = async function() {
-        const otheruserdetails = await getOtherUserInfo(userOnPath);
+    useEffect(() => {
+        console.log("info to display");
+        console.log(infotodisplay);
+    }, [infotodisplay]);
+
+    const fetchUserOtherDetails = async function(usernameonpath: string) {
+        const otheruserdetails = await getOtherUserInfo(usernameonpath);
         if (
             otheruserdetails !== undefined &&
             otheruserdetails !== "user not found"
@@ -94,12 +116,14 @@ const Profile = function() {
                     userID: otheruserdetails[2],
                 })
             );
+            fetchFriendsList(otheruserdetails[2]);
             setOtherUserDetailsFetched(true);
         }
     };
 
     const fetchProjectsOtherUser = async function() {
-        const otheruserprojects = await fetchOtherUserInfo(userOnPath);
+        const usernameOnPath = location.pathname.substring(8);
+        const otheruserprojects = await fetchOtherUserInfo(usernameOnPath);
         if (
             otheruserprojects !== undefined &&
             otheruserprojects !== "user not found"
@@ -164,11 +188,23 @@ const Profile = function() {
     const editProfile = function(event: React.MouseEvent) {
         navigate("/people/" + username + "/edit");
     };
+    const addFriend = async function(event: React.MouseEvent) {
+        await addFriendDB(userOnPath);
+        setfriendslist((prevState) => [...prevState, userOnPath]);
+    };
+
+    const showFriends = function(event: React.MouseEvent) {
+        navigate("/people/" + userOnPath + "/friends");
+    };
+
+    // still doesnt work 100%
+
     return (
         <div>
             <h2>{userMatchesPath ? username : userOnPath}</h2>
 
             {userMatchesPath && <button onClick={editProfile}>edit profile</button>}
+            {!userMatchesPath && <button onClick={addFriend}>add friend</button>}
 
             <div id="profile">
                 <div id="profileleft">
@@ -176,7 +212,7 @@ const Profile = function() {
                     <div>if someone else's profile: add friend, message</div>
                     <div>groups</div>
                 </div>
-                {infotodisplay !== undefined && (
+                {infofetched && infotodisplay !== undefined && (
                     <DisplayProfileDetails userinfo={infotodisplay} />
                 )}
                 <div id="profileright">
@@ -184,7 +220,14 @@ const Profile = function() {
                         <Link to={notebookpath}>Projects</Link>
                         queued, library, posts
                     </div>
-                    <div>stash, faves, friends, comments</div>
+                    <div>
+                        <button id="faves">faves</button>
+                        <button id="friends" onClick={showFriends}>
+                            {friendslist.length} friends
+                        </button>
+                        <button id="comments">Comments</button>
+                        <button id="stash">Stash</button>
+                    </div>
                 </div>
             </div>
         </div>

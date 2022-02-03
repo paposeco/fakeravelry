@@ -188,6 +188,20 @@ const addInfoToProfile = async function(
     }
 };
 
+const addFriendDB = async function(friendusername: string) {
+    try {
+        const user = auth.currentUser;
+        if (user !== null) {
+            const userRef = doc(database, "users", user.uid);
+            await updateDoc(userRef, {
+                friendslist: arrayUnion(friendusername),
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 // projects
 const fetchUserInfo = async function() {
     const user = auth.currentUser;
@@ -383,6 +397,22 @@ const getInfo = async function(infotofetch: string) {
             } else {
                 //return email
                 return userinfo.email;
+            }
+        }
+    }
+};
+
+const getFriends = async function(userid: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        const docRef = doc(database, "users", userid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const friendslist = docSnap.data().friendslist;
+            if (friendslist === undefined) {
+                return [];
+            } else {
+                return friendslist;
             }
         }
     }
@@ -589,6 +619,8 @@ export {
     checkUniqueProjectName,
     addInfoToProfile,
     getUserProfileInformation,
+    addFriendDB,
+    getFriends,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db
