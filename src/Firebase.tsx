@@ -259,19 +259,22 @@ const signOutUser = async function() {
 
 // no spaces
 const getUserID = async function(username: string) {
-    const docRef = doc(database, "usernames", "usernamescollection");
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        const usernames = docSnap.data();
-        const usernamesarray: { userid: string; username: string }[] =
-            usernames.all;
-        const userOnArray = usernamesarray.find(
-            (element) => element.username === username
-        );
-        if (userOnArray !== undefined) {
-            return userOnArray.userid;
-        } else {
-            return false;
+    const user = auth.currentUser;
+    if (user !== null) {
+        const docRef = doc(database, "usernames", "usernamescollection");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const usernames = docSnap.data();
+            const usernamesarray: { userid: string; username: string }[] =
+                usernames.all;
+            const userOnArray = usernamesarray.find(
+                (element) => element.username === username
+            );
+            if (userOnArray !== undefined) {
+                return userOnArray.userid;
+            } else {
+                return false;
+            }
         }
     }
 };
@@ -418,6 +421,23 @@ const getFriends = async function(userid: string) {
     }
 };
 
+const getProfilePic = async function(friendusername: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        const frienduserid = await getUserID(friendusername);
+        if (frienduserid !== undefined && frienduserid !== false) {
+            const docRef = doc(database, "users", frienduserid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const userinfo = docSnap.data();
+                return userinfo.imageurl;
+            }
+        } else {
+            return false;
+        }
+    }
+};
+
 // name and username
 const getOtherUserInfo = async function(username: string) {
     const loggedInUser = auth.currentUser;
@@ -493,7 +513,6 @@ const linkToRaveler = async function(username: string) {
     const docRef = doc(database, "usernames", "usernamescollection");
     const docSnap = await getDoc(docRef);
     const usernamelowercase = username.toLowerCase();
-    let userID = "";
     if (docSnap.exists()) {
         const usernames = docSnap.data();
         const usernamesarray: { userid: string; username: string }[] =
@@ -502,7 +521,6 @@ const linkToRaveler = async function(username: string) {
         for (let i = 0; i < usernamesarray.length; i++) {
             if (usernamesarray[i].username.toLowerCase() === usernamelowercase) {
                 userExists = true;
-                userID = usernamesarray[i].userid;
                 break;
             }
         }
@@ -621,6 +639,8 @@ export {
     getUserProfileInformation,
     addFriendDB,
     getFriends,
+    getUserID,
+    getProfilePic,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

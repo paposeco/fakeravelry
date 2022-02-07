@@ -97,11 +97,6 @@ const Profile = function() {
         setinfofetched(false);
     }, [location]);
 
-    useEffect(() => {
-        console.log("info to display");
-        console.log(infotodisplay);
-    }, [infotodisplay]);
-
     const fetchUserOtherDetails = async function(usernameonpath: string) {
         const otheruserdetails = await getOtherUserInfo(usernameonpath);
         if (
@@ -197,8 +192,6 @@ const Profile = function() {
         navigate("/people/" + userOnPath + "/friends");
     };
 
-    // still doesnt work 100%
-
     return (
         <div>
             <h2>{userMatchesPath ? username : userOnPath}</h2>
@@ -236,6 +229,5 @@ const Profile = function() {
 
 export default Profile;
 
-// add friend
 // cancel button
 // add multiple images?

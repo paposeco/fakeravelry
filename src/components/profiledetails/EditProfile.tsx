@@ -265,3 +265,5 @@ const EditProfile = function() {
 };
 
 export default EditProfile;
+
+// upload image should save to db and not on save changes
