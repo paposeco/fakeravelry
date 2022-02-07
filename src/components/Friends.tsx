@@ -1,5 +1,6 @@
 import { getFriends, getUserID, getProfilePic } from "../Firebase";
 import DisplayProfileImage from "./profiledetails/DisplayProfileImage";
+import SearchFriends from "./community/SearchFriends";
 import { useLocation, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -17,9 +18,8 @@ const Friends = function() {
     const [friendsfetched, setfriendsfetched] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.userinfo);
     const [usermatchespath, setUsermatchespath] = useState<boolean>(true);
-    const [useronpathhasfriends, setuseronpathhasfriends] = useState<boolean>(
-        true
-    );
+    const [useronpathhasfriends, setuseronpathhasfriends] =
+        useState<boolean>(true);
     const [usernameonpath, setusernameonpath] = useState<string>("");
 
     const fetchFriends = async function(usernametofetch: string) {
@@ -115,14 +115,15 @@ const Friends = function() {
             </div>
             <div>
                 {!useronpathhasfriends && (
-                    // if user matches path : add friends
-                    // else no friends here
                     <div>
-                        {!usermatchespath ? (
-                            <p>{usernameonpath} has no friends yet.</p>
-                        ) : (
-                            <p>You don't have any friends yet.</p>
-                        )}
+                        <div>
+                            {!usermatchespath ? (
+                                <p>{usernameonpath} has no friends yet.</p>
+                            ) : (
+                                <p>You don't have any friends yet.</p>
+                            )}
+                        </div>
+                        <div>{usermatchespath ? <SearchFriends /> : null}</div>
                     </div>
                 )}
             </div>

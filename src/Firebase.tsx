@@ -525,13 +525,54 @@ const linkToRaveler = async function(username: string) {
             }
         }
         if (userExists) {
-            //when someone tries to access someone elses profiles, it needs to query the db and get everything about the user and place it in store maybe
             return `/people/${username}`;
         } else {
             return "";
         }
     } else {
         return "error in db";
+    }
+};
+
+const fetchCommunityMembers = async function() {
+    const user = auth.currentUser;
+    let allusers: { username: string; imageurl: string }[] = [];
+    if (user !== null) {
+        try {
+            const querySnapshot = await getDocs(collection(database, "users"));
+            querySnapshot.forEach((doc) => {
+                const userdata = doc.data();
+                allusers.push({
+                    username: userdata.username,
+                    imageurl: userdata.imageurl,
+                });
+            });
+            return allusers;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+};
+
+const searchUser = async function(username: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        const docRef = doc(database, "usernames", "usernamescollection");
+        const docSnap = await getDoc(docRef);
+        const usernamelowercase = username.toLowerCase();
+        if (docSnap.exists()) {
+            const usernames = docSnap.data();
+            const usernamesarray: { userid: string; username: string }[] =
+                usernames.all;
+            let userExists = false;
+            for (let i = 0; i < usernamesarray.length; i++) {
+                if (usernamesarray[i].username.toLowerCase() === usernamelowercase) {
+                    userExists = true;
+                    break;
+                }
+            }
+            return userExists;
+        }
     }
 };
 
@@ -641,6 +682,8 @@ export {
     getFriends,
     getUserID,
     getProfilePic,
+    searchUser,
+    fetchCommunityMembers,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db
