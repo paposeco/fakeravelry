@@ -90,20 +90,26 @@ const Notebook = function() {
         }
     };
 
+    // projects are being added to store twice to both users
+
     useEffect(() => {
         const usernameonpath = location.pathname.substring(10);
-        if (useronpath !== usernameonpath) {
-            setprojectsToDisplay([]);
-            if (usernameonpath === user) {
-                setusermatchespath(true);
-            }
+        if (user !== "" && usernameonpath === user) {
+            setusermatchespath(true);
+            setuseronpath(usernameonpath);
+        } else if (user !== "" && usernameonpath !== user) {
+            setusermatchespath(false);
+            setuseronpath(usernameonpath);
         }
-        setuseronpath(usernameonpath);
+        setprojectsToDisplay((prevState) => {
+            let fresharray: ProjectFromStore[] = [];
+            return fresharray;
+        });
     }, [location]);
 
     useEffect(() => {
         const usernameonpath = location.pathname.substring(10);
-        if (usernameonpath === user) {
+        if (usernameonpath === user && user !== "") {
             setprojectsToDisplay((prevState) => {
                 let updateState = Array.from(prevState);
                 projectData!.forEach((project) => {
@@ -119,11 +125,12 @@ const Notebook = function() {
                 return updateState;
             });
         }
-    }, [projectData, useronpath]);
+    }, [projectData]);
 
     useEffect(() => {
         const usernameonpath = location.pathname.substring(10);
-        if (usernameonpath !== user) {
+        if (usernameonpath !== user && user !== "") {
+            setusermatchespath(false);
             if (
                 otherUserProjectData[0].projectid === "" &&
                 !otherUserProjectsFetched
@@ -145,56 +152,37 @@ const Notebook = function() {
                     return updateState;
                 });
             }
-            setusermatchespath(false);
         }
-    }, [otherUserProjectData, useronpath]);
+    }, [otherUserProjectData]);
 
     useEffect(() => {
         setnewprojectpath("/notebook/" + user + "/newproject");
     }, [user]);
 
-    if (usermatchespath) {
-        return (
-            <div>
-                <div>
-                    <Link to={newprojectpath}>Add new project</Link>
+    return (
+        <div>
+            {usermatchespath && <Link to={newprojectpath}>Add new project</Link>}
+            {projectsToDisplay.map((project: ProjectFromStore) => (
+                <div key={uniqid()}>
+                    <ProjectThumbnail
+                        useronpath={useronpath}
+                        projectname={project.projectname}
+                        projectphoto={project.imageUrl}
+                        projectslug={project.projectslug}
+                        projectstatus={project.projectstatus.progressstatus}
+                        projectprogress={project.projectstatus.progressrange}
+                        projectid={project.projectid}
+                        username={user}
+                    />
                 </div>
-                {projectsToDisplay.map((project: ProjectFromStore) => (
-                    <div key={uniqid()}>
-                        <ProjectThumbnail
-                            useronpath={useronpath}
-                            projectname={project.projectname}
-                            projectphoto={project.imageUrl}
-                            projectslug={project.projectslug}
-                            projectstatus={project.projectstatus.progressstatus}
-                            projectprogress={project.projectstatus.progressrange}
-                            projectid={project.projectid}
-                            username={user}
-                        />
-                    </div>
-                ))}
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                {projectsToDisplay.map((project: ProjectFromStore) => (
-                    <div key={uniqid()}>
-                        <ProjectThumbnail
-                            useronpath={useronpath}
-                            projectname={project.projectname}
-                            projectphoto={project.imageUrl}
-                            projectslug={project.projectslug}
-                            projectstatus={project.projectstatus.progressstatus}
-                            projectprogress={project.projectstatus.progressrange}
-                            projectid={project.projectid}
-                            username={user}
-                        />
-                    </div>
-                ))}
-            </div>
-        );
-    }
+            ))}
+        </div>
+    );
 };
 
 export default Notebook;
+
+// delete projects and display is not correct
+
+// nao esta bem
+// nos projects in progress esta escrito de forma diferente

@@ -36,7 +36,7 @@ const ProjectThumbnail = function(props: {
 
     const handleClicks = function(event: React.MouseEvent) {
         navigate(projectpath, {
-            state: { projectid: projectID, useronpath: props.useronpath },
+            state: { projectid: projectID },
         });
     };
     // edit and display should look for the project in store for a certain projectslug

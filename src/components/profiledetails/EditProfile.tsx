@@ -1,6 +1,6 @@
 import { Country } from "../projects/SelectOptions";
 import { RootState } from "../store/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -84,20 +84,18 @@ const EditProfile = function() {
             });
         }
     });
-    const [imageSelected, setImageSelected] = useState<FileList | null>();
-    const [publicImgUrl, setPublicImgUrl] = useState<string>("");
 
-    const handleImageChange = function(
-        event: React.ChangeEvent<HTMLInputElement>
-    ) {
-        setImageSelected(event.target.files);
-    };
+    const [publicImgUrl, setPublicImgUrl] = useState<string>("");
+    const fileInput = useRef<HTMLInputElement | null>(null);
 
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (imageSelected !== (null && undefined)) {
-            // uploads image to firebase storage and returns a public url
-            const publicUrl = await uploadProfilePhoto(imageSelected![0]);
+        if (
+            fileInput !== null &&
+            fileInput.current !== null &&
+            fileInput.current.files !== null
+        ) {
+            const publicUrl = await uploadProfilePhoto(fileInput.current.files[0]);
             if (publicUrl !== false && publicUrl !== undefined) {
                 setPublicImgUrl(publicUrl);
                 await addInfoToProfile(
@@ -166,7 +164,7 @@ const EditProfile = function() {
                             id="uploadphotoproject"
                             name="uploadphotoproject"
                             accept="image/*"
-                            onChange={handleImageChange}
+                            ref={fileInput}
                         />
                     </label>
                     <button id="submitphoto" type="submit">

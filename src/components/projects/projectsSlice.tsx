@@ -44,6 +44,10 @@ const projectsSlice = createSlice({
     name: "projects",
     initialState,
     reducers: {
+        projectDeleted(state, action) {
+            const { projectid } = action.payload;
+            return state.filter((element) => element.projectid !== projectid);
+        },
         projectAdded(state, action) {
             if (state.length === 1 && state[0].projectid === "") {
                 state[0].projectid = action.payload.projectid;
@@ -275,6 +279,7 @@ export const {
     projectFetchedFromDB,
     projectUpdated,
     projectPhotoAdded,
+    projectDeleted,
 } = projectsSlice.actions;
 export const selectProjectById = (state: RootState, projectID: string) =>
     state.projects.find((project) => project.projectid === projectID);

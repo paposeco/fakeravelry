@@ -8,10 +8,12 @@ import {
     collection,
     updateDoc,
     arrayUnion,
+    arrayRemove,
     query,
     where,
     increment,
     addDoc,
+    deleteDoc,
 } from "firebase/firestore";
 import {
     getDownloadURL,
@@ -189,16 +191,30 @@ const addInfoToProfile = async function(
 };
 
 const addFriendDB = async function(friendusername: string) {
-    try {
-        const user = auth.currentUser;
-        if (user !== null) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        try {
             const userRef = doc(database, "users", user.uid);
             await updateDoc(userRef, {
                 friendslist: arrayUnion(friendusername),
             });
+        } catch (error) {
+            console.log(error);
         }
-    } catch (error) {
-        console.log(error);
+    }
+};
+
+const removeFriendDB = async function(friendusername: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        try {
+            const userRef = doc(database, "users", user.uid);
+            await updateDoc(userRef, {
+                friendslist: arrayRemove(friendusername),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 
@@ -456,6 +472,17 @@ const getOtherUserInfo = async function(username: string) {
     }
 };
 
+const deleteProject = async function(projectid: string) {
+    const user = auth.currentUser;
+    if (user !== null) {
+        try {
+            await deleteDoc(doc(database, "users", user.uid, "projects", projectid));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+};
+
 const addProjectToNotebook = async function(
     projectid: string,
     craftType: string,
@@ -669,6 +696,7 @@ export {
     getInfo,
     getOtherUserInfo,
     addProjectToNotebook,
+    deleteProject,
     updateProjectInDB,
     uploadPhoto,
     uploadProfilePhoto,
@@ -679,6 +707,7 @@ export {
     addInfoToProfile,
     getUserProfileInformation,
     addFriendDB,
+    removeFriendDB,
     getFriends,
     getUserID,
     getProfilePic,

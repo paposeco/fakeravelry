@@ -1,8 +1,13 @@
-import { getFriends, getUserID, getProfilePic } from "../Firebase";
+import {
+    getFriends,
+    getUserID,
+    getProfilePic,
+    removeFriendDB,
+} from "../Firebase";
 import DisplayProfileImage from "./profiledetails/DisplayProfileImage";
 import SearchFriends from "./community/SearchFriends";
 import { useLocation, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import uniqid from "uniqid";
 import { RootState } from "./store/store";
@@ -18,8 +23,9 @@ const Friends = function() {
     const [friendsfetched, setfriendsfetched] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.userinfo);
     const [usermatchespath, setUsermatchespath] = useState<boolean>(true);
-    const [useronpathhasfriends, setuseronpathhasfriends] =
-        useState<boolean>(true);
+    const [useronpathhasfriends, setuseronpathhasfriends] = useState<boolean>(
+        true
+    );
     const [usernameonpath, setusernameonpath] = useState<string>("");
 
     const fetchFriends = async function(usernametofetch: string) {
@@ -70,6 +76,20 @@ const Friends = function() {
 
     // fetch username and profile photo: link to profile
 
+    const removeFriend = async function(event: React.MouseEvent) {
+        const buttonid = event.currentTarget.id;
+        const friendusername = buttonid.substring(6);
+        await removeFriendDB(friendusername);
+        setfriendslist((prevState) => {
+            let friends = Array.from(prevState);
+            const friendtodelete = friends.findIndex(
+                (element) => element.friendusername === friendusername
+            );
+            friends.splice(friendtodelete, 1);
+            return friends;
+        });
+    };
+
     useEffect(() => {
         if (!friendsfetched) {
             const completePath = location.pathname.substring(8);
@@ -108,6 +128,14 @@ const Friends = function() {
                                 <Link to={`/people/${friend.friendusername}`}>
                                     {friend.friendusername}
                                 </Link>
+                                {usermatchespath && (
+                                    <button
+                                        onClick={removeFriend}
+                                        id={`remove${friend.friendusername}`}
+                                    >
+                                        Remove Friend
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -132,3 +160,5 @@ const Friends = function() {
 };
 
 export default Friends;
+
+// after adding friend change button to remove

@@ -1,6 +1,6 @@
 //acess info from store
 //import { useEffect } from "react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,10 +35,11 @@ const EditProject = function() {
     // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
     // fetches project data from store
-    const projectData: ProjectFromStore | undefined = useSelector(
-        (state: RootState) =>
+    const projectData:
+        | ProjectFromStore
+        | undefined = useSelector((state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-    );
+        );
 
     // local state hooks for form
     const [craftType, setCraftType] = useState<string>("");
@@ -63,6 +64,7 @@ const EditProject = function() {
     const [yarncollection, setYarnCollection] = useState<Yarn[]>([]);
     const [projectSlug, setProjectSlug] = useState<string>("");
     const [madefor, setMadeFor] = useState<string>("");
+    const fileInput = useRef<HTMLInputElement | null>(null);
 
     // easier access to correct hook for event target id
     const setFunctions = new Map([
@@ -381,18 +383,24 @@ const EditProject = function() {
     };
 
     // handles adding images to projects
-    const [imageSelected, setImageSelected] = useState<FileList | null>();
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
-    const [displayImageComponent, setDisplayImageComponent] =
-        useState<JSX.Element>();
-    const imageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setImageSelected(event.target.files);
-    };
+    const [
+        displayImageComponent,
+        setDisplayImageComponent,
+    ] = useState<JSX.Element>();
+
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (imageSelected !== (null && undefined)) {
-            // uploads image to firebase storage and returns a public url
-            const publicUrl = await uploadPhoto(projectID, imageSelected![0]);
+        if (
+            fileInput !== null &&
+            fileInput.current !== null &&
+            fileInput.current.files !== null
+        ) {
+            const publicUrl = await uploadPhoto(
+                projectID,
+                fileInput.current.files[0]
+            );
+
             if (publicUrl !== false) {
                 setPublicImgUrl(publicUrl);
                 // updates store with publicurl
@@ -459,7 +467,7 @@ const EditProject = function() {
                                 id="uploadphotoproject"
                                 name="uploadphotoproject"
                                 accept="image/*"
-                                onChange={imageChange}
+                                ref={fileInput}
                             />
                         </label>
                         <button id="submitphoto" type="submit">

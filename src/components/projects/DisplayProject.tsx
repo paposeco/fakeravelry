@@ -1,32 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import type { ProjectFromStore } from "../common/types";
 import ProjectItem from "./ProjectItem";
 import DisplayProjectImage from "./DisplayProjectImage";
 import DisplayProgress from "./DisplayProgress";
 import AboutPattern from "./AboutPattern";
+import { deleteProject } from "../../Firebase";
+import { projectDeleted } from "./projectsSlice";
 
 // fetches project com store and displays it with help from modules: displayprojectimage for project image and projectitem that displays each block of information. projectitem gets help from DisplayYarn for rendering the yarn elements
 
 // i will assume that the user doesn't access a single project from the url, but instead through the notebook
 const DisplayProject = function() {
     const { state } = useLocation();
+    const location = useLocation();
     const navigate = useNavigate();
-    const { projectid, useronpath } = state;
+    const dispatch = useDispatch();
+    const { projectid } = state;
     const user = useSelector((state: RootState) => state.userinfo.username);
     const [usermatchespath, setusermatchespath] = useState<boolean>(true);
 
     const selectProject = function(currentstate: RootState) {
-        if (useronpath === user) {
-            return currentstate.projects.find(
-                (element) => element.projectid === projectid
-            );
-        } else {
-            return currentstate.otheruserprojects.find(
-                (element) => element.projectid === projectid
-            );
+        const currentuseronpath = location.pathname
+            .substring(0, location.pathname.indexOf("projects") - 1)
+            .substring(10);
+        if (user !== "") {
+            if (currentuseronpath === user) {
+                return currentstate.projects.find(
+                    (element) => element.projectid === projectid
+                );
+            } else {
+                return currentstate.otheruserprojects.find(
+                    (element) => element.projectid === projectid
+                );
+            }
         }
     };
 
@@ -35,10 +43,15 @@ const DisplayProject = function() {
     );
 
     useEffect(() => {
-        if (user === useronpath) {
-            setusermatchespath(true);
-        } else {
-            setusermatchespath(false);
+        const currentuseronpath = location.pathname
+            .substring(0, location.pathname.indexOf("projects") - 1)
+            .substring(10);
+        if (user !== "") {
+            if (user === currentuseronpath) {
+                setusermatchespath(true);
+            } else {
+                setusermatchespath(false);
+            }
         }
     }, [user]);
 
@@ -56,6 +69,13 @@ const DisplayProject = function() {
     const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
         false
     );
+
+    const deleteproject = function(event: React.MouseEvent) {
+        const currentprojectid = state.projectid;
+        deleteProject(currentprojectid);
+        dispatch(projectDeleted({ projectid: currentprojectid }));
+        navigate("/notebook/" + user);
+    };
 
     const editProject = function(event: React.MouseEvent) {
         const cleanProjectName = projectdatafromstore!.projectname
@@ -120,119 +140,130 @@ const DisplayProject = function() {
         }
     }, [projectdatafromstore]);
 
-    return (
-        <div id="project">
-            <div id="projectphoto">
-                <DisplayProjectImage imageurl={projectdatafromstore!.imageUrl} />
-            </div>
-            <div id="projectdescription">
-                <h2>{projectdatafromstore!.projectname}</h2>
+    if (projectdatafromstore === undefined) {
+        return <div></div>;
+    } else {
+        return (
+            <div id="project">
+                <div id="projectphoto">
+                    <DisplayProjectImage imageurl={projectdatafromstore!.imageUrl} />
+                </div>
+                <div id="projectdescription">
+                    <h2>{projectdatafromstore!.projectname}</h2>
 
-                <div id="projectinfo">
-                    <h3>Project info</h3>
-                    {displayPattern && (
+                    <div id="projectinfo">
+                        <h3>Project info</h3>
+                        {displayPattern && (
+                            <ProjectItem
+                                itemdescription="Pattern"
+                                itemvalue={projectdatafromstore!.pattern.name}
+                            />
+                        )}
                         <ProjectItem
-                            itemdescription="Pattern"
-                            itemvalue={projectdatafromstore!.pattern.name}
+                            itemdescription="Craft"
+                            itemvalue={projectdatafromstore!.crafttype}
                         />
-                    )}
-                    <ProjectItem
-                        itemdescription="Craft"
-                        itemvalue={projectdatafromstore!.crafttype}
+                        {displayCategory && (
+                            <ProjectItem
+                                itemdescription="Category"
+                                itemvalue={projectdatafromstore!.projectinfo.patterncategory}
+                            />
+                        )}
+                        {displayMadefor && !displayLinkToRaveler && (
+                            <ProjectItem
+                                itemdescription="Made for"
+                                itemvalue={projectdatafromstore!.projectinfo.madefor}
+                            />
+                        )}
+                        {/* need to beautify link */}
+                        {displayMadefor && displayLinkToRaveler && (
+                            <ProjectItem
+                                itemdescription="Made for"
+                                itemvalue={projectdatafromstore!.projectinfo.linktoraveler}
+                            />
+                        )}
+
+                        {displayFinishby && (
+                            <ProjectItem
+                                itemdescription="Finish by"
+                                itemvalue={projectdatafromstore!.projectinfo.finishby}
+                            />
+                        )}
+                        {displaySize && (
+                            <ProjectItem
+                                itemdescription="Size"
+                                itemvalue={projectdatafromstore!.projectinfo.sizemade}
+                            />
+                        )}
+                        {displayTags && (
+                            <ProjectItem
+                                itemdescription="Tags"
+                                itemvalue={projectdatafromstore!.projectinfo.selectedtags}
+                            />
+                        )}
+                    </div>
+                    <div id="needlesyarn">
+                        <h3>Needles & yarn</h3>
+                        {displayNeedles && (
+                            <ProjectItem
+                                itemdescription="Needle"
+                                itemvalue={projectdatafromstore!.projectinfo.needles}
+                            />
+                        )}
+                        {displayHooks && (
+                            <ProjectItem
+                                itemdescription="Hook"
+                                itemvalue={projectdatafromstore!.projectinfo.hooks}
+                            />
+                        )}
+                        {displayGauge && (
+                            <ProjectItem
+                                itemdescription="Gauge"
+                                itemvalue={projectdatafromstore!.projectinfo.gauge}
+                            />
+                        )}
+                        {displayYarn && (
+                            <ProjectItem
+                                itemdescription="Yarn"
+                                itemvalue={projectdatafromstore!.projectinfo.yarn}
+                            />
+                        )}
+                    </div>
+                    <div id="notes">
+                        <h3>Notes</h3>
+                        {displayNotes && (
+                            <ProjectItem
+                                itemdescription="Notes"
+                                itemvalue={projectdatafromstore!.projectinfo.projectnotes}
+                            />
+                        )}
+                    </div>
+                    {/* progress status should be a separate module */}
+                </div>
+                <div id="projectsidebar">
+                    <div id="projectbuttons">
+                        {usermatchespath && (
+                            <div>
+                                <button id="editproject" onClick={editProject}>
+                                    edit project
+                                </button>
+                                <button id="deleteproject" onClick={deleteproject}>
+                                    delete project
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <DisplayProgress status={projectdatafromstore!.projectstatus} />
+                    <AboutPattern
+                        pattern={projectdatafromstore!.pattern}
+                        patternfrom={projectdatafromstore!.projectinfo.patternfrom}
                     />
-                    {displayCategory && (
-                        <ProjectItem
-                            itemdescription="Category"
-                            itemvalue={projectdatafromstore!.projectinfo.patterncategory}
-                        />
-                    )}
-                    {displayMadefor && !displayLinkToRaveler && (
-                        <ProjectItem
-                            itemdescription="Made for"
-                            itemvalue={projectdatafromstore!.projectinfo.madefor}
-                        />
-                    )}
-                    {/* need to beautify link */}
-                    {displayMadefor && displayLinkToRaveler && (
-                        <ProjectItem
-                            itemdescription="Made for"
-                            itemvalue={projectdatafromstore!.projectinfo.linktoraveler}
-                        />
-                    )}
-
-                    {displayFinishby && (
-                        <ProjectItem
-                            itemdescription="Finish by"
-                            itemvalue={projectdatafromstore!.projectinfo.finishby}
-                        />
-                    )}
-                    {displaySize && (
-                        <ProjectItem
-                            itemdescription="Size"
-                            itemvalue={projectdatafromstore!.projectinfo.sizemade}
-                        />
-                    )}
-                    {displayTags && (
-                        <ProjectItem
-                            itemdescription="Tags"
-                            itemvalue={projectdatafromstore!.projectinfo.selectedtags}
-                        />
-                    )}
                 </div>
-                <div id="needlesyarn">
-                    <h3>Needles & yarn</h3>
-                    {displayNeedles && (
-                        <ProjectItem
-                            itemdescription="Needle"
-                            itemvalue={projectdatafromstore!.projectinfo.needles}
-                        />
-                    )}
-                    {displayHooks && (
-                        <ProjectItem
-                            itemdescription="Hook"
-                            itemvalue={projectdatafromstore!.projectinfo.hooks}
-                        />
-                    )}
-                    {displayGauge && (
-                        <ProjectItem
-                            itemdescription="Gauge"
-                            itemvalue={projectdatafromstore!.projectinfo.gauge}
-                        />
-                    )}
-                    {displayYarn && (
-                        <ProjectItem
-                            itemdescription="Yarn"
-                            itemvalue={projectdatafromstore!.projectinfo.yarn}
-                        />
-                    )}
-                </div>
-                <div id="notes">
-                    <h3>Notes</h3>
-                    {displayNotes && (
-                        <ProjectItem
-                            itemdescription="Notes"
-                            itemvalue={projectdatafromstore!.projectinfo.projectnotes}
-                        />
-                    )}
-                </div>
-                {/* progress status should be a separate module */}
             </div>
-            <div id="projectsidebar">
-                <div id="projectbuttons">
-                    {usermatchespath && (
-                        <button id="editproject" onClick={editProject}>
-                            edit project
-                        </button>
-                    )}
-                </div>
-                <DisplayProgress status={projectdatafromstore!.projectstatus} />
-                <AboutPattern
-                    pattern={projectdatafromstore!.pattern}
-                    patternfrom={projectdatafromstore!.projectinfo.patternfrom}
-                />
-            </div>
-        </div>
-    );
+        );
+    }
 };
 
 export default DisplayProject;
+
+// made for if not user should show what people wrote instead of empty. it's saved in db, but not displayed correctly

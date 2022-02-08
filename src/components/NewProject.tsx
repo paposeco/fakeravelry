@@ -37,9 +37,9 @@ const NewProject = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        const patternUsed: string = (
-            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
-        ).value;
+        const patternUsed: string = (event.currentTarget.elements.namedItem(
+            "patternused"
+        ) as HTMLInputElement).value;
         const cleanProjectName = projectName
             .toLowerCase()
             .trim()
@@ -78,7 +78,8 @@ const NewProject = function() {
     };
 
     const getPathWithUsername = function(projectslug: string) {
-        const path = "/notebook/" + username + "/" + projectslug + "/editproject";
+        const path =
+            "/notebook/" + username + "/projects/" + projectslug + "/editproject";
         return path;
     };
 

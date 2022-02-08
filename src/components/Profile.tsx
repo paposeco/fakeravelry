@@ -4,6 +4,7 @@ import {
     getOtherUserInfo,
     getUserProfileInformation,
     addFriendDB,
+    removeFriendDB,
     getFriends,
 } from "../Firebase";
 import { useEffect, useState } from "react";
@@ -38,6 +39,7 @@ const Profile = function() {
     const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
     const [friendslist, setfriendslist] = useState<string[]>([]);
+    const [isfriend, setisfriend] = useState<boolean>(false);
 
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
@@ -51,6 +53,7 @@ const Profile = function() {
                 if (!otherUserDetailsFetched) {
                     fetchUserOtherDetails(usernameOnPath);
                 }
+                checkIfIsFriend(user.userID, usernameOnPath);
             } else {
                 setUserMatchesPath(true);
                 setnotebookpath("/notebook/" + username);
@@ -69,7 +72,17 @@ const Profile = function() {
         }
     };
 
-    const fetchUserProfileInformation = async function() {
+    // check if logged in user is friends with user on path
+    const checkIfIsFriend = async function(
+        loggedinuser: string,
+        currentuseronpath: string
+    ) {
+        const friends = await getFriends(loggedinuser);
+        const friendexists = friends.includes(currentuseronpath);
+        setisfriend(friendexists);
+    };
+
+    const fetchUserProfileInformation = async () => {
         if (userIDOnPath !== "") {
             const profileinfo:
                 | ProfileInformation
@@ -186,6 +199,22 @@ const Profile = function() {
     const addFriend = async function(event: React.MouseEvent) {
         await addFriendDB(userOnPath);
         setfriendslist((prevState) => [...prevState, userOnPath]);
+        setisfriend(true);
+    };
+
+    const removeFriend = async function(event: React.MouseEvent) {
+        await removeFriendDB(userOnPath);
+        setfriendslist((prevState) => {
+            const newfriendlist = Array.from(prevState);
+            const friendtoremove = newfriendlist.findIndex(
+                (element) => element === userOnPath
+            );
+            if (friendtoremove !== -1) {
+                newfriendlist.splice(friendtoremove, 1);
+            }
+            return newfriendlist;
+        });
+        setisfriend(false);
     };
 
     const showFriends = function(event: React.MouseEvent) {
@@ -197,8 +226,12 @@ const Profile = function() {
             <h2>{userMatchesPath ? username : userOnPath}</h2>
 
             {userMatchesPath && <button onClick={editProfile}>edit profile</button>}
-            {!userMatchesPath && <button onClick={addFriend}>add friend</button>}
-
+            {!userMatchesPath && !isfriend && (
+                <button onClick={addFriend}>add friend</button>
+            )}
+            {!userMatchesPath && isfriend && (
+                <button onClick={removeFriend}>remove friend</button>
+            )}
             <div id="profile">
                 <div id="profileleft">
                     <DisplayProfileImage imageurl={publicImgUrl} />
@@ -231,3 +264,5 @@ export default Profile;
 
 // cancel button
 // add multiple images?
+
+// added foto and didnt' change profile
