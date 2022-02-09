@@ -14,7 +14,7 @@ const Notebook = function() {
     const dispatch = useDispatch();
     const [newprojectpath, setnewprojectpath] = useState<string>("");
     const user = useSelector((state: RootState) => state.userinfo.username);
-    let projectData: ProjectFromStore[] | undefined = useSelector(
+    const projectData: ProjectFromStore[] | undefined = useSelector(
         (state: RootState) => state.projects
     );
     const otherUserProjectData: ProjectFromStore[] | undefined = useSelector(
@@ -49,6 +49,47 @@ const Notebook = function() {
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
+                    let currentProject: ProjectFromStore = {
+                        projectid: project.id,
+                        imageUrl: project.data().imageUrl,
+                        crafttype: project.data().crafttype,
+                        projectslug: project.data().projectslug,
+                        projectname: project.data().projectname,
+                        patternused: project.data().patternused,
+                        pattern: {
+                            name: project.data().pattern.name,
+                            about: project.data().pattern.about,
+                        },
+                        projectinfo: {
+                            madefor: project.data().projectinfo.madefor,
+                            linktoraveler: project.data().projectinfo.linktoraveler,
+                            finishby: project.data().projectinfo.finishby,
+                            sizemade: project.data().projectinfo.sizemade,
+                            patternfrom: project.data().projectinfo.patternfrom,
+                            patterncategory: project.data().projectinfo.patterncategory,
+                            selectedtags: project.data().projectinfo.tags,
+                            needles: project.data().projectinfo.needles,
+                            hooks: project.data().projectinfo.hooks,
+                            gauge: {
+                                numberStsOrRepeats: gaugeNumberSts,
+                                horizontalunits: project.data().projectinfo.gauge
+                                    .horizontalunits,
+                                numberRows: gaugeNumberRows,
+                                gaugesize: project.data().projectinfo.gauge.gaugesize,
+                                gaugepattern: project.data().projectinfo.gauge.gaugepattern,
+                            },
+                            yarn: project.data().projectinfo.yarn,
+                            projectnotes: project.data().projectinfo.projectnotes,
+                        },
+                        projectstatus: {
+                            progressstatus: project.data().projectstatus.progressstatus,
+                            progressrange: project.data().projectstatus.progressrange,
+                            happiness: project.data().projectstatus.happiness,
+                            starteddate: project.data().projectstatus.starteddate,
+                            completeddate: project.data().projectstatus.completeddate,
+                        },
+                    };
+                    setprojectsToDisplay((prevState) => [...prevState, currentProject]);
                     dispatch(
                         otherUserProjectFetchedFromDB({
                             projectid: project.id,
@@ -92,6 +133,7 @@ const Notebook = function() {
 
     // projects are being added to store twice to both users
 
+    // when location changes
     useEffect(() => {
         const usernameonpath = location.pathname.substring(10);
         if (user !== "" && usernameonpath === user) {
@@ -107,9 +149,13 @@ const Notebook = function() {
         });
     }, [location]);
 
+    // need to ceck if info is already on sti
+    // after fetching info from store for user
     useEffect(() => {
+        console.log("project data");
+        console.log(projectData);
         const usernameonpath = location.pathname.substring(10);
-        if (usernameonpath === user && user !== "") {
+        if (usernameonpath === user && user !== "" && projectData !== undefined) {
             setprojectsToDisplay((prevState) => {
                 let updateState = Array.from(prevState);
                 projectData!.forEach((project) => {
@@ -124,36 +170,48 @@ const Notebook = function() {
                 });
                 return updateState;
             });
+        } else if (
+            usernameonpath !== user &&
+            user !== "" &&
+            projectData !== undefined
+        ) {
         }
     }, [projectData]);
 
-    useEffect(() => {
-        const usernameonpath = location.pathname.substring(10);
-        if (usernameonpath !== user && user !== "") {
-            setusermatchespath(false);
-            if (
-                otherUserProjectData[0].projectid === "" &&
-                !otherUserProjectsFetched
-            ) {
-                fetchProjectsOtherUser(usernameonpath);
-            } else {
-                setprojectsToDisplay((prevState) => {
-                    let updateState = Array.from(prevState);
-                    otherUserProjectData!.forEach((project) => {
-                        const currentprojectid = project.projectid;
-                        const checkifexists = updateState.find(
-                            (element: ProjectFromStore) =>
-                                element.projectid === currentprojectid
-                        );
-                        if (checkifexists === undefined && project.projectid !== "") {
-                            updateState = [...updateState, project];
-                        }
-                    });
-                    return updateState;
-                });
-            }
-        }
-    }, [otherUserProjectData]);
+    //when user doesnt match path
+    // check what's inside otheruser on store
+    // if projectid on first project is "" info hasn't been fetched from db
+
+    // after fetching info from store for other user
+    /* useEffect(() => {
+     *     console.log("other user project data");
+     *     console.log(otherUserProjectData);
+     *     const usernameonpath = location.pathname.substring(10);
+     *     if (usernameonpath !== user && user !== "") {
+     *         setusermatchespath(false);
+     *         if (
+     *             otherUserProjectData[0].projectid === "" &&
+     *             !otherUserProjectsFetched
+     *         ) {
+     *             fetchProjectsOtherUser(usernameonpath);
+     *         } else {
+     *             setprojectsToDisplay((prevState) => {
+     *                 let updateState: ProjectFromStore[] = [];
+     *                 otherUserProjectData!.forEach((project) => {
+     *                     const currentprojectid = project.projectid;
+     *                     const checkifexists = updateState.find(
+     *                         (element: ProjectFromStore) =>
+     *                             element.projectid === currentprojectid
+     *                     );
+     *                     if (checkifexists === undefined && project.projectid !== "") {
+     *                         updateState = [...updateState, project];
+     *                     }
+     *                 });
+     *                 return updateState;
+     *             });
+     *         }
+     *     }
+     * }, [otherUserProjectData]); */
 
     useEffect(() => {
         setnewprojectpath("/notebook/" + user + "/newproject");
