@@ -20,6 +20,7 @@ import {
     getStorage,
     ref,
     uploadBytesResumable,
+    deleteObject,
 } from "firebase/storage";
 
 import {
@@ -87,6 +88,40 @@ const uploadPhoto = async function(projectid: string, file: File) {
     } catch (error) {
         console.log(error);
         return false;
+    }
+};
+
+const deletePhoto = async function(projectid: string) {
+    try {
+        const user = auth.currentUser;
+        if (user !== null) {
+            //get storageuri from project
+            const projectRef = doc(
+                database,
+                "users",
+                user.uid,
+                "projects",
+                projectid
+            );
+            const projectSnap = await getDoc(projectRef);
+            if (projectSnap.exists()) {
+                const photoURI = projectSnap.data().storageUri;
+                const storage = getStorage();
+                const photoreference = ref(storage, photoURI);
+                deleteObject(photoreference)
+                    .then(() => {
+                        updateDoc(projectRef, {
+                            imageUrl: "",
+                            storageUri: "",
+                        });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        }
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -523,7 +558,7 @@ const addProjectToNotebook = async function(
                     projectnotes: "",
                 },
                 projectstatus: {
-                    progressstatus: "In progress",
+                    progressstatus: "inprogress",
                     progressrange: "0",
                     happiness: "",
                     starteddate: "",
@@ -699,6 +734,7 @@ export {
     deleteProject,
     updateProjectInDB,
     uploadPhoto,
+    deletePhoto,
     uploadProfilePhoto,
     fetchUserInfo,
     fetchOtherUserInfo,

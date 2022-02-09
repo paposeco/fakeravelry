@@ -6,12 +6,11 @@ import ProjectItem from "./ProjectItem";
 import DisplayProjectImage from "./DisplayProjectImage";
 import DisplayProgress from "./DisplayProgress";
 import AboutPattern from "./AboutPattern";
-import { deleteProject } from "../../Firebase";
-import { projectDeleted } from "./projectsSlice";
+import { deleteProject, deletePhoto } from "../../Firebase";
+import { projectDeleted, projectPhotoDeleted } from "./projectsSlice";
 
 // fetches project com store and displays it with help from modules: displayprojectimage for project image and projectitem that displays each block of information. projectitem gets help from DisplayYarn for rendering the yarn elements
 
-// i will assume that the user doesn't access a single project from the url, but instead through the notebook
 const DisplayProject = function() {
     const { state } = useLocation();
     const location = useLocation();
@@ -66,15 +65,15 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
-        false
-    );
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
+        useState<boolean>(false);
 
     const deleteproject = function(event: React.MouseEvent) {
         const currentprojectid = state.projectid;
         deleteProject(currentprojectid);
         dispatch(projectDeleted({ projectid: currentprojectid }));
         navigate("/notebook/" + user);
+        projectdatafromstore!.imageUrl = "";
     };
 
     const editProject = function(event: React.MouseEvent) {
@@ -137,8 +136,19 @@ const DisplayProject = function() {
             ) {
                 setDisplayLinkToRaveler(true);
             }
+            if (projectdatafromstore.imageUrl !== "") {
+                setphotoexists(true);
+            }
         }
     }, [projectdatafromstore]);
+
+    const deletephoto = async function(event: React.MouseEvent) {
+        const currentprojectid = state.projectid;
+        await deletePhoto(currentprojectid);
+        dispatch(projectPhotoDeleted({ projectid: currentprojectid }));
+        setphotoexists(false);
+    };
+    const [photoexists, setphotoexists] = useState<boolean>(false);
 
     if (projectdatafromstore === undefined) {
         return <div></div>;
@@ -147,6 +157,7 @@ const DisplayProject = function() {
             <div id="project">
                 <div id="projectphoto">
                     <DisplayProjectImage imageurl={projectdatafromstore!.imageUrl} />
+                    {photoexists && <button onClick={deletephoto}>delete photo</button>}
                 </div>
                 <div id="projectdescription">
                     <h2>{projectdatafromstore!.projectname}</h2>

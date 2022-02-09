@@ -25,6 +25,25 @@ const ProjectThumbnail = function(props: {
         }
     }, [props.projectprogress]);
 
+    const [projectStatus, setProjectStatus] = useState<string>("");
+
+    useEffect(() => {
+        switch (props.projectstatus) {
+            case "inprogress":
+                setProjectStatus("In progress");
+                break;
+            case "finished":
+                setProjectStatus("Finished");
+                break;
+            case "hibernating":
+                setProjectStatus("Hibernating");
+                break;
+            case "frogged":
+                setProjectStatus("Frogged");
+                break;
+        }
+    }, [props.projectstatus]);
+
     useEffect(() => {
         setProjectpath(
             "/notebook/" + props.username + "/projects/" + props.projectslug
@@ -45,7 +64,7 @@ const ProjectThumbnail = function(props: {
             <div>
                 <h3>{props.projectname}</h3>
                 <div>
-                    <span>{props.projectstatus}</span>
+                    <p>{projectStatus}</p>
                     {/* <img src={props.projectphoto} alt={`${props.projectname}photo`}/> */}
                     <DisplayProjectImage imageurl={props.projectphoto} />
                     <span>{progress}%</span>

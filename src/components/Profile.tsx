@@ -11,7 +11,10 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState } from "./store/store";
-import { otherUserProjectFetchedFromDB } from "./projects/projectsSliceOtherUser";
+import {
+    otherUserProjectFetchedFromDB,
+    clearProjects,
+} from "./projects/projectsSliceOtherUser";
 import { otherUserAdded } from "./store/otherUserInfoSlice";
 import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
 import DisplayProfileImage from "./profiledetails/DisplayProfileImage";
@@ -24,17 +27,15 @@ const Profile = function() {
     const user = useSelector((state: RootState) => state.userinfo);
     const [username, setUsername] = useState<string>("");
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>();
-    const [userOnPath, setUserOnPath] = useState<string>("");
+    const [userOnPath, setUserOnPath] = useState<string>(
+        location.pathname.substring(8)
+    );
     const [userIDOnPath, setUserIDOnPath] = useState<string>("");
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
-    const [
-        otherUserProjectsFetched,
-        setOtherUserProjectsFetched,
-    ] = useState<boolean>(false);
-    const [
-        otherUserDetailsFetched,
-        setOtherUserDetailsFetched,
-    ] = useState<boolean>(false);
+    const [otherUserProjectsFetched, setOtherUserProjectsFetched] =
+        useState<boolean>(false);
+    const [otherUserDetailsFetched, setOtherUserDetailsFetched] =
+        useState<boolean>(false);
 
     const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
@@ -47,16 +48,15 @@ const Profile = function() {
         // wait for user from store
         if (user.username !== "") {
             setUsername(user.username);
+            setnotebookpath("/notebook/" + usernameOnPath);
             if (user.username !== usernameOnPath) {
                 setUserMatchesPath(false);
-                setnotebookpath("/notebook/" + usernameOnPath);
                 if (!otherUserDetailsFetched) {
                     fetchUserOtherDetails(usernameOnPath);
                 }
                 checkIfIsFriend(user.userID, usernameOnPath);
             } else {
                 setUserMatchesPath(true);
-                setnotebookpath("/notebook/" + username);
                 setUserIDOnPath(user.userID);
                 fetchFriendsList(user.userID);
             }
@@ -84,10 +84,8 @@ const Profile = function() {
 
     const fetchUserProfileInformation = async () => {
         if (userIDOnPath !== "") {
-            const profileinfo:
-                | ProfileInformation
-                | false
-                | undefined = await getUserProfileInformation(userIDOnPath);
+            const profileinfo: ProfileInformation | false | undefined =
+                await getUserProfileInformation(userIDOnPath);
             return profileinfo;
         }
     };
@@ -142,8 +140,8 @@ const Profile = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts = project.data().projectinfo.gauge
-                            .numberStsOrRepeats);
+                        : (gaugeNumberSts =
+                            project.data().projectinfo.gauge.numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -188,7 +186,11 @@ const Profile = function() {
         }
     };
     useEffect(() => {
-        if (!userMatchesPath && !otherUserProjectsFetched) {
+        if (
+            userMatchesPath !== undefined &&
+            !userMatchesPath &&
+            !otherUserProjectsFetched
+        ) {
             fetchProjectsOtherUser();
         }
     }, [userMatchesPath]);
@@ -220,6 +222,20 @@ const Profile = function() {
     const showFriends = function(event: React.MouseEvent) {
         navigate("/people/" + userOnPath + "/friends");
     };
+
+    useEffect(() => {
+        const currentnameonpath = location.pathname.substring(8);
+        setUserOnPath(currentnameonpath);
+        const loggedinuser = user.username;
+        if (loggedinuser !== currentnameonpath) {
+            setUserMatchesPath(false);
+            setOtherUserDetailsFetched(false);
+            setOtherUserProjectsFetched(false);
+            dispatch(clearProjects({ allprojects: "allprojects" }));
+        } else {
+            setUserMatchesPath(true);
+        }
+    }, [location]);
 
     return (
         <div>
@@ -261,8 +277,3 @@ const Profile = function() {
 };
 
 export default Profile;
-
-// cancel button
-// add multiple images?
-
-// added foto and didnt' change profile

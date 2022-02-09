@@ -35,11 +35,10 @@ const EditProject = function() {
     // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
     // fetches project data from store
-    const projectData:
-        | ProjectFromStore
-        | undefined = useSelector((state: RootState) =>
+    const projectData: ProjectFromStore | undefined = useSelector(
+        (state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        );
+    );
 
     // local state hooks for form
     const [craftType, setCraftType] = useState<string>("");
@@ -384,10 +383,8 @@ const EditProject = function() {
 
     // handles adding images to projects
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
-    const [
-        displayImageComponent,
-        setDisplayImageComponent,
-    ] = useState<JSX.Element>();
+    const [displayImageComponent, setDisplayImageComponent] =
+        useState<JSX.Element>();
 
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -416,6 +413,11 @@ const EditProject = function() {
             setDisplayImageComponent(<DisplayProjectImage imageurl={publicImgUrl} />);
         }
     };
+
+    /* const cancelChanges = function(event: React.MouseEvent) {
+     *     //    navigate()
+     *     console.log(location.pathname);
+     * }; */
 
     // on page load, sets project information with info from store
     useEffect(() => {
@@ -600,9 +602,6 @@ const EditProject = function() {
                             <button id="addhook" onClick={addHook} type="button">
                                 add hook
                             </button>
-                            {/* {selectNeedlesToRender.map((select) => (
-                                <div key={uniqid()}>{select}</div>
-                            ))} */}
                             {selectNeedlesToRender}
                             {selectHooksToRender}
                         </div>
@@ -680,6 +679,7 @@ const EditProject = function() {
                             value={projectInformation.projectnotes}
                         />
                         <input type="submit" value="Save Changes" />
+                        <button>Cancel</button>
                         <div>
                             <label htmlFor="progressstatus">
                                 Status
@@ -801,15 +801,11 @@ const EditProject = function() {
 
 export default EditProject;
 
-// project status toggles form elements
-
 // very sad <i class="las la-sad-tear"></i>
 // sad <i class="las la-frown"></i>
 // meh <i class="las la-meh"></i>
 // happy <i class="las la-smile-beam"></i>
 // very happy <i class="las la-laugh"></i>
-
-// /notebook should redirect to /notebook/username or something
 
 /*
  *   handleInputChange(event) {

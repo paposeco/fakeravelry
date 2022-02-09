@@ -31,7 +31,7 @@ const initialState = [
             projectnotes: "",
         },
         projectstatus: {
-            progressstatus: "In progress",
+            progressstatus: "inprogress",
             progressrange: "0",
             happiness: "",
             starteddate: "",
@@ -207,6 +207,15 @@ const projectsSlice = createSlice({
                 existingProject.imageUrl = imageUrl;
             }
         },
+        projectPhotoDeleted(state, action) {
+            const { projectid } = action.payload;
+            const existingProject = state.find(
+                (project) => project.projectid === projectid
+            );
+            if (existingProject) {
+                existingProject.imageUrl = "";
+            }
+        },
         projectUpdated(state, action) {
             const {
                 projectid,
@@ -257,7 +266,8 @@ const projectsSlice = createSlice({
                 existingProject.projectinfo.selectedtags = selectedtags;
                 existingProject.projectinfo.needles = needles;
                 existingProject.projectinfo.hooks = hooks;
-                existingProject.projectinfo.gauge.numberStsOrRepeats = numberStsOrRepeats;
+                existingProject.projectinfo.gauge.numberStsOrRepeats =
+                    numberStsOrRepeats;
                 existingProject.projectinfo.gauge.horizontalunits = horizontalunits;
                 existingProject.projectinfo.gauge.numberRows = numberRows;
                 existingProject.projectinfo.gauge.gaugesize = gaugesize;
@@ -279,6 +289,7 @@ export const {
     projectFetchedFromDB,
     projectUpdated,
     projectPhotoAdded,
+    projectPhotoDeleted,
     projectDeleted,
 } = projectsSlice.actions;
 export const selectProjectById = (state: RootState, projectID: string) =>
