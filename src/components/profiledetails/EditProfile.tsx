@@ -1,6 +1,6 @@
 import { Country } from "../projects/SelectOptions";
 import { RootState } from "../store/store";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -57,10 +57,8 @@ const EditProfile = function() {
         }
     });
     const fetchUserProfileInformation = async function() {
-        const profileinfo:
-            | ProfileInformation
-            | false
-            | undefined = await getUserProfileInformation(user.userID);
+        const profileinfo: ProfileInformation | false | undefined =
+            await getUserProfileInformation(user.userID);
 
         return profileinfo;
     };
