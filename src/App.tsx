@@ -8,7 +8,14 @@ import Profile from "./components/Profile";
 import EditProfile from "./components/profiledetails/EditProfile";
 import Welcome from "./components/Welcome";
 import Signup from "./components/Signup";
-import { auth, getInfo, fetchUserInfo, signOutUser } from "./Firebase";
+import logo from "./images/logo.svg";
+import {
+    auth,
+    getInfo,
+    fetchUserInfo,
+    signOutUser,
+    getUserProfileImage,
+} from "./Firebase";
 import NewProject from "./components/NewProject";
 import EditProject from "./components/projects/EditProject";
 import DisplayProject from "./components/projects/DisplayProject";
@@ -16,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { userAdded } from "./components/store/userInfoSlice";
 import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 import Friends from "./components/Friends";
+import DisplayProfileImage from "./components/profiledetails/DisplayProfileImage";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -27,6 +35,7 @@ const App = function() {
     const [userID, setUserID] = useState<string>("");
     const [peoplepath, setPeoplePath] = useState<string>("");
     const [notebookpath, setNotebookpath] = useState<string>("");
+    const [profileimg, setprofileimg] = useState<string>("");
     const dispatch = useDispatch();
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
     const fetchUserData = async function() {
@@ -38,8 +47,8 @@ const App = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts = project.data().projectinfo.gauge
-                            .numberStsOrRepeats);
+                        : (gaugeNumberSts =
+                            project.data().projectinfo.gauge.numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -88,6 +97,8 @@ const App = function() {
             if (user) {
                 setUserSignedIn(true);
                 const userInfo = await getInfo("both");
+                const userProfileImage = await getUserProfileImage();
+                setprofileimg(userProfileImage);
                 setUsername(userInfo[0]);
                 setName(userInfo[1]);
                 setUserID(userInfo[2]);
@@ -123,6 +134,30 @@ const App = function() {
         window.location.reload();
     };
 
+    const [menushown, setmenushown] = useState(false);
+
+    const showMenu = function(event: React.MouseEvent) {
+        if (!menushown) {
+            const profileimgli = document.getElementById("profileimage");
+            const newdiv = document.createElement("div");
+            newdiv.setAttribute("id", "profilemenu");
+            profileimgli!.appendChild(newdiv);
+            const newul = document.createElement("ul");
+            const liprofile = document.createElement("li");
+            const lisignout = document.createElement("li");
+            newul.appendChild(liprofile);
+            newul.appendChild(lisignout);
+            newdiv.appendChild(newul);
+            liprofile.innerHTML = `<a class="profilemenuelement" href="${peoplepath}">Profile</a>`; // checks if user is signed in? but the link around profileimage doesn't check
+            lisignout.innerHTML = `<p class="profilemenuelement" onclick=${signOut}>Sign out</p>`;
+            newdiv.addEventListener("mouseleave", () => {
+                newdiv.remove();
+                setmenushown(false);
+            });
+            setmenushown(true);
+        }
+    };
+
     if (!userSignedIn) {
         return (
             <Routes>
@@ -137,24 +172,42 @@ const App = function() {
     } else {
         return (
             <div>
-                <div>
+                <div id="navcontainer">
                     <nav>
                         <ul>
                             <li>
-                                <Link to="/community">Community</Link>
+                                <Link to="/">
+                                    <span id="logo">
+                                        <img src={logo} alt="fakeravelrylogo" />
+                                    </span>
+                                </Link>
                             </li>
                             <li>
-                                <Link to="/messages">Messages</Link>
+                                <Link to="/">patterns</Link>
                             </li>
                             <li>
-                                <Link to={notebookpath}>Notebook</Link>
+                                <Link to="/">yarns</Link>
                             </li>
                             <li>
+                                <Link to="/community">community</Link>
+                            </li>
+                            <li>
+                                <Link to="/">support</Link>
+                            </li>
+                            <li id="linktonotebook">
+                                <Link to={notebookpath}>my notebook</Link>
+                            </li>
+                            <li id="profileimage" onMouseEnter={showMenu}>
+                                <Link to={peoplepath}>
+                                    <DisplayProfileImage imageurl={profileimg} />
+                                </Link>
+                            </li>
+                            {/* <li>
                                 <Link to={peoplepath}>Profile</Link>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                                 <button onClick={signOut}>Sign Out</button>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
                 </div>

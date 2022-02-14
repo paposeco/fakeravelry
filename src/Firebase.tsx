@@ -360,6 +360,25 @@ const getUserProfileInformation = async function(userId: string) {
     }
 };
 
+const getUserProfileImage = async function() {
+    const user = auth.currentUser;
+    if (user !== null) {
+        try {
+            const docRef = doc(database, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const alldata = docSnap.data();
+                return alldata.imageurl;
+            } else {
+                return "";
+            }
+        } catch (error) {
+            console.log(error);
+            return "";
+        }
+    }
+};
+
 const checkUniqueUsername = async function(desiredusername: string) {
     const docRef = doc(database, "usernames", "usernamescollection");
     const docSnap = await getDoc(docRef);
@@ -749,6 +768,7 @@ export {
     getProfilePic,
     searchUser,
     fetchCommunityMembers,
+    getUserProfileImage,
 };
 
 // quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db
