@@ -1,8 +1,17 @@
+html{
+    font-size: 14px;
+}
+
 body{
     background: #f7f7f7;
     font-family: "Inter", Helvetica, Arial, sans-serif;
     color: rgb(46, 52, 54);
     margin: 0px;
+}
+
+h2{
+    font-size: 1.4285714286rem;
+    font-weight: 900;
 }
 
 .projectinfodiv, .profileinfodiv{
@@ -20,6 +29,7 @@ body{
 #profileleft{
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 20px;
 }
 
@@ -66,11 +76,11 @@ input[name="happiness"]:checked + label{
 }
 
 #navcontainer{
-    height: 50px;
+    height: 55px;
 }
 
 nav{
-    height: 50px;
+    height: 100%;
     background-color: white;
     width: 100%;
     border-bottom: 1px solid rgb(46, 52, 54);
@@ -83,7 +93,7 @@ nav > ul{
     align-items: center;
     margin: 0px;
     padding-left: 20px;
-    height: 50px;
+    height: 100%;
 }
 
 nav > ul li{
@@ -101,26 +111,64 @@ nav > ul li a{
     font-size: 14px;
 }
 
-#profileimage{
-    height: 40px;
-    width: 40px;
-    margin-right: 10px;
-    display: inline;
+.standardmenu{
+    padding-top: 20px;
+    display: block;
+    order: 1;
+}
 
+#profileimage{
+    margin-right: 20px;
+    display: inline;
+    order: 1;
+}
+
+#profileimage a div{
+    margin-top: 5px;
+    height: 47px;
 }
 
 #profileimage img{
-    width: 100%;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     object-fit: cover;
     border-radius: 5px;
     border: 1px solid rgb(46, 52, 54);
 }
 
+.activemenu{
+    height: 6px;
+    background: black;
+    order: 2;
+    transition: background 0.5s ease-in-out;
+}
+
+.menuitem{
+    height: 100%;
+}
+
+/* .menuitem:firstchild{ */
+/*     padding-top: 20px; */
+/* } */
+
+.activemenunotprofile{
+    order: 2;
+    height: 3px;
+    background: black;
+    transition: background 0.5s ease-in-out;
+}
+
+.navelementselected{
+    margin-top: 15px;
+}
+
 #profilemenu{
-    margin-left: -150px;
+    margin-left: -158px;
     /* margin-top: 100px; */
     width: 200px;
+    top:56px;
+    position: absolute;
+    background-color: white;
 }
 
 #profilemenu ul{
@@ -128,8 +176,6 @@ nav > ul li a{
     flex-direction: column;
     font-size: 14px;
     padding-top: 10px;
-    margin-top: 2px;
-    background-color: white;
     padding-left: 0px;
     padding-top: 0px;
 }
@@ -157,4 +203,41 @@ nav > ul li a{
 
 .profilemenuelement:hover{
     cursor: pointer;
+}
+
+#userprofile{
+
+    display: grid;
+    grid-template-columns: 175px 510px 250px;
+
+}
+
+#profileleft .profileimage img{
+    max-width: 102px;
+}
+
+#content{
+    width: 960px;
+    margin: auto;
+    padding-top: 35px;
+}
+
+.genericbutton{
+    background: rgb(218, 247, 243);
+    outline: none;
+    border-radius: 0px;
+    border: 1px solid  rgb(46, 52, 54);
+    font-family: "Inter";
+    font-size: 12px;
+    padding: 4px 5px;
+}
+
+#profileleft .genericbutton{
+    width: 112px;
+}
+
+#usernickname{
+    display: grid;
+    grid-template-columns: 175px 510px 250px;
+    text-align: center;
 }

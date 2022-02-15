@@ -238,25 +238,35 @@ const Profile = function() {
     }, [location]);
 
     return (
-        <div>
-            <h2>{userMatchesPath ? username : userOnPath}</h2>
-
-            {userMatchesPath && <button onClick={editProfile}>edit profile</button>}
-            {!userMatchesPath && !isfriend && (
-                <button onClick={addFriend}>add friend</button>
-            )}
-            {!userMatchesPath && isfriend && (
-                <button onClick={removeFriend}>remove friend</button>
-            )}
-            <div id="profile">
+        <div id="content">
+            <div id="usernickname">
+                <h2>{userMatchesPath ? username : userOnPath}</h2>
+            </div>
+            <div id="userprofile">
                 <div id="profileleft">
+                    {userMatchesPath && (
+                        <button onClick={editProfile} className="genericbutton">
+                            edit profile
+                        </button>
+                    )}
+                    {!userMatchesPath && !isfriend && (
+                        <button onClick={addFriend} className="genericbutton">
+                            add friend
+                        </button>
+                    )}
+                    {!userMatchesPath && isfriend && (
+                        <button onClick={removeFriend} className="genericbutton">
+                            remove friend
+                        </button>
+                    )}
+
                     <DisplayProfileImage imageurl={publicImgUrl} />
-                    <div>if someone else's profile: add friend, message</div>
-                    <div>groups</div>
                 </div>
-                {infofetched && infotodisplay !== undefined && (
-                    <DisplayProfileDetails userinfo={infotodisplay} />
-                )}
+                <div id="profile">
+                    {infofetched && infotodisplay !== undefined && (
+                        <DisplayProfileDetails userinfo={infotodisplay} />
+                    )}
+                </div>
                 <div id="profileright">
                     <div>
                         <Link to={notebookpath}>Projects</Link>

@@ -24,6 +24,7 @@ import { userAdded } from "./components/store/userInfoSlice";
 import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 import Friends from "./components/Friends";
 import DisplayProfileImage from "./components/profiledetails/DisplayProfileImage";
+import DisplayProfileMenu from "./components/profiledetails/DisplayProfileMenu";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -138,23 +139,33 @@ const App = function() {
 
     const showMenu = function(event: React.MouseEvent) {
         if (!menushown) {
-            const profileimgli = document.getElementById("profileimage");
-            const newdiv = document.createElement("div");
-            newdiv.setAttribute("id", "profilemenu");
-            profileimgli!.appendChild(newdiv);
-            const newul = document.createElement("ul");
-            const liprofile = document.createElement("li");
-            const lisignout = document.createElement("li");
-            newul.appendChild(liprofile);
-            newul.appendChild(lisignout);
-            newdiv.appendChild(newul);
-            liprofile.innerHTML = `<a class="profilemenuelement" href="${peoplepath}">Profile</a>`; // checks if user is signed in? but the link around profileimage doesn't check
-            lisignout.innerHTML = `<p class="profilemenuelement" onclick=${signOut}>Sign out</p>`;
-            newdiv.addEventListener("mouseleave", () => {
-                newdiv.remove();
-                setmenushown(false);
-            });
             setmenushown(true);
+            const menuitemdivselected = document.getElementById("selectedmenuitem");
+            menuitemdivselected!.setAttribute("class", "activemenu");
+        }
+    };
+
+    useEffect(() => {
+        if (menushown) {
+            const profileimg = document.getElementById("profileimage");
+            const menuitemdivselected = document.getElementById("selectedmenuitem");
+            if (profileimg !== null) {
+                profileimg!.addEventListener("mouseleave", () => {
+                    setmenushown(false);
+                    menuitemdivselected!.classList.remove("activemenu");
+                });
+            }
+        }
+    }, [menushown]);
+
+    const activateMenu = function(event: React.MouseEvent) {
+        const target = event.currentTarget;
+        const targetdiv = target.querySelector(".navelementselected");
+        if (targetdiv !== null) {
+            targetdiv.classList.add("activemenunotprofile");
+            target.addEventListener("mouseleave", () => {
+                targetdiv.classList.remove("activemenunotprofile");
+            });
         }
     };
 
@@ -182,32 +193,58 @@ const App = function() {
                                     </span>
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/">patterns</Link>
+                            <li onMouseEnter={activateMenu}>
+                                <div className="menuitem">
+                                    <Link to="/" className="standardmenu">
+                                        patterns
+                                    </Link>
+                                    <div className="navelementselected"></div>
+                                </div>
                             </li>
-                            <li>
-                                <Link to="/">yarns</Link>
+                            <li onMouseEnter={activateMenu}>
+                                <div className="menuitem">
+                                    <Link to="/" className="standardmenu">
+                                        yarns
+                                    </Link>
+                                    <div className="navelementselected"></div>
+                                </div>
                             </li>
-                            <li>
-                                <Link to="/community">community</Link>
+                            <li onMouseEnter={activateMenu}>
+                                <div className="menuitem">
+                                    <Link to="/community" className="standardmenu">
+                                        community
+                                    </Link>
+                                    <div className="navelementselected"></div>
+                                </div>
                             </li>
-                            <li>
-                                <Link to="/">support</Link>
+                            <li onMouseEnter={activateMenu}>
+                                <div className="menuitem">
+                                    <Link to="/" className="standardmenu">
+                                        support
+                                    </Link>
+                                    <div className="navelementselected"></div>
+                                </div>
                             </li>
-                            <li id="linktonotebook">
-                                <Link to={notebookpath}>my notebook</Link>
+                            <li id="linktonotebook" onMouseEnter={activateMenu}>
+                                <div className="menuitem">
+                                    <Link to={notebookpath} className="standardmenu">
+                                        my notebook
+                                    </Link>
+                                    <div className="navelementselected"></div>
+                                </div>
                             </li>
                             <li id="profileimage" onMouseEnter={showMenu}>
                                 <Link to={peoplepath}>
                                     <DisplayProfileImage imageurl={profileimg} />
                                 </Link>
+                                <div id="selectedmenuitem" className=""></div>
+                                {menushown && (
+                                    <DisplayProfileMenu
+                                        peoplepath={peoplepath}
+                                        signoutfunction={signOut}
+                                    />
+                                )}
                             </li>
-                            {/* <li>
-                                <Link to={peoplepath}>Profile</Link>
-                            </li> */}
-                            {/* <li>
-                                <button onClick={signOut}>Sign Out</button>
-                            </li> */}
                         </ul>
                     </nav>
                 </div>

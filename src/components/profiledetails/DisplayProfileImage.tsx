@@ -3,13 +3,13 @@ import emptyprojectphoto from "../../images/emptyprojectphoto.svg";
 const DisplayProfileImage = function(props: { imageurl: string }) {
     if (props.imageurl === "" || props.imageurl === undefined) {
         return (
-            <div>
+            <div className="profileimage">
                 <img src={emptyprojectphoto} alt="emptyprofilephoto" />
             </div>
         );
     } else {
         return (
-            <div>
+            <div className="profileimage">
                 <img src={props.imageurl} alt="profilephoto" />
             </div>
         );
