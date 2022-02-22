@@ -18,13 +18,27 @@ import {
 import { otherUserAdded } from "./store/otherUserInfoSlice";
 import DisplayProfileDetails from "./profiledetails/DisplayProfileDetail";
 import DisplayProfileImage from "./profiledetails/DisplayProfileImage";
-import type { ProfileInformation } from "./common/types";
+import type { ProfileInformation, ProjectFromStore } from "./common/types";
+
+//icons
+import ProjectIcon from "../images/projectsicon.svg";
+import StashIcon from "../images/stash.svg";
+import QueueIcon from "../images/queueicon.svg";
+import FavoritesIcon from "../images/favoritesicon.svg";
+import LibraryIcon from "../images/libraryicon.svg";
+import FriendsIcon from "../images/friendsicon.svg";
+import ForumIcon from "../images/forumsicon.svg";
+import CommentsIcon from "../images/commentsicon.svg";
 
 const Profile = function() {
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.userinfo);
+    const projectData: ProjectFromStore[] = useSelector(
+        (state: RootState) => state.projects
+    );
+    // fetch all info from store and display number of projects
     const [username, setUsername] = useState<string>("");
     const [userMatchesPath, setUserMatchesPath] = useState<boolean>();
     const [userOnPath, setUserOnPath] = useState<string>(
@@ -41,6 +55,10 @@ const Profile = function() {
     const [notebookpath, setnotebookpath] = useState<string>("");
     const [friendslist, setfriendslist] = useState<string[]>([]);
     const [isfriend, setisfriend] = useState<boolean>(false);
+    const [friendspath, setfriendspath] = useState<string>(
+        "/people/" + location.pathname.substring(8) + "/friends"
+    );
+    const [numberprojects, setnumberprojects] = useState<number>(0);
 
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
@@ -59,6 +77,7 @@ const Profile = function() {
                 setUserMatchesPath(true);
                 setUserIDOnPath(user.userID);
                 fetchFriendsList(user.userID);
+                setnumberprojects(projectData.length);
             }
         }
     }, [location, user]);
@@ -106,6 +125,7 @@ const Profile = function() {
 
     useEffect(() => {
         setinfofetched(false);
+        setnumberprojects(0);
     }, [location]);
 
     const fetchUserOtherDetails = async function(usernameonpath: string) {
@@ -134,8 +154,11 @@ const Profile = function() {
             otheruserprojects !== undefined &&
             otheruserprojects !== "user not found"
         ) {
+            let countprojects = 0;
             const addallprojects = new Promise((resolve, reject) => {
                 otheruserprojects.forEach((project) => {
+                    //                    setnumberprojects(numberprojects + 1);
+                    countprojects += 1;
                     let gaugeNumberSts: number;
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
@@ -180,6 +203,7 @@ const Profile = function() {
                     );
                 });
             });
+            setnumberprojects(countprojects);
             addallprojects
                 .then((resolve) => setOtherUserProjectsFetched(true))
                 .catch((reject) => console.log("error"));
@@ -219,13 +243,14 @@ const Profile = function() {
         setisfriend(false);
     };
 
-    const showFriends = function(event: React.MouseEvent) {
-        navigate("/people/" + userOnPath + "/friends");
-    };
+    /* const showFriends = function(event: React.MouseEvent) {
+     *     navigate("/people/" + userOnPath + "/friends");
+     * }; */
 
     useEffect(() => {
         const currentnameonpath = location.pathname.substring(8);
         setUserOnPath(currentnameonpath);
+        setfriendspath("/people/" + currentnameonpath + "/friends");
         const loggedinuser = user.username;
         if (loggedinuser !== currentnameonpath) {
             setUserMatchesPath(false);
@@ -234,8 +259,13 @@ const Profile = function() {
             dispatch(clearProjects({ allprojects: "allprojects" }));
         } else {
             setUserMatchesPath(true);
+            setnumberprojects(projectData.length);
         }
     }, [location]);
+
+    useEffect(() => {
+        setnumberprojects(projectData.length);
+    }, [projectData]);
 
     return (
         <div id="content">
@@ -269,16 +299,47 @@ const Profile = function() {
                 </div>
                 <div id="profileright">
                     <div>
-                        <Link to={notebookpath}>Projects</Link>
-                        queued, library, posts
+                        <Link to={notebookpath}>
+                            <img src={ProjectIcon} alt="projecticon" /> {numberprojects}{" "}
+                            projects
+                        </Link>
                     </div>
                     <div>
-                        <button id="faves">faves</button>
-                        <button id="friends" onClick={showFriends}>
-                            {friendslist.length} friends
-                        </button>
-                        <button id="comments">Comments</button>
-                        <button id="stash">Stash</button>
+                        <Link to="/">
+                            <img src={StashIcon} alt="stashicon" /> 0 stashed
+                        </Link>
+                    </div>
+
+                    <div>
+                        <Link to="/">
+                            <img src={QueueIcon} alt="queueicon" /> 0 queued
+                        </Link>
+                    </div>
+                    <div>
+                        <Link to="/">
+                            <img src={FavoritesIcon} alt="favoritesicon" /> 0 faves
+                        </Link>
+                    </div>
+                    <div>
+                        <Link to="/">
+                            <img src={LibraryIcon} alt="libraryicon" /> 0 library
+                        </Link>
+                    </div>
+                    <div>
+                        <Link to={friendspath}>
+                            <img src={FriendsIcon} alt="friendsicon" /> {friendslist.length}{" "}
+                            friends
+                        </Link>
+                    </div>
+                    <div>
+                        <Link to="/">
+                            <img src={ForumIcon} alt="forumicon" /> 0 posts
+                        </Link>
+                    </div>
+                    <div>
+                        <Link to="/">
+                            <img src={CommentsIcon} alt="commenticon" /> 0 comments
+                        </Link>
                     </div>
                 </div>
             </div>

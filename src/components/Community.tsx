@@ -50,6 +50,12 @@ const Community = function() {
 
     const changePage = function(event: React.MouseEvent) {
         const buttonid = event.currentTarget.id;
+        const buttonnode = document.getElementById(buttonid);
+        const allbuttons = document.querySelectorAll("button");
+        allbuttons.forEach((button) => button.classList.remove("buttonactive"));
+        if (buttonnode !== null) {
+            buttonnode.classList.add("buttonactive");
+        }
         setpageselected(buttonid);
         membersToDisplay(buttonid);
     };
@@ -66,11 +72,27 @@ const Community = function() {
             const neededbuttons = pagination.length;
             let buttons: JSX.Element[] = [];
             for (let i = 0; i < neededbuttons; i++) {
-                buttons.push(
-                    <button id={`page${i + 1}`} onClick={changePage}>
-                        Page {i + 1}
-                    </button>
-                );
+                if (i === 0) {
+                    buttons.push(
+                        <button
+                            id={`page${i + 1}`}
+                            onClick={changePage}
+                            className="genericbutton buttonactive"
+                        >
+                            {i + 1}
+                        </button>
+                    );
+                } else {
+                    buttons.push(
+                        <button
+                            id={`page${i + 1}`}
+                            onClick={changePage}
+                            className="genericbutton"
+                        >
+                            {i + 1}
+                        </button>
+                    );
+                }
             }
             setpagebuttons(buttons);
         }
@@ -82,10 +104,10 @@ const Community = function() {
                 Community
                 <SearchFriends />
             </div>
-            <div>
+            <div id="friendgrid">
                 {paginationready &&
                     pagemembers.map((member: Member) => (
-                        <div key={uniqid()}>
+                        <div key={uniqid()} className="memberthumbnail">
                             <Link to={`/people/${member.username}`}>
                                 <DisplayProfileImage imageurl={member.imageurl} />
                             </Link>
@@ -93,7 +115,7 @@ const Community = function() {
                         </div>
                     ))}
             </div>
-            <div>
+            <div id="pagination">
                 {pagebuttons.map((button) => (
                     <div key={uniqid()}>{button}</div>
                 ))}

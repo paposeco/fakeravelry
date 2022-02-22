@@ -9,12 +9,25 @@ body{
     margin: 0px;
 }
 
+a{
+    color: #2E606B;
+}
+
+a:visited{
+    color: #585858;
+}
+
+a:hover{
+
+    color: #1A444D;
+}
+
 h2{
     font-size: 1.4285714286rem;
     font-weight: 900;
 }
 
-.projectinfodiv, .profileinfodiv{
+.projectinfodiv{
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -34,9 +47,34 @@ h2{
 }
 
 #profileright{
+    display: grid;
+    grid-template-areas: "a a"
+                         "a a"
+                         "a a"
+                         "a a";
+    width: 250px;
+    margin-left: 30px;
+}
+
+#profileright a{
+    text-decoration: none;
+    color: black;
+    padding-left: 10px;
+}
+
+#profileright a:hover{
+    background: white;
+}
+
+#profileright div:hover{
+    background: white;
+}
+
+#profileright div{
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 #project{
@@ -209,7 +247,6 @@ nav > ul li a{
 
     display: grid;
     grid-template-columns: 175px 510px 250px;
-
 }
 
 #profileleft .profileimage img{
@@ -232,6 +269,10 @@ nav > ul li a{
     padding: 4px 5px;
 }
 
+.buttonactive{
+    background: rgb(151, 239, 227);
+}
+
 #profileleft .genericbutton{
     width: 112px;
 }
@@ -240,4 +281,68 @@ nav > ul li a{
     display: grid;
     grid-template-columns: 175px 510px 250px;
     text-align: center;
+}
+
+
+.profileinfodiv{
+    display: grid;
+    width: 510px;
+    grid-template-columns: 30% 60%;
+    line-height: 1.2em;
+    padding: 5px 0px;
+    border-bottom: 1px solid rgb(46, 52, 54);
+}
+
+.profileinfodiv > .itemdescription{
+    color: rgb(112, 112, 112);
+}
+
+#friendgrid{
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 100px);
+    flex-wrap: wrap;
+    margin: 50px;
+}
+
+.memberthumbnail{
+    width: 115px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.memberthumbnail .profileimage img{
+    width: 102px;
+    height: 102px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: solid 1px black;
+}
+
+.memberthumbnail .profileimage{
+    display: flex;
+    justify-content: center;
+}
+
+#pagination{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.friendthumbnailfooter{
+    display: flex;
+    flex-direction: row;
+}
+
+.removefriend{
+    outline: none;
+    border: none;
+    background: #f7f7f7;
+    padding: 0;
+}
+
+.removefriend:hover{
+    cursor: pointer;
 }
