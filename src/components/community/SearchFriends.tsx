@@ -39,9 +39,12 @@ const SearchFriends = function() {
                     type="search"
                     id="searchuser"
                     name="searchuser"
+                    placeholder="username"
                     onChange={handleChange}
                 />
-                <button type="submit">Search</button>
+                <button type="submit" className="genericbutton">
+                    Search
+                </button>
             </form>
             <p>{searchresultinfo}</p>
             {userfound && (

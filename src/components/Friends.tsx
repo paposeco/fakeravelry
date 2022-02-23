@@ -83,11 +83,35 @@ const Friends = function() {
     // fetch username and profile photo: link to profile
 
     const showRemoveFriendOption = function(event: React.MouseEvent) {
-        const newdiv = document.createElement("div");
-        newdiv.textContent = "Remove friend";
-        newdiv.addEventListener("click", () => {
-            removeFriend(event);
-        });
+        const divalreadyexists = document.getElementById("removethisfriend");
+        if (divalreadyexists === null) {
+            const newdiv = document.createElement("div");
+            const firstevent = event;
+            const friendgrid = document.getElementById("friendgrid");
+            friendgrid!.appendChild(newdiv);
+            newdiv.setAttribute("id", "removethisfriend");
+            newdiv.style.position = "absolute";
+            newdiv.style.top = `${event.pageY}px`;
+            newdiv.style.left = `${event.pageX}px`;
+            const para = document.createElement("p");
+            const closebox = document.createElement("div");
+            newdiv.appendChild(closebox);
+            newdiv.appendChild(para);
+            para.textContent = "Remove friend";
+            closebox.setAttribute("class", "closebox");
+            const closebutton = document.createElement("button");
+            closebutton.setAttribute("class", "genericbutton");
+            closebutton.textContent = "x";
+            closebox.appendChild(closebutton);
+            closebutton.addEventListener("click", () => {
+                newdiv.remove();
+            });
+            para.addEventListener("click", () => {
+                removeFriend(firstevent);
+            });
+        } else {
+            divalreadyexists.remove();
+        }
     };
 
     const removeFriend = async function(event: React.MouseEvent) {
@@ -194,7 +218,12 @@ const Friends = function() {
     }, [paginationready]);
 
     return (
-        <div>
+        <div id="communitycontent">
+            {usermatchespath ? (
+                <h2>My friends</h2>
+            ) : (
+                <h2>{usernameonpath}'s friends'</h2>
+            )}
             {useronpathhasfriends && (
                 <div>
                     <div id="friendgrid">
@@ -210,7 +239,7 @@ const Friends = function() {
                                         </Link>
                                         <button
                                             title="Remove friend"
-                                            onClick={removeFriend}
+                                            onClick={showRemoveFriendOption}
                                             id={"buttonRemove" + member.friendusername}
                                             className="removefriend"
                                         >

@@ -25,6 +25,7 @@ import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 import Friends from "./components/Friends";
 import DisplayProfileImage from "./components/profiledetails/DisplayProfileImage";
 import DisplayProfileMenu from "./components/profiledetails/DisplayProfileMenu";
+import DisplayCommunityMenu from "./components/community/DisplayCommunityMenu";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -145,12 +146,36 @@ const App = function() {
         }
     };
 
+    const [communitymenushown, setcommunitymenushown] = useState<boolean>(false);
+    const showCommunityMenu = function(event: React.MouseEvent) {
+        if (!communitymenushown) {
+            setcommunitymenushown(true);
+            const communityelement = document.getElementById("selectedcommunityitem");
+            communityelement!.setAttribute("class", "activemenunotprofile");
+        }
+    };
+
+    useEffect(() => {
+        if (communitymenushown) {
+            const communitynavelement = document.getElementById("communitynav");
+            const menuitem = document.getElementById("selectedcommunityitem");
+            if (communitynavelement !== null) {
+                communitynavelement.addEventListener("mouseleave", () => {
+                    setcommunitymenushown(false);
+                    if (menuitem !== null) {
+                        menuitem.classList.remove("activemenunotprofile");
+                    }
+                });
+            }
+        }
+    }, [communitymenushown]);
+
     useEffect(() => {
         if (menushown) {
             const profileimg = document.getElementById("profileimage");
             const menuitemdivselected = document.getElementById("selectedmenuitem");
             if (profileimg !== null) {
-                profileimg!.addEventListener("mouseleave", () => {
+                profileimg.addEventListener("mouseleave", () => {
                     setmenushown(false);
                     menuitemdivselected!.classList.remove("activemenu");
                 });
@@ -209,12 +234,15 @@ const App = function() {
                                     <div className="navelementselected"></div>
                                 </div>
                             </li>
-                            <li onMouseEnter={activateMenu}>
+                            <li onMouseEnter={showCommunityMenu} id="communitynav">
                                 <div className="menuitem">
                                     <Link to="/community" className="standardmenu">
                                         community
                                     </Link>
-                                    <div className="navelementselected"></div>
+                                    <div id="selectedcommunityitem"></div>
+                                    {communitymenushown && (
+                                        <DisplayCommunityMenu currentuser={username} />
+                                    )}
                                 </div>
                             </li>
                             <li onMouseEnter={activateMenu}>

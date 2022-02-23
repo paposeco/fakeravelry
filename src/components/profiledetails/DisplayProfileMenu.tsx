@@ -9,7 +9,8 @@ const DisplayProfileMenu = function(props: {
             <ul>
                 <li>
                     <Link to={props.peoplepath} className="profilemenuelement">
-                        Profile
+                        <p>Profile</p>
+                        <p className="subnavelementdesc">View and edit your profile</p>
                     </Link>
                 </li>
                 <li>

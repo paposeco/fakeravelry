@@ -99,9 +99,10 @@ const Community = function() {
     }, [paginationready]);
 
     return (
-        <div>
-            <div>
-                Community
+        <div id="communitycontent">
+            <h2>Fake Ravelry's members</h2>
+            <div id="searchfrienddiv">
+                <p>Find a member:</p>
                 <SearchFriends />
             </div>
             <div id="friendgrid">
