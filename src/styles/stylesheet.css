@@ -77,16 +77,24 @@ h2{
     align-items: center;
 }
 
-#project{
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-}
-
 .projectstatusdiv{
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    margin: 10px auto;
+    height: 27.5px;
+}
+
+.projectstatusdiv .itemdescription{
+    width: 80px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.projectstatusdiv .itemvalue{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 input[name="happiness"] {
@@ -141,6 +149,7 @@ nav > ul li{
     flex-direction: column;
     align-content: center;
     justify-content: center;
+    color: black;
 }
 
 nav > ul li a{
@@ -155,6 +164,12 @@ nav > ul li a{
     order: 1;
 }
 
+.standardmenu:visited{
+    color: black;
+}
+
+
+/* for nav profile image */
 #profileimage{
     margin-right: 20px;
     display: inline;
@@ -173,6 +188,7 @@ nav > ul li a{
     border-radius: 5px;
     border: 1px solid rgb(46, 52, 54);
 }
+
 
 .activemenu{
     height: 6px;
@@ -292,6 +308,8 @@ nav > ul li a{
 
 #profileleft .profileimage img{
     max-width: 102px;
+    border-radius: 5px;
+    border: 1px solid black;
 }
 
 #content{
@@ -334,7 +352,7 @@ nav > ul li a{
     border-bottom: 1px solid rgb(46, 52, 54);
 }
 
-.profileinfodiv > .itemdescription{
+.profileinfodiv > .itemdescription, .projectinfodiv > .itemDescription{
     color: rgb(112, 112, 112);
 }
 
@@ -425,7 +443,7 @@ nav > ul li a{
     padding-top: 35px;
 }
 
-#communitycontent h2{
+#communitycontent h2, #notebook h2{
     border-bottom: 1px solid black;
     padding-bottom: 15px;
 }
@@ -447,4 +465,261 @@ nav > ul li a{
 
 #searchusers button:hover{
     cursor: pointer;
+}
+
+
+#notebook{
+    width: 95%;
+    padding-top: 35px;
+    margin: auto;
+}
+
+#notebookcontent{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding-top: 20px;
+}
+
+#notebook .genericbutton{
+    margin-top: 20px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 170px;
+    font-size: 14px;
+}
+
+#notebook .genericbutton:hover{
+    cursor: pointer;
+    background:  rgb(151, 239, 227);
+}
+
+#notebookprojects{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.projectthumbnail{
+    width: 190px;
+    height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.projectthumbnail img{
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    border: 1px solid black;
+}
+
+.projectthumbnail img:hover{
+    cursor:pointer;
+}
+
+.progressonthumbnail{
+    text-align: right;
+}
+
+.projectstatusonthumbnail{
+    position: relative;
+    top: 30px;
+    left: 115px;
+    background: white;
+    border-radius: 10px;
+    padding: 3px 12px;
+}
+
+.projectcomplete{
+    position: relative;
+    top: 30px;
+    left: 115px;
+    border-radius: 10px;
+    padding: 3px 12px;    
+}
+
+.projectname{
+    text-align: center;
+    color: black;
+    margin-bottom: 0px;
+}
+
+#notebooknav{
+    height: 37px;
+    width: 100%;
+    background: rgb(26, 68, 77);
+}
+
+#notebooknav ul{
+    list-style: none;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-left: 0px;
+    color: rgb(243, 244, 240);
+    gap: 20px;
+    margin: 0px;
+    align-items: flex-start;
+}
+
+#notebooknav ul li{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    height: 89%;
+    font-size: 12px;
+    padding-left: 5px;
+    padding-right: 15px;
+    justify-content: center
+}
+
+#notebooknavselected{
+    border-bottom: rgb(89, 152, 166) solid 4px;
+}
+
+#notebooknav ul li:hover{
+    border-bottom: rgb(89, 152, 166) solid 4px;
+    transition: border 0.2s ease-in-out;
+}
+
+#project{
+    width: 100%;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#projectcontent{
+    width: 1055px;
+    margin: auto;
+    padding-top: 35px;
+}
+
+#projectcontent > h2{
+    font-size: 16px;
+    border-bottom: 1px solid black;
+    padding-bottom: 15px;
+}
+
+
+#projectphoto{
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#projectphoto img{
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border: solid 1px black;
+    margin-right: 7px;
+}
+
+#projectphoto button{
+    align-self: flex-end;
+    margin-right: 7px;
+}
+
+#projectdescription h2{
+    font-weight: 900;
+    font-size: 20px;
+    margin-top: 0px;
+}
+
+
+#projectdescription{
+    width: 503px;
+    margin-right: 32px;
+}
+
+.projectinfodiv{
+    min-height: 22.75px;
+    padding: 3px 0px;
+    margin-top: 2px;
+    border-bottom: 1px solid rgb(46, 52, 54);
+}
+
+.projectinfodiv .itemDescription{
+    width: 105px;
+}
+
+#projectinfo h4{
+    margin-bottom: 5px;
+}
+
+.hooksandneedles{
+    list-style: none;
+    padding-left: 0px;
+}
+
+#yarnlist{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+#projectbuttons div{
+    display: grid;
+    grid-template-areas: "a a"
+                         "a a";
+    margin-bottom: 30px;
+}
+
+#projectsidebar{
+    width: 280px;
+}
+
+.projectbutton{
+    border: none;
+    background: #f7f7f7;
+    outline: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: 30px;
+    width: 142px;
+    gap: 5px;
+}
+
+#breadcrumbs ul{
+    list-style: none;
+    /* padding-left: 0px; */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+#profileimgbreadcrumb{
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
+}
+
+#breadcrumbs ul li{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.wipdate{
+    
 }

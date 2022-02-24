@@ -45,40 +45,42 @@ const DisplayYarn = function(props: { yarn: YarnDisplay }) {
     };
     return (
         <div key={uniqid()}>
-            <div className="itemDescription">Yarn</div>
-            <div className="itemValue">{props.yarn.yarnname}</div>
+            <div className="projectinfodiv">
+                <div className="itemDescription">Yarn</div>
+                <div className="itemValue">{props.yarn.yarnname}</div>
+            </div>
             {displayHowMuch && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">How much?</div>
                     <div className="itemValue">{props.yarn.howmuch}</div>
                 </div>
             )}
             {displayColorway && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">Colorway</div>
                     <div className="itemValue">{props.yarn.colorway}</div>
                 </div>
             )}
             {displayColorFamily && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">Color family</div>
                     <div className="itemValue">{colorfamilyname}</div>
                 </div>
             )}
             {displayDyelot && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">Dyelot</div>
                     <div className="itemValue">{props.yarn.dyelot}</div>
                 </div>
             )}
             {displayPurchasedAt && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">Purchased at</div>
                     <div className="itemValue">{props.yarn.purchasedat}</div>
                 </div>
             )}
             {displayPurchaseDate && (
-                <div>
+                <div className="projectinfodiv">
                     <div className="itemDescription">Purchase date</div>
                     <div className="itemValue">{props.yarn.purchasedate}</div>
                 </div>

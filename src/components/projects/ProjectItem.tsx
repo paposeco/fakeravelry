@@ -51,9 +51,9 @@ const ProjectItem = function(props: {
 
     useEffect(() => {
         if (props.itemdescription === "Gauge" && !gaugeReady) {
-            let numberSts: number | undefined = undefined;
+            let numberSts: number = 0;
             let horizontalunits: string = "";
-            let numberRows: number | undefined = undefined;
+            let numberRows: number = 0;
             let gaugesize: string = "";
             let gaugepattern: string = "";
             for (const [key, value] of Object.entries(props.itemvalue)) {
@@ -62,7 +62,7 @@ const ProjectItem = function(props: {
                 } else if (key === "horizontalunits") {
                     horizontalunits = value;
                 } else if (key === "numberRows") {
-                    numberSts = value;
+                    numberRows = value;
                 } else if (key === "gaugesize") {
                     gaugesize = value;
                 } else if (key === "gaugepattern") {
@@ -70,39 +70,39 @@ const ProjectItem = function(props: {
                 }
             }
             if (gaugepattern === "" && gaugesize === "") {
-                if (numberSts !== undefined && numberRows === undefined) {
+                if (numberSts !== 0 && numberRows === 0) {
                     setGaugeInfo(`${numberSts} ${horizontalunits}`);
                     setGaugeReady(true);
-                } else if (numberSts === undefined && numberRows !== undefined) {
+                } else if (numberSts === 0 && numberRows !== 0) {
                     setGaugeInfo(`${numberRows} rows`);
                     setGaugeReady(true);
-                } else if (numberSts !== undefined && numberRows !== undefined) {
+                } else if (numberSts !== 0 && numberRows !== 0) {
                     setGaugeInfo(
                         `${numberSts} ${horizontalunits} and ${numberRows} rows`
                     );
                     setGaugeReady(true);
                 }
             } else if (gaugepattern !== "" && gaugesize === "") {
-                if (numberSts !== undefined && numberRows === undefined) {
+                if (numberSts !== 0 && numberRows === 0) {
                     setGaugeInfo(`${numberSts} ${horizontalunits} in ${gaugepattern}`);
                     setGaugeReady(true);
-                } else if (numberSts === undefined && numberRows !== undefined) {
+                } else if (numberSts === 0 && numberRows !== 0) {
                     setGaugeInfo(`${numberRows} rows in ${gaugepattern}`);
                     setGaugeReady(true);
-                } else if (numberSts !== undefined && numberRows !== undefined) {
+                } else if (numberSts !== 0 && numberRows !== 0) {
                     setGaugeInfo(
                         `${numberSts} ${horizontalunits} and ${numberRows} rows in ${gaugepattern}`
                     );
                     setGaugeReady(true);
                 }
             } else if (gaugepattern === "" && gaugesize !== "") {
-                if (numberSts !== undefined && numberRows === undefined) {
+                if (numberSts !== 0 && numberRows === 0) {
                     setGaugeInfo(`${numberSts} ${horizontalunits} = ${gaugesize} cm`);
                     setGaugeReady(true);
-                } else if (numberSts === undefined && numberRows !== undefined) {
+                } else if (numberSts === 0 && numberRows !== 0) {
                     setGaugeInfo(`${numberRows} rows = ${gaugesize} cm`);
                     setGaugeReady(true);
-                } else if (numberSts !== undefined && numberRows !== undefined) {
+                } else if (numberSts !== 0 && numberRows !== 0) {
                     setGaugeInfo(
                         `${numberSts} ${horizontalunits} and ${numberRows} rows = ${gaugesize} cm`
                     );
@@ -305,7 +305,7 @@ const ProjectItem = function(props: {
             <div className="projectinfodiv">
                 <div className="itemDescription">{props.itemdescription}</div>
                 <div className="itemValue">
-                    <ul>
+                    <ul className="hooksandneedles">
                         {needlesToDisplay.map((needle: string) => (
                             <li key={uniqid()}>{needle}</li>
                         ))}
@@ -318,7 +318,7 @@ const ProjectItem = function(props: {
             <div className="projectinfodiv">
                 <div className="itemDescription">{props.itemdescription}</div>
                 <div className="itemValue">
-                    <ul>
+                    <ul className="hooksandneedles">
                         {hooksToDisplay.map((hook: string) => (
                             <li key={uniqid()}>{hook}</li>
                         ))}
@@ -328,7 +328,7 @@ const ProjectItem = function(props: {
         );
     } else if (props.itemdescription === "Yarn" && yarnReady) {
         return (
-            <div className="projectinfodiv">
+            <div id="yarnlist">
                 {yarnToDisplay.map((yarn: YarnDisplay) => (
                     <div key={uniqid()}>
                         <DisplayYarn yarn={yarn} />

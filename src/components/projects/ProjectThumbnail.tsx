@@ -46,7 +46,7 @@ const ProjectThumbnail = function(props: {
 
     useEffect(() => {
         setProjectpath(
-            "/notebook/" + props.username + "/projects/" + props.projectslug
+            "/notebook/" + props.useronpath + "/projects/" + props.projectslug
         );
     }, [props.projectslug]);
     useEffect(() => {
@@ -58,16 +58,22 @@ const ProjectThumbnail = function(props: {
             state: { projectid: projectID },
         });
     };
-    // edit and display should look for the project in store for a certain projectslug
     return (
-        <div onClick={handleClicks} key={uniqid()}>
+        <div onClick={handleClicks} key={uniqid()} title="Open project">
             <div>
-                <h3>{props.projectname}</h3>
+                <p className="projectname">{props.projectname}</p>
                 <div>
-                    <p>{projectStatus}</p>
-                    {/* <img src={props.projectphoto} alt={`${props.projectname}photo`}/> */}
+                    {props.projectstatus === "inprogress" ? (
+                        <span className="projectstatusonthumbnail">wip</span>
+                    ) : (
+                        <span className="projectcomplete"></span>
+                    )}
                     <DisplayProjectImage imageurl={props.projectphoto} />
-                    <span>{progress}%</span>
+                    {props.projectstatus === "inprogress" ? (
+                        <p className="progressonthumbnail">{progress}%</p>
+                    ) : (
+                        <p className="progressonthumbnail"></p>
+                    )}
                 </div>
             </div>
         </div>

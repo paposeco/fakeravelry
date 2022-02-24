@@ -1,14 +1,23 @@
 //show project collection from (db -> store redux)
 import { RootState } from "./store/store";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ProjectThumbnail from "./projects/ProjectThumbnail";
 import type { ProjectFromStore } from "./common/types";
 import uniqid from "uniqid";
+import Circle from "../images/circle.svg";
+import ProjectsIcon from "../images/projectsicon.svg";
+import QueueIcon from "../images/queueicon.svg";
+import StashIcon from "../images/stash.svg";
+import HandspunIcon from "../images/handspun.svg";
+import ToolsIcon from "../images/tools.svg";
+import FavoritesIcon from "../images/favoritesicon.svg";
+import LibraryIcon from "../images/libraryicon.svg";
 
 const Notebook = function() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [newprojectpath, setnewprojectpath] = useState<string>("");
     const user = useSelector((state: RootState) => state.userinfo.username);
     const projectData: ProjectFromStore[] | undefined = useSelector(
@@ -100,6 +109,10 @@ const Notebook = function() {
         }
     }, [projectData]);
 
+    const loadnewprojectpage = function(event: React.MouseEvent) {
+        navigate(newprojectpath);
+    };
+
     useEffect(() => {
         const usernameonpath = location.pathname.substring(10);
         if (usernameonpath !== user && user !== "") {
@@ -126,21 +139,63 @@ const Notebook = function() {
 
     return (
         <div>
-            {usermatchespath && <Link to={newprojectpath}>Add new project</Link>}
-            {projectsToDisplay.map((project: ProjectFromStore) => (
-                <div key={uniqid()}>
-                    <ProjectThumbnail
-                        useronpath={useronpath}
-                        projectname={project.projectname}
-                        projectphoto={project.imageUrl}
-                        projectslug={project.projectslug}
-                        projectstatus={project.projectstatus.progressstatus}
-                        projectprogress={project.projectstatus.progressrange}
-                        projectid={project.projectid}
-                        username={user}
-                    />
+            <div id="notebooknav">
+                <ul>
+                    <li id="notebooknavselected">
+                        <img src={ProjectsIcon} /> Projects
+                    </li>
+                    <li>
+                        <img src={QueueIcon} /> Queue
+                    </li>
+                    <li>
+                        <img src={StashIcon} /> Stash
+                    </li>
+                    <li>
+                        <img src={HandspunIcon} /> Handspun
+                    </li>
+                    <li>
+                        <img src={ToolsIcon} /> Tools
+                    </li>
+                    <li>
+                        <img src={FavoritesIcon} /> Favorites
+                    </li>
+                    <li>
+                        <img src={LibraryIcon} /> Library
+                    </li>
+                </ul>
+            </div>
+            <div id="notebook">
+                {usermatchespath ? (
+                    <h2>My projects</h2>
+                ) : (
+                    <h2>{useronpath}'s projects</h2>
+                )}
+                <div id="notebookcontent">
+                    {/* {usermatchespath && <Link to={newprojectpath}>Add new project</Link>} */}
+                    {usermatchespath && (
+                        <button className="genericbutton" onClick={loadnewprojectpage}>
+                            <img src={Circle} alt="circle" />
+                            <span>Add new project</span>
+                        </button>
+                    )}
+                    <div id="notebookprojects">
+                        {projectsToDisplay.map((project: ProjectFromStore) => (
+                            <div key={uniqid()} className="projectthumbnail">
+                                <ProjectThumbnail
+                                    useronpath={useronpath}
+                                    projectname={project.projectname}
+                                    projectphoto={project.imageUrl}
+                                    projectslug={project.projectslug}
+                                    projectstatus={project.projectstatus.progressstatus}
+                                    projectprogress={project.projectstatus.progressrange}
+                                    projectid={project.projectid}
+                                    username={user}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            ))}
+            </div>
         </div>
     );
 };
