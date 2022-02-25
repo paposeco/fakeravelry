@@ -107,7 +107,7 @@ const Notebook = function() {
                 return updateState;
             });
         }
-    }, [projectData]);
+    }, [projectData, user]);
 
     const loadnewprojectpage = function(event: React.MouseEvent) {
         navigate(newprojectpath);

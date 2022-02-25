@@ -15,8 +15,13 @@ const DisplayProgress = function(props: { status: Status }) {
         }
     }, [startdate]);
     useEffect(() => {
-        if (completedate === "") {
+        if (completedate === "" && props.status.progressstatus === "inprogress") {
             setcompletedate("work in progress");
+        } else if (
+            completedate === "" &&
+            props.status.progressstatus !== "inprogress"
+        ) {
+            setcompletedate("no date set");
         }
     }, [completedate]);
 
@@ -62,6 +67,14 @@ const DisplayProgress = function(props: { status: Status }) {
                 setprogressstatus("");
         }
     }, [props.status.progressstatus]);
+
+    const [progressbar, setprogressbar] = useState<string>();
+    const [progressbarunfinished, setprogressbarunfinished] = useState<string>();
+    useEffect(() => {
+        setprogressbar(props.status.progressrange + "px");
+        const tofinish = 100 - Number(props.status.progressrange);
+        setprogressbarunfinished(tofinish + "px");
+    }, [props.status.progressrange]);
     return (
         <div id="projectstatus">
             <div className="projectstatusdiv">
@@ -70,17 +83,38 @@ const DisplayProgress = function(props: { status: Status }) {
                     {progressstatus} <i className={happinessemoji}></i>
                 </div>
             </div>
-            <div className="projectstatusdiv">
-                <div className="itemdescription">Progress</div>
-                <div className="itemvalue">{props.status.progressrange}</div>
-            </div>
+
+            {props.status.progressstatus !== "finished" && (
+                <div className="projectstatusdiv">
+                    <div className="itemdescription">Progress</div>
+                    {/* <div className="itemvalue">{props.status.progressrange}</div> */}
+                    <div className="itemvalue">
+                        <div className="progressbar">
+                            <span
+                                id="progresscompleted"
+                                style={{ width: progressbar }}
+                            ></span>
+                            <span
+                                id="progresstocomplete"
+                                style={{ width: progressbarunfinished }}
+                            ></span>
+                        </div>{" "}
+                        {props.status.progressrange}%
+                    </div>
+                </div>
+            )}
             <div className="projectstatusdiv">
                 <div className="itemdescription">Started</div>
-                <div className="itemvalue">{startdate}</div>
+                {startdate === "no date set" ? (
+                    <div className="itemvalue wipdate">{startdate}</div>
+                ) : (
+                    <div className="itemvalue">{startdate}</div>
+                )}
             </div>
             <div className="projectstatusdiv">
                 <div className="itemdescription">Completed</div>
-                {completedate === "work in progress" ? (
+                {completedate === "work in progress" ||
+                    completedate === "no date set" ? (
                     <div className="itemvalue wipdate">{completedate}</div>
                 ) : (
                     <div className="itemvalue">{completedate}</div>

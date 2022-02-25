@@ -86,7 +86,7 @@ const projectsSlice = createSlice({
                         projectnotes: "",
                     },
                     projectstatus: {
-                        progressstatus: "In progress",
+                        progressstatus: "inprogress",
                         progressrange: "0",
                         happiness: "",
                         starteddate: "",

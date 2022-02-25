@@ -11,7 +11,7 @@ const Breadcrumbs = function(props: {
 
     useEffect(() => {
         setuserprofile(`/people/${props.username}`);
-        setusernotebook(`/people/${props.username}`);
+        setusernotebook(`/notebook/${props.username}`);
     }, [props.username]);
 
     return (
@@ -41,3 +41,5 @@ const Breadcrumbs = function(props: {
 };
 
 export default Breadcrumbs;
+
+// new project, default is work in progress

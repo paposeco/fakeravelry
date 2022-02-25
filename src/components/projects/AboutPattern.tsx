@@ -26,7 +26,7 @@ const AboutPattern = function(props: {
             <h3>About this pattern</h3>
             <div>
                 <p>{patternname}</p>
-                {displayfrom && <p>{props.patternfrom}</p>}
+                {displayfrom && <p>from {props.patternfrom}</p>}
             </div>
         </div>
     );

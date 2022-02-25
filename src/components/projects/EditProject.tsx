@@ -138,6 +138,7 @@ const EditProject = function() {
                     previousStatus.happiness = elementId;
                 } else {
                     previousStatus[elementId] = event.target.value;
+                    console.log(event.target.value);
                 }
 
                 return previousStatus;

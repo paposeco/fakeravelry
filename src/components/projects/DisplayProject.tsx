@@ -91,7 +91,7 @@ const DisplayProject = function() {
         deleteProject(currentprojectid);
         dispatch(projectDeleted({ projectid: currentprojectid }));
         navigate("/notebook/" + user);
-        projectdatafromstore!.imageUrl = "";
+        /* projectdatafromstore!.imageUrl = ""; */
     };
 
     const editProject = function(event: React.MouseEvent) {
@@ -356,3 +356,4 @@ export default DisplayProject;
 //breadcrumbs
 // page title
 // notebook "my projects "
+// notebook doesn't display projects on refresh?

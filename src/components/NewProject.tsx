@@ -37,9 +37,9 @@ const NewProject = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        const patternUsed: string = (event.currentTarget.elements.namedItem(
-            "patternused"
-        ) as HTMLInputElement).value;
+        const patternUsed: string = (
+            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
+        ).value;
         const cleanProjectName = projectName
             .toLowerCase()
             .trim()

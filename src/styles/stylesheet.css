@@ -695,6 +695,13 @@ nav > ul li a{
     height: 30px;
     width: 142px;
     gap: 5px;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.projectbutton:hover{
+    background: white;
+    cursor: pointer;
 }
 
 #breadcrumbs ul{
@@ -721,5 +728,24 @@ nav > ul li a{
 
 
 .wipdate{
-    
+    color: #bbb;
+}
+
+.progressbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 14px;
+    border: solid 1px #7f7f7f;
+    margin: auto 10px auto 0px;
+}
+
+#progresscompleted{
+    background: #477A85;
+    height: 100%;
+}
+
+#progresstocomplete{
+    background: #d9d9d9;
+    height: 100%;
 }
