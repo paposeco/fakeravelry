@@ -749,3 +749,75 @@ nav > ul li a{
     background: #d9d9d9;
     height: 100%;
 }
+
+
+#newprojectcontent{
+    margin-top: 25px;
+}
+#newproject{
+    width: 960px;
+    margin: 50px auto auto auto;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
+#newprojectprofile{
+    width: 160px;
+}
+
+#newprojectprofile img{
+    width: 102px;
+    height: 102px;
+    object-fit: cover;
+    margin: auto;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: block;
+}
+
+#newprojectprofile p{
+    width: 160px;
+    text-align: center;
+}
+
+#newprojectform{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.labelemphasis{
+    font-weight: 700;
+}
+
+#newprojectform input, #newprojectform select{
+    background: white;
+    width: 331px;
+    border-radius: 0px;
+    border: 1px solid grey;
+    line-height: 2em;
+    height: 2em;
+}
+
+#newprojectform input[type="radio"]{
+    width: 15px;
+}
+
+.newprojectlabel{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    width: 331px;
+}
+
+.newprojectlabel label{
+    width: max-content;
+}
+
+#newprojectform button{
+    width: 75px;
+    align-self: flex-end;
+}
