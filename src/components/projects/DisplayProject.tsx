@@ -82,8 +82,9 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
-        useState<boolean>(false);
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
+        false
+    );
     const [useronpath, setuseronpath] = useState<string>("");
 
     const deleteproject = function(event: React.MouseEvent) {
@@ -167,21 +168,26 @@ const DisplayProject = function() {
         setphotoexists(false);
     };
     const [photoexists, setphotoexists] = useState<boolean>(false);
-    const [profilebreadcrumbimage, setprofilebreacrumbimage] =
-        useState<string>("");
+    const [profilebreadcrumbimage, setprofilebreacrumbimage] = useState<string>(
+        ""
+    );
     const fetchUserProfileInformation = async () => {
         if (usermatchespath) {
             if (userid !== "") {
-                const profileinfo: ProfileInformation | false | undefined =
-                    await getUserProfileInformation(userid);
+                const profileinfo:
+                    | ProfileInformation
+                    | false
+                    | undefined = await getUserProfileInformation(userid);
                 if (profileinfo !== undefined && profileinfo !== false) {
                     setprofilebreacrumbimage(profileinfo.imageurl);
                 }
             }
         } else {
             if (otheruserid !== "") {
-                const profileinfo: ProfileInformation | false | undefined =
-                    await getUserProfileInformation(otheruserid);
+                const profileinfo:
+                    | ProfileInformation
+                    | false
+                    | undefined = await getUserProfileInformation(otheruserid);
                 if (profileinfo !== undefined && profileinfo !== false) {
                     setprofilebreacrumbimage(profileinfo.imageurl);
                 }
@@ -273,7 +279,16 @@ const DisplayProject = function() {
                                 )}
                             </div>
                             <div id="needlesyarn">
-                                <h4>Needles & yarn</h4>
+                                {projectdatafromstore!.crafttype === "knitting" && (
+                                    <h4>Needles & yarn</h4>
+                                )}
+                                {projectdatafromstore!.crafttype === "crochet" && (
+                                    <h4>Hooks & yarn</h4>
+                                )}
+                                {projectdatafromstore!.crafttype !== "knitting" &&
+                                    projectdatafromstore!.crafttype !== "crochet" && (
+                                        <h4>Yarn</h4>
+                                    )}
                                 {displayNeedles && (
                                     <ProjectItem
                                         itemdescription="Needle"

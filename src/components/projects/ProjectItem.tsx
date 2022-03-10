@@ -20,8 +20,9 @@ const ProjectItem = function(props: {
     const [hooksReady, setHooksReady] = useState<boolean>(false);
     const [yarnReady, setYarnReady] = useState<boolean>(false);
     const [yarnToDisplay, setYarnToDisplay] = useState<YarnDisplay[]>([]);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] =
-        useState<boolean>(false);
+    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
+        false
+    );
     const [madeforusername, setMadeforusername] = useState<string>("");
 
     useEffect(() => {
@@ -245,7 +246,7 @@ const ProjectItem = function(props: {
                             howmuch: howmuch,
                             colorway: yarn.colorway,
                             dyelot: yarn.dyelot,
-                            colorfamily: yarn.closestcolor,
+                            closestcolor: yarn.closestcolor,
                             purchasedat: purchasedat,
                             purchasedate: purchasedate,
                         },

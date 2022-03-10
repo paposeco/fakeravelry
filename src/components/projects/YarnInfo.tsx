@@ -101,9 +101,11 @@ const YarnInfo = function(props: {
     };
 
     return (
-        <fieldset id={props.yarnID}>
-            <label htmlFor="yarnname">
-                Yarn
+        <fieldset id={props.yarnID} className="yarnfieldset">
+            <div className="newprojectlabel">
+                <label htmlFor="yarnname" className="yarnsubset">
+                    Yarn
+                </label>
                 <input
                     type="text"
                     name="yarnname"
@@ -112,9 +114,9 @@ const YarnInfo = function(props: {
                     value={yarnName}
                     onChange={localChangeHandler}
                 />
-            </label>
-            <label htmlFor="colorway">
-                Colorway
+            </div>
+            <div className="colorway">
+                <label htmlFor="colorway">Colorway</label>
                 <input
                     type="text"
                     name="colorway"
@@ -123,22 +125,22 @@ const YarnInfo = function(props: {
                     data-project="yarn"
                     onChange={localChangeHandler}
                 />
-            </label>
-            <select
-                name="closestcolor"
-                id="closestcolor"
-                onChange={changeSelect}
-                value={selectValue.closestcolor}
-                data-project="yarn"
-            >
-                {Colorways.map((color, index) => (
-                    <option value={"color" + index} key={uniqid()}>
-                        {color}
-                    </option>
-                ))}
-            </select>
-            <label htmlFor="dyelot">
-                Dye lot
+                <select
+                    name="closestcolor"
+                    id="closestcolor"
+                    onChange={changeSelect}
+                    value={selectValue.closestcolor}
+                    data-project="yarn"
+                >
+                    {Colorways.map((color, index) => (
+                        <option value={"color" + index} key={uniqid()}>
+                            {color}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="newprojectlabel">
+                <label htmlFor="dyelot">Dye lot</label>
                 <input
                     name="dyelot"
                     id="dyelot"
@@ -147,22 +149,25 @@ const YarnInfo = function(props: {
                     data-project="yarn"
                     onChange={localChangeHandler}
                 />
-            </label>
-            <select
-                name="yarnweight"
-                id="yarnweight"
-                onChange={changeSelect}
-                value={selectValue.yarnweight}
-                data-project="yarn"
-            >
-                {Yarnweight.map((weight, index) => (
-                    <option value={"yarnweight" + index} key={uniqid()}>
-                        {weight}
-                    </option>
-                ))}
-            </select>
-            <label htmlFor="meterage">
-                Per skein:{" "}
+            </div>
+            <div className="craftselect">
+                <label htmlFor="yarnweight">Weight</label>
+                <select
+                    name="yarnweight"
+                    id="yarnweight"
+                    onChange={changeSelect}
+                    value={selectValue.yarnweight}
+                    data-project="yarn"
+                >
+                    {Yarnweight.map((weight, index) => (
+                        <option value={"yarnweight" + index} key={uniqid()}>
+                            {weight}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="skeindescription">
+                <label htmlFor="meterage">Per skein:</label>
                 <input
                     id="meterage"
                     name="meterage"
@@ -199,9 +204,9 @@ const YarnInfo = function(props: {
                     <option value="grams">Grams</option>
                     <option value="ounces">Convert to Ounces</option>
                 </select>
-            </label>
-            <label htmlFor="numberskeins">
-                Skeins
+            </div>
+            <div className="newprojectlabel">
+                <label htmlFor="numberskeins">Skeins </label>
                 <input
                     type="number"
                     id="numberskeins"
@@ -210,9 +215,9 @@ const YarnInfo = function(props: {
                     data-project="yarn"
                     onChange={localChangeHandler}
                 />
-            </label>
-            <label htmlFor="purchasedat">
-                Purchased at
+            </div>
+            <div className="newprojectlabel">
+                <label htmlFor="purchasedat">Purchased at</label>
                 <input
                     id="purchasedat"
                     name="purchasedat"
@@ -221,9 +226,9 @@ const YarnInfo = function(props: {
                     data-project="yarn"
                     onChange={localChangeHandler}
                 />
-            </label>
-            <label htmlFor="purchasedate">
-                Purchase date
+            </div>
+            <div className="newprojectlabel">
+                <label htmlFor="purchasedate">Purchase date</label>
                 <input
                     name="purchasedate"
                     id="purchasedate"
@@ -232,9 +237,9 @@ const YarnInfo = function(props: {
                     data-project="yarn"
                     onChange={localChangeHandler}
                 />
-            </label>
-            <label htmlFor="totalpaid">
-                Total paid
+            </div>
+            <div className="totalpaiddiv">
+                <label htmlFor="totalpaid">Total paid </label>
                 <input
                     type="number"
                     name="totalpaid"
@@ -256,7 +261,7 @@ const YarnInfo = function(props: {
                         </option>
                     ))}
                 </select>
-            </label>
+            </div>
         </fieldset>
     );
 };

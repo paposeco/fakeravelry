@@ -21,8 +21,8 @@ const DisplayYarn = function(props: { yarn: YarnDisplay }) {
             if (props.yarn.colorway !== "") {
                 setDisplayColorway(true);
             }
-            if (props.yarn.colorfamily !== "") {
-                setColorfamilyname(getColorfamilyname(props.yarn.colorfamily));
+            if (props.yarn.closestcolor !== "colorway0") {
+                setColorfamilyname(getColorfamilyname(props.yarn.closestcolor));
                 setDisplayColorFamily(true);
             }
             if (props.yarn.dyelot !== "") {
@@ -43,50 +43,61 @@ const DisplayYarn = function(props: { yarn: YarnDisplay }) {
         const colorfamilyname: string = Colorways[colorIndex];
         return colorfamilyname;
     };
-    return (
-        <div key={uniqid()}>
-            <div className="projectinfodiv">
-                <div className="itemDescription">Yarn</div>
-                <div className="itemValue">{props.yarn.yarnname}</div>
+    if (
+        !displayHowMuch &&
+        !displayColorway &&
+        !displayColorFamily &&
+        !displayDyelot &&
+        !displayPurchaseDate &&
+        !displayPurchasedAt
+    ) {
+        return <div></div>;
+    } else {
+        return (
+            <div key={uniqid()}>
+                <div className="projectinfodiv">
+                    <div className="itemDescription">Yarn</div>
+                    <div className="itemValue">{props.yarn.yarnname}</div>
+                </div>
+                {displayHowMuch && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">How much?</div>
+                        <div className="itemValue">{props.yarn.howmuch}</div>
+                    </div>
+                )}
+                {displayColorway && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">Colorway</div>
+                        <div className="itemValue">{props.yarn.colorway}</div>
+                    </div>
+                )}
+                {displayColorFamily && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">Color family</div>
+                        <div className="itemValue">{colorfamilyname}</div>
+                    </div>
+                )}
+                {displayDyelot && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">Dyelot</div>
+                        <div className="itemValue">{props.yarn.dyelot}</div>
+                    </div>
+                )}
+                {displayPurchasedAt && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">Purchased at</div>
+                        <div className="itemValue">{props.yarn.purchasedat}</div>
+                    </div>
+                )}
+                {displayPurchaseDate && (
+                    <div className="projectinfodiv">
+                        <div className="itemDescription">Purchase date</div>
+                        <div className="itemValue">{props.yarn.purchasedate}</div>
+                    </div>
+                )}
             </div>
-            {displayHowMuch && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">How much?</div>
-                    <div className="itemValue">{props.yarn.howmuch}</div>
-                </div>
-            )}
-            {displayColorway && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">Colorway</div>
-                    <div className="itemValue">{props.yarn.colorway}</div>
-                </div>
-            )}
-            {displayColorFamily && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">Color family</div>
-                    <div className="itemValue">{colorfamilyname}</div>
-                </div>
-            )}
-            {displayDyelot && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">Dyelot</div>
-                    <div className="itemValue">{props.yarn.dyelot}</div>
-                </div>
-            )}
-            {displayPurchasedAt && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">Purchased at</div>
-                    <div className="itemValue">{props.yarn.purchasedat}</div>
-                </div>
-            )}
-            {displayPurchaseDate && (
-                <div className="projectinfodiv">
-                    <div className="itemDescription">Purchase date</div>
-                    <div className="itemValue">{props.yarn.purchasedate}</div>
-                </div>
-            )}
-        </div>
-    );
+        );
+    }
 };
 
 export default DisplayYarn;

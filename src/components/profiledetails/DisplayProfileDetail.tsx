@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { ProfileInformation } from "../common/types";
 import uniqid from "uniqid";
+import { Country } from "../projects/SelectOptions";
 
 const DisplayProfileDetails = function(props: {
     userinfo: ProfileInformation;
@@ -42,11 +43,36 @@ const DisplayProfileDetails = function(props: {
         setinfofinished(true);
     };
 
+    const [countryname, setcountryname] = useState<string>("");
+    const getCountryName = function(countrycode: string) {
+        const countryinarray = Country.find(
+            (element) => element.value === countrycode
+        );
+        if (countryinarray !== undefined) {
+            setcountryname(countryinarray.text);
+        }
+    };
     useEffect(() => {
         if (!infofinished) {
             selectnonemptyinfo();
         }
     });
+
+    useEffect(() => {
+        getCountryName(props.userinfo.selectedcountry);
+    }, [props.userinfo]);
+
+    useEffect(() => {
+        setinfotodisplay((prevState) => {
+            const copyArray = Array.from(prevState);
+            const countryinarray = prevState.findIndex(
+                (element) => element[0] === "selectedcountry"
+            );
+            copyArray[countryinarray] = ["selectedcountry", countryname];
+            return copyArray;
+        });
+    }, [countryname]);
+
     return (
         <div>
             <div className="profileinfodiv">

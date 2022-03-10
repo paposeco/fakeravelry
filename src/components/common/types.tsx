@@ -83,7 +83,7 @@ export interface YarnDisplay {
     howmuch: string;
     colorway: string;
     dyelot: string;
-    colorfamily: string;
+    closestcolor: string;
     purchasedat: string;
     purchasedate: string;
 }

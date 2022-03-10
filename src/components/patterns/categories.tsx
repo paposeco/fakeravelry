@@ -295,6 +295,8 @@ const displaycategories = function() {
     const ulSelectCategory: HTMLElement | null = document.getElementById(
         "selectcategory"
     );
+    ulSelectCategory!.style.border = "solid 1px lightgrey";
+    ulSelectCategory!.style.margin = "14px 0px 14px 124px";
     const showFolderContent = function(event: MouseEvent): void {
         // folder clicked
         const folderclicked: HTMLElement | null = event.target as HTMLElement;

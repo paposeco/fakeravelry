@@ -26,6 +26,7 @@ import Friends from "./components/Friends";
 import DisplayProfileImage from "./components/profiledetails/DisplayProfileImage";
 import DisplayProfileMenu from "./components/profiledetails/DisplayProfileMenu";
 import DisplayCommunityMenu from "./components/community/DisplayCommunityMenu";
+import Navigation from "./components/Navigation";
 
 // it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
@@ -49,8 +50,8 @@ const App = function() {
                     let gaugeNumberRows: number;
                     project.data().projectinfo.gauge.numberStsOrRepeats === null
                         ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts =
-                            project.data().projectinfo.gauge.numberStsOrRepeats);
+                        : (gaugeNumberSts = project.data().projectinfo.gauge
+                            .numberStsOrRepeats);
                     project.data().projectinfo.gauge.numberRows === null
                         ? (gaugeNumberRows = 0)
                         : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -209,72 +210,7 @@ const App = function() {
         return (
             <div>
                 <div id="navcontainer">
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">
-                                    <span id="logo">
-                                        <img src={logo} alt="fakeravelrylogo" />
-                                    </span>
-                                </Link>
-                            </li>
-                            <li onMouseEnter={activateMenu}>
-                                <div className="menuitem">
-                                    <Link to="/" className="standardmenu">
-                                        patterns
-                                    </Link>
-                                    <div className="navelementselected"></div>
-                                </div>
-                            </li>
-                            <li onMouseEnter={activateMenu}>
-                                <div className="menuitem">
-                                    <Link to="/" className="standardmenu">
-                                        yarns
-                                    </Link>
-                                    <div className="navelementselected"></div>
-                                </div>
-                            </li>
-                            <li onMouseEnter={showCommunityMenu} id="communitynav">
-                                <div className="menuitem">
-                                    <Link to="/community" className="standardmenu">
-                                        community
-                                    </Link>
-                                    <div id="selectedcommunityitem"></div>
-                                    {communitymenushown && (
-                                        <DisplayCommunityMenu currentuser={username} />
-                                    )}
-                                </div>
-                            </li>
-                            <li onMouseEnter={activateMenu}>
-                                <div className="menuitem">
-                                    <Link to="/" className="standardmenu">
-                                        support
-                                    </Link>
-                                    <div className="navelementselected"></div>
-                                </div>
-                            </li>
-                            <li id="linktonotebook" onMouseEnter={activateMenu}>
-                                <div className="menuitem">
-                                    <Link to={notebookpath} className="standardmenu">
-                                        my notebook
-                                    </Link>
-                                    <div className="navelementselected"></div>
-                                </div>
-                            </li>
-                            <li id="profileimage" onMouseEnter={showMenu}>
-                                <Link to={peoplepath}>
-                                    <DisplayProfileImage imageurl={profileimg} />
-                                </Link>
-                                <div id="selectedmenuitem" className=""></div>
-                                {menushown && (
-                                    <DisplayProfileMenu
-                                        peoplepath={peoplepath}
-                                        signoutfunction={signOut}
-                                    />
-                                )}
-                            </li>
-                        </ul>
-                    </nav>
+                    <Navigation username={username} />
                 </div>
                 <Routes>
                     <Route path="/" element={<Welcome />} />

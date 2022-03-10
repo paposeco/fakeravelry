@@ -326,6 +326,7 @@ nav > ul li a{
     font-family: "Inter";
     font-size: 12px;
     padding: 4px 5px;
+    cursor: pointer;
 }
 
 .buttonactive{
@@ -602,7 +603,7 @@ nav > ul li a{
 
 #projectcontent{
     width: 1055px;
-    margin: auto;
+    margin: auto auto 50px auto;
     padding-top: 35px;
 }
 
@@ -681,6 +682,9 @@ nav > ul li a{
 
 #projectsidebar{
     width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .projectbutton{
@@ -820,4 +824,312 @@ nav > ul li a{
 #newprojectform button{
     width: 75px;
     align-self: flex-end;
+}
+
+
+#editprojectform{
+    width: 720px;
+    display: flex;
+    flex-direction: row;
+}
+
+#editprojectform #projectdescription{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#editprojectform #projectsidebar{
+    display: flex;
+    flex-direction: column;
+}
+
+
+#editprojectform .newprojectlabel, #editprojectform .colorway{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 412px;
+}
+
+#editprojectform .newprojectlabel label{
+    min-width: 120px;
+}
+
+#editprojectform .colorway label{
+    min-width: 128px;
+}
+
+#editprojectform .newprojectlabel input{
+    width: 280px;
+}
+
+#editprojectform .colorway input{
+    width: 150px;
+}
+
+
+.craftselect{
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    width: 412px;
+    gap: 8px;
+    align-items: center;
+}
+
+.craftselect label{
+    min-width: 120px;
+}
+
+#selectcategory{
+    list-style: none;
+    margin: 0px 0px 0px 124px;
+    padding-left: 5px;
+    width: 280px;
+}
+
+#selectcategory ul{
+    list-style: none;
+    padding: 5px;
+}
+
+.item::before{
+    content: "□ ";
+    font-size: 20px;
+}
+
+.folder::before{
+    content: "";
+    background: url("../images/folder.svg");
+    width: 16px;
+    height: 16px;
+    padding-right: 2px;
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+
+li.subfolder::before, li.subsubfolder::before{
+    content: "";
+    background: url("../images/folder.svg");
+    width: 16px;
+    height: 16px;
+    padding-right: 2px;
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+
+
+#needlesandgauge{
+    margin-top: 10px;
+}
+
+#addtool{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+#addneedle, #addhook, #addyarnbutton{
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    gap: 4px;
+    color: #2E606B;
+}
+
+#addneedle:hover, #addhook:hover, #addyarnbutton:hover{
+    cursor: pointer;
+    color: #1A444D;
+}
+
+.gaugediv{
+    display: flex;
+    flex-direction: row;
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+.gaugediv > label{
+    min-width: 128px;
+}
+
+#completegauge{
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+}
+
+#gaugehorizontal, #gaugevertical{
+    width: 33px;
+}
+
+#projectnotes{
+    resize: none;
+    height: 250px;
+}
+
+#editprojectform .genericbutton{
+    width: 95px;
+}
+
+#editprojectfooter{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#uploadPhotoForm button{
+    margin-left: 190px;
+}
+
+.yarnfieldset{
+    border: none;
+    padding: 0px;
+    margin: 0px;
+        display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.yarnsubset{
+    font-weight: bolder;
+}
+
+.skeindescription{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.skeindescription label{
+    min-width: 126px;
+}
+
+.skeindescription input{
+    width: 56px;
+}
+
+.skeindescription select{
+    width: 75px;
+}
+
+.totalpaiddiv{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.totalpaiddiv label{
+    min-width: 126px;
+}
+
+.totalpaiddiv input{
+    width: 143px;
+}
+
+.totalpaiddiv select{
+    width: 132px;
+}
+
+.progresstatuslabel{
+    min-width: 80px;
+}
+
+.sidebarstatus{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+
+#editprofile{
+    margin-left: 30px;
+}
+
+#uploadProfilePic{
+    width: 175px;
+}
+
+#uploadProfilePic .genericbutton{
+    margin-left: 100px;
+    width: 75px;
+}
+
+.editprofilediv{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.editprofiledivlabel{
+    min-width: 185px;
+}
+
+#editprofile .genericbutton{
+    margin-left: 390px;
+}
+
+
+#loginpage{
+    background: url("../images/background.jpg");
+    height: 100vh;
+    width: 100vw;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+#backgroundimages{
+    width: 1085px;
+}
+
+#login{
+    padding: 48px;
+    width: 620px;
+    height: 728px;
+    margin-top: 40px 80px 40px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+#insidelogin{
+    width: 400px;
+}
+
+#firstbackground{
+    position: absolute;
+    top: 3.5%;
+    width: 26vw;
+    height: 46vw;
+    left: 3.5%;
+}
+
+#secondbackground{
+    position: absolute;
+    width: 15vw;
+    height: 27.15vw;
+    top: 44%;
+    left: 29%;
+}
+
+
+#thirdbackground{
+    position: absolute;
+    width: 13vw;
+    top: 30%;
+    left: 47%;
+}
+
+
+#loginform{
+    display: flex;
+    flex-direction: column;
 }
