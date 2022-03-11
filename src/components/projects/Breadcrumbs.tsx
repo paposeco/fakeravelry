@@ -41,5 +41,3 @@ const Breadcrumbs = function(props: {
 };
 
 export default Breadcrumbs;
-
-// new project, default is work in progress

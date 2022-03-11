@@ -151,6 +151,10 @@ const EditProfile = function() {
         }
     };
 
+    useEffect(() => {
+        document.title = "Fake Ravelry: " + user.username + "'s profile";
+    }, [user]);
+
     return (
         <div id="content">
             <div id="userprofile">
@@ -308,5 +312,3 @@ const EditProfile = function() {
 };
 
 export default EditProfile;
-
-// upload image should save to db and not on save changes

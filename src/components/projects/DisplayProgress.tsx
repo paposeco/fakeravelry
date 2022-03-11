@@ -23,7 +23,7 @@ const DisplayProgress = function(props: { status: Status }) {
         ) {
             setcompletedate("no date set");
         }
-    }, [completedate]);
+    }, [completedate, props.status.progressstatus]);
 
     useEffect(() => {
         const happinessstatus = props.status.happiness;
@@ -87,7 +87,6 @@ const DisplayProgress = function(props: { status: Status }) {
             {props.status.progressstatus !== "finished" && (
                 <div className="projectstatusdiv">
                     <div className="itemdescription">Progress</div>
-                    {/* <div className="itemvalue">{props.status.progressrange}</div> */}
                     <div className="itemvalue">
                         <div className="progressbar">
                             <span

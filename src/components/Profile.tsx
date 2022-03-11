@@ -46,10 +46,14 @@ const Profile = function() {
     );
     const [userIDOnPath, setUserIDOnPath] = useState<string>("");
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
-    const [otherUserProjectsFetched, setOtherUserProjectsFetched] =
-        useState<boolean>(false);
-    const [otherUserDetailsFetched, setOtherUserDetailsFetched] =
-        useState<boolean>(false);
+    const [
+        otherUserProjectsFetched,
+        setOtherUserProjectsFetched,
+    ] = useState<boolean>(false);
+    const [
+        otherUserDetailsFetched,
+        setOtherUserDetailsFetched,
+    ] = useState<boolean>(false);
 
     const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
@@ -62,6 +66,24 @@ const Profile = function() {
 
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
+        const fetchUserOtherDetails = async function(usernameonpath: string) {
+            const otheruserdetails = await getOtherUserInfo(usernameonpath);
+            if (
+                otheruserdetails !== undefined &&
+                otheruserdetails !== "user not found"
+            ) {
+                setUserIDOnPath(otheruserdetails[2]);
+                dispatch(
+                    otherUserAdded({
+                        username: otheruserdetails[0],
+                        name: otheruserdetails[1],
+                        userID: otheruserdetails[2],
+                    })
+                );
+                fetchFriendsList(otheruserdetails[2]);
+                setOtherUserDetailsFetched(true);
+            }
+        };
         setUserOnPath(usernameOnPath);
         // wait for user from store
         if (user.username !== "") {
@@ -80,7 +102,7 @@ const Profile = function() {
                 setnumberprojects(projectData.length);
             }
         }
-    }, [location, user]);
+    }, [location, user, otherUserDetailsFetched, projectData, dispatch]);
 
     const fetchFriendsList = async function(userIDtoFetch: string) {
         const friends = await getFriends(userIDtoFetch);
@@ -103,8 +125,10 @@ const Profile = function() {
 
     const fetchUserProfileInformation = async () => {
         if (userIDOnPath !== "") {
-            const profileinfo: ProfileInformation | false | undefined =
-                await getUserProfileInformation(userIDOnPath);
+            const profileinfo:
+                | ProfileInformation
+                | false
+                | undefined = await getUserProfileInformation(userIDOnPath);
             return profileinfo;
         }
     };
@@ -128,88 +152,69 @@ const Profile = function() {
         setnumberprojects(0);
     }, [location]);
 
-    const fetchUserOtherDetails = async function(usernameonpath: string) {
-        const otheruserdetails = await getOtherUserInfo(usernameonpath);
-        if (
-            otheruserdetails !== undefined &&
-            otheruserdetails !== "user not found"
-        ) {
-            setUserIDOnPath(otheruserdetails[2]);
-            dispatch(
-                otherUserAdded({
-                    username: otheruserdetails[0],
-                    name: otheruserdetails[1],
-                    userID: otheruserdetails[2],
-                })
-            );
-            fetchFriendsList(otheruserdetails[2]);
-            setOtherUserDetailsFetched(true);
-        }
-    };
-
-    const fetchProjectsOtherUser = async function() {
-        const usernameOnPath = location.pathname.substring(8);
-        const otheruserprojects = await fetchOtherUserInfo(usernameOnPath);
-        if (
-            otheruserprojects !== undefined &&
-            otheruserprojects !== "user not found"
-        ) {
-            let countprojects = 0;
-            const addallprojects = new Promise((resolve, reject) => {
-                otheruserprojects.forEach((project) => {
-                    //                    setnumberprojects(numberprojects + 1);
-                    countprojects += 1;
-                    let gaugeNumberSts: number;
-                    let gaugeNumberRows: number;
-                    project.data().projectinfo.gauge.numberStsOrRepeats === null
-                        ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts =
-                            project.data().projectinfo.gauge.numberStsOrRepeats);
-                    project.data().projectinfo.gauge.numberRows === null
-                        ? (gaugeNumberRows = 0)
-                        : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
-                    dispatch(
-                        otherUserProjectFetchedFromDB({
-                            projectid: project.id,
-                            imageUrl: project.data().imageUrl,
-                            crafttype: project.data().crafttype,
-                            projectslug: project.data().projectslug,
-                            projectname: project.data().projectname,
-                            patternused: project.data().patternused,
-                            patternname: project.data().pattern.name,
-                            about: project.data().pattern.about,
-                            madefor: project.data().projectinfo.madefor,
-                            linktoraveler: project.data().projectinfo.linktoraveler,
-                            finishby: project.data().projectinfo.finishby,
-                            sizemade: project.data().projectinfo.sizemade,
-                            patternfrom: project.data().projectinfo.patternfrom,
-                            patterncategory: project.data().projectinfo.patterncategory,
-                            selectedtags: project.data().projectinfo.tags,
-                            needles: project.data().projectinfo.needles,
-                            hooks: project.data().projectinfo.hooks,
-                            numberStsOrRepeats: gaugeNumberSts,
-                            horizontalunits: project.data().projectinfo.gauge.horizontalunits,
-                            numberRows: gaugeNumberRows,
-                            gaugesize: project.data().projectinfo.gauge.gaugesize,
-                            gaugepattern: project.data().projectinfo.gauge.gaugepattern,
-                            yarn: project.data().projectinfo.yarn,
-                            projectnotes: project.data().projectinfo.projectnotes,
-                            progressstatus: project.data().projectstatus.progressstatus,
-                            progressrange: project.data().projectstatus.progressrange,
-                            happiness: project.data().projectstatus.happiness,
-                            starteddate: project.data().projectstatus.starteddate,
-                            completeddate: project.data().projectstatus.completeddate,
-                        })
-                    );
-                });
-            });
-            setnumberprojects(countprojects);
-            addallprojects
-                .then((resolve) => setOtherUserProjectsFetched(true))
-                .catch((reject) => console.log("error"));
-        }
-    };
     useEffect(() => {
+        const fetchProjectsOtherUser = async function() {
+            const usernameOnPath = location.pathname.substring(8);
+            const otheruserprojects = await fetchOtherUserInfo(usernameOnPath);
+            if (
+                otheruserprojects !== undefined &&
+                otheruserprojects !== "user not found"
+            ) {
+                let countprojects = 0;
+                const addallprojects = new Promise((resolve, reject) => {
+                    otheruserprojects.forEach((project) => {
+                        countprojects += 1;
+                        let gaugeNumberSts: number;
+                        let gaugeNumberRows: number;
+                        project.data().projectinfo.gauge.numberStsOrRepeats === null
+                            ? (gaugeNumberSts = 0)
+                            : (gaugeNumberSts = project.data().projectinfo.gauge
+                                .numberStsOrRepeats);
+                        project.data().projectinfo.gauge.numberRows === null
+                            ? (gaugeNumberRows = 0)
+                            : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
+                        dispatch(
+                            otherUserProjectFetchedFromDB({
+                                projectid: project.id,
+                                imageUrl: project.data().imageUrl,
+                                crafttype: project.data().crafttype,
+                                projectslug: project.data().projectslug,
+                                projectname: project.data().projectname,
+                                patternused: project.data().patternused,
+                                patternname: project.data().pattern.name,
+                                about: project.data().pattern.about,
+                                madefor: project.data().projectinfo.madefor,
+                                linktoraveler: project.data().projectinfo.linktoraveler,
+                                finishby: project.data().projectinfo.finishby,
+                                sizemade: project.data().projectinfo.sizemade,
+                                patternfrom: project.data().projectinfo.patternfrom,
+                                patterncategory: project.data().projectinfo.patterncategory,
+                                selectedtags: project.data().projectinfo.tags,
+                                needles: project.data().projectinfo.needles,
+                                hooks: project.data().projectinfo.hooks,
+                                numberStsOrRepeats: gaugeNumberSts,
+                                horizontalunits: project.data().projectinfo.gauge
+                                    .horizontalunits,
+                                numberRows: gaugeNumberRows,
+                                gaugesize: project.data().projectinfo.gauge.gaugesize,
+                                gaugepattern: project.data().projectinfo.gauge.gaugepattern,
+                                yarn: project.data().projectinfo.yarn,
+                                projectnotes: project.data().projectinfo.projectnotes,
+                                progressstatus: project.data().projectstatus.progressstatus,
+                                progressrange: project.data().projectstatus.progressrange,
+                                happiness: project.data().projectstatus.happiness,
+                                starteddate: project.data().projectstatus.starteddate,
+                                completeddate: project.data().projectstatus.completeddate,
+                            })
+                        );
+                    });
+                });
+                setnumberprojects(countprojects);
+                addallprojects
+                    .then((resolve) => setOtherUserProjectsFetched(true))
+                    .catch((reject) => console.log("error"));
+            }
+        };
         if (
             userMatchesPath !== undefined &&
             !userMatchesPath &&
@@ -217,7 +222,7 @@ const Profile = function() {
         ) {
             fetchProjectsOtherUser();
         }
-    }, [userMatchesPath]);
+    }, [userMatchesPath, otherUserProjectsFetched, dispatch, location.pathname]);
 
     const editProfile = function(event: React.MouseEvent) {
         navigate("/people/" + username + "/edit");
@@ -243,10 +248,6 @@ const Profile = function() {
         setisfriend(false);
     };
 
-    /* const showFriends = function(event: React.MouseEvent) {
-     *     navigate("/people/" + userOnPath + "/friends");
-     * }; */
-
     useEffect(() => {
         const currentnameonpath = location.pathname.substring(8);
         setUserOnPath(currentnameonpath);
@@ -261,11 +262,15 @@ const Profile = function() {
             setUserMatchesPath(true);
             setnumberprojects(projectData.length);
         }
-    }, [location]);
+    }, [location, dispatch, projectData, user]);
 
     useEffect(() => {
         setnumberprojects(projectData.length);
     }, [projectData]);
+
+    useEffect(() => {
+        document.title = "Fake Ravelry: " + userOnPath + "'s profile";
+    }, [userOnPath]);
 
     return (
         <div id="content">
@@ -312,7 +317,7 @@ const Profile = function() {
 
                     <div>
                         <Link to="/">
-                            <img src={QueueIcon} alt="queueicon" /> 0 queued
+                            <img src={QueueIcon} alt="queueicon" /> 0 queued{" "}
                         </Link>
                     </div>
                     <div>

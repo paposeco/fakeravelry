@@ -1,12 +1,17 @@
 html{
     font-size: 14px;
+    font-family: "Inter", Helvetica, Arial, sans-serif;
 }
 
 body{
     background: #f7f7f7;
-    font-family: "Inter", Helvetica, Arial, sans-serif;
     color: rgb(46, 52, 54);
     margin: 0px;
+    min-height: 100vh;
+}
+
+#root{
+    min-height: 100vh;
 }
 
 a{
@@ -18,8 +23,11 @@ a:visited{
 }
 
 a:hover{
-
     color: #1A444D;
+}
+
+button, input{
+    font-family: "Inter", Helvetica, Arial, sans-serif;
 }
 
 h2{
@@ -132,7 +140,7 @@ nav{
     border-bottom: 1px solid rgb(46, 52, 54);
 }
 
-nav > ul{
+nav > ul, #navnotloggedin > ul{
     display: flex;
     flex-direction: row;
     gap: 40px;
@@ -142,7 +150,13 @@ nav > ul{
     height: 100%;
 }
 
-nav > ul li{
+#navnotloggedin > ul{
+    justify-content: flex-end;
+    margin-right: 20px;
+    gap: 20px;
+}
+
+nav > ul li, #navnotloggedin > ul li{
     height: 100%;
     list-style: none;
     display: flex;
@@ -156,6 +170,23 @@ nav > ul li a{
     text-decoration: none;
     color: black;
     font-size: 14px;
+}
+
+#navnotloggedin > ul li a{
+    color: black;
+    font-size: 14px;
+}
+
+
+#navnotloggedin{
+    height: 55px;
+    background-color: #f7f7f7;
+    width: 100%;
+    border-bottom: 1px solid rgb(46, 52, 54);
+}
+
+#notloggedinlogo{
+    margin-right: auto;
 }
 
 .standardmenu{
@@ -316,6 +347,7 @@ nav > ul li a{
     width: 960px;
     margin: auto;
     padding-top: 35px;
+    min-height: calc(100vh - 55px - 40px - 50px);
 }
 
 .genericbutton{
@@ -442,6 +474,7 @@ nav > ul li a{
     width: 95%;
     margin: auto;
     padding-top: 35px;
+    min-height: calc(100vh - 55px - 40px - 50px);
 }
 
 #communitycontent h2, #notebook h2{
@@ -468,6 +501,13 @@ nav > ul li a{
     cursor: pointer;
 }
 
+#notebookcontentdiv{
+    min-height: calc(100vh - 55px - 40px - 50px + 35px);
+}
+
+#displayproject{
+    min-height: calc(100vh - 55px - 40px - 50px + 21px);
+}
 
 #notebook{
     width: 95%;
@@ -1088,20 +1128,32 @@ li.subfolder::before, li.subsubfolder::before{
 }
 
 #backgroundimages{
-    width: 1085px;
+    /* width: 1085px; */
+    width: 100%;
 }
 
 #login{
-    padding: 48px;
-    width: 620px;
-    height: 728px;
-    margin-top: 40px 80px 40px 40px;
+
+    max-width: 620px;
+   
+    width: 50%;
+
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+
 }
 
 #insidelogin{
     width: 400px;
+    padding: 48px;
+    height: 728px;
+    margin-top: 40px 80px 40px 40px;
+    background: white;
+    border: 1px solid black;
+    box-shadow: 4px 4px 0 0 black;
+    display: flex;
+    flex-direction: column;
 }
 
 #firstbackground{
@@ -1132,4 +1184,152 @@ li.subfolder::before, li.subsubfolder::before{
 #loginform{
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
+
+#loginform label{
+    font-weight: bolder;
+}
+
+#loginform input{
+    padding: 8px;
+    border: 1px solid black;
+}
+
+#loginform input:focus{
+    outline: none;
+    background: rgb(239,250,249);
+    border: 1px solid black;
+    padding: 8px;
+}
+
+#bigsignup{
+    margin-top: 60px;
+}
+
+#bigsignup h1{
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.frontpagebutton{
+    width: 100px;
+    border: 1px solid black;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    padding-left: 16px;
+    padding-right: 16px;
+    cursor:pointer;
+    align-self: flex-end;
+    background: #97EFE3;
+    box-shadow: 4px 4px 0 0 black;
+
+}
+
+.frontpagebutton:hover{
+    background: #72DFD0;
+}
+
+#signuppage{
+    background: white;
+    height: 100vh;
+}
+
+#signupform{
+    width: 365px;
+    margin: auto;
+    padding-top: 35px;
+}
+
+
+#signupform form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#signupform form input{
+    padding: 8px;
+    border: 1px solid black;
+    width: 350px;
+}
+
+#signupform form label{
+    font-weight: bolder;
+}
+
+#signupform form input:focus{
+    outline: none;
+    background: rgb(239,250,249);
+    border: 1px solid black;
+    padding: 8px;
+}
+
+#blogcontent{
+    width: 700px;
+    margin: auto;
+    padding-top: 35px;
+}
+
+#introduction p, .blogpost p{
+    line-height: 26px;
+    font-size: 1.14rem;
+}
+
+#blogcontent img{
+    max-width: 600px;
+    margin: 40px auto;
+    display: block;
+}
+
+#introduction{
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid black;
+}
+
+.blogpost{
+    margin-bottom: 35px;
+}
+
+.blogpost ul{
+    line-height: 24px;
+    font-size: 16px;
+}
+
+.blogpost ul li{
+    margin-bottom: 16px;
+    margin-left: 10px;
+}
+
+.blogpostheader{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.blogpostheader div p{
+    font-size: 14px;
+    text-align: right;
+    line-height: 18px;
+}
+
+footer{
+    height: 40px;
+    width: 100%;
+    background: #1A444D;
+    text-align: center;
+
+}
+
+footer p{
+    padding-top: 10px;
+}
+
+footer a, footer a:visited{
+    color: #97EFE3;
+
+}
+

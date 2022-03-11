@@ -13,5 +13,4 @@ export const store = configureStore({
     },
 });
 
-// type of state in redux. could have used rootstateorany
 export type RootState = ReturnType<typeof store.getState>;

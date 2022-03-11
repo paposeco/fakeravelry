@@ -24,41 +24,15 @@ const Friends = function() {
     const [friendsfetched, setfriendsfetched] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.userinfo);
     const [usermatchespath, setUsermatchespath] = useState<boolean>(true);
-    const [useronpathhasfriends, setuseronpathhasfriends] =
-        useState<boolean>(true);
+    const [useronpathhasfriends, setuseronpathhasfriends] = useState<boolean>(
+        true
+    );
     const [usernameonpath, setusernameonpath] = useState<string>("");
 
     const [pagination, setpagination] = useState<FriendProfile[][]>([]);
     const [paginationready, setpaginationready] = useState<boolean>(false);
-    const [pageselected, setpageselected] = useState<string>("page1");
     const [pagemembers, setpagemembers] = useState<FriendProfile[]>([]);
     const [pagebuttons, setpagebuttons] = useState<JSX.Element[]>([]);
-
-    const fetchFriends = async function(usernametofetch: string) {
-        if (user.username !== "") {
-            setfriendsfetched(true);
-            if (user.username === usernametofetch) {
-                const friends: string[] = await getFriends(user.userID); //array of friends usernames
-                if (friends.length > 0) {
-                    const friendsinfo = await getFriendsInfo(friends);
-                    setfriendslist(friendsinfo);
-                } else {
-                    setuseronpathhasfriends(false);
-                }
-            } else {
-                const userID = await getUserID(usernametofetch);
-                if (userID !== undefined && userID !== false) {
-                    const friends: string[] = await getFriends(userID);
-                    if (friends.length > 0) {
-                        const friendsinfo = await getFriendsInfo(friends);
-                        setfriendslist(friendsinfo);
-                    } else {
-                        setuseronpathhasfriends(false);
-                    }
-                }
-            }
-        }
-    };
 
     const getFriendsInfo = async function(friendslist: string[]) {
         let friendsDetails: FriendProfile[] = [];
@@ -79,8 +53,6 @@ const Friends = function() {
         }
         return friendsDetails;
     };
-
-    // fetch username and profile photo: link to profile
 
     const showRemoveFriendOption = function(event: React.MouseEvent) {
         const divalreadyexists = document.getElementById("removethisfriend");
@@ -129,6 +101,31 @@ const Friends = function() {
     };
 
     useEffect(() => {
+        const fetchFriends = async function(usernametofetch: string) {
+            if (user.username !== "") {
+                setfriendsfetched(true);
+                if (user.username === usernametofetch) {
+                    const friends: string[] = await getFriends(user.userID); //array of friends usernames
+                    if (friends.length > 0) {
+                        const friendsinfo = await getFriendsInfo(friends);
+                        setfriendslist(friendsinfo);
+                    } else {
+                        setuseronpathhasfriends(false);
+                    }
+                } else {
+                    const userID = await getUserID(usernametofetch);
+                    if (userID !== undefined && userID !== false) {
+                        const friends: string[] = await getFriends(userID);
+                        if (friends.length > 0) {
+                            const friendsinfo = await getFriendsInfo(friends);
+                            setfriendslist(friendsinfo);
+                        } else {
+                            setuseronpathhasfriends(false);
+                        }
+                    }
+                }
+            }
+        };
         if (!friendsfetched) {
             const completePath = location.pathname.substring(8);
             const usernameOnPath = completePath.substring(
@@ -137,7 +134,7 @@ const Friends = function() {
             );
             fetchFriends(usernameOnPath);
         }
-    });
+    }, [friendsfetched, location.pathname, user]);
 
     useEffect(() => {
         if (user.username !== "") {
@@ -151,7 +148,7 @@ const Friends = function() {
                 setUsermatchespath(false);
             }
         }
-    }, [user]);
+    }, [user, location.pathname]);
 
     useEffect(() => {
         const numbermembers = friendslist.length;
@@ -168,25 +165,23 @@ const Friends = function() {
         }
     }, [friendslist]);
 
-    const changePage = function(event: React.MouseEvent) {
-        const buttonid = event.currentTarget.id;
-        setpageselected(buttonid);
-        membersToDisplay(buttonid);
-        const buttonnode = document.getElementById(buttonid);
-        const allbuttons = document.querySelectorAll("button");
-        allbuttons.forEach((button) => button.classList.remove("buttonactive"));
-        if (buttonnode !== null) {
-            buttonnode.classList.add("buttonactive");
-        }
-    };
-
-    const membersToDisplay = function(buttonclicked: string) {
-        const currentpage = Number(buttonclicked.substring(4));
-        const membersonpage = pagination[currentpage - 1];
-        setpagemembers(membersonpage);
-    };
-
     useEffect(() => {
+        const membersToDisplay = function(buttonclicked: string) {
+            const currentpage = Number(buttonclicked.substring(4));
+            const membersonpage = pagination[currentpage - 1];
+            setpagemembers(membersonpage);
+        };
+        const changePage = function(event: React.MouseEvent) {
+            const buttonid = event.currentTarget.id;
+            membersToDisplay(buttonid);
+            const buttonnode = document.getElementById(buttonid);
+            const allbuttons = document.querySelectorAll("button");
+            allbuttons.forEach((button) => button.classList.remove("buttonactive"));
+            if (buttonnode !== null) {
+                buttonnode.classList.add("buttonactive");
+            }
+        };
+
         if (paginationready) {
             const neededbuttons = pagination.length;
             let buttons: JSX.Element[] = [];
@@ -215,7 +210,11 @@ const Friends = function() {
             }
             setpagebuttons(buttons);
         }
-    }, [paginationready]);
+    }, [paginationready, pagination]);
+
+    useEffect(() => {
+        document.title = "Fake Ravelry: " + usernameonpath + "'s friends";
+    }, [usernameonpath]);
 
     return (
         <div id="communitycontent">
@@ -243,7 +242,7 @@ const Friends = function() {
                                             id={"buttonRemove" + member.friendusername}
                                             className="removefriend"
                                         >
-                                            <img src={MoreVertical} />
+                                            <img src={MoreVertical} alt="more" />
                                         </button>
                                     </div>
                                 </div>
@@ -274,25 +273,3 @@ const Friends = function() {
 };
 
 export default Friends;
-
-// after adding friend change button to remove
-/* <div>
-                        {friendslist.map((friend: FriendProfile) => (
-                            <div key={uniqid()}>
-                                <Link to={`/people/${friend.friendusername}`}>
-                                    <DisplayProfileImage imageurl={friend.friendimageurl} />
-                                </Link>
-                                <Link to={`/people/${friend.friendusername}`}>
-                                    {friend.friendusername}
-                                </Link>
-                                {usermatchespath && (
-                                    <button
-                                        onClick={removeFriend}
-                                        id={`remove${friend.friendusername}`}
-                                    >
-                                        Remove Friend
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div> */

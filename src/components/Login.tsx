@@ -55,22 +55,31 @@ const Login = function() {
                             id="email"
                             type="email"
                             onChange={handlerOfChange}
+                            value={email}
                         />
                         <label htmlFor="password">Password</label>
                         <input
                             name="password"
                             id="password"
-                            type="text"
+                            type="password"
                             onChange={handlerOfChange}
+                            value={password}
                         />
-                        <button type="submit">Log In</button>
+                        <button type="submit" className="frontpagebutton" title="Log In">
+                            Log In
+                        </button>
                     </form>
-                    <h3>Sign Up</h3>
+
                     <div id="bigsignup">
-                        Fakeravelry is a free website for knitters, crocheters, and fiber
-                        artists.
+                        <h3>Sign Up</h3>
+                        <h1>
+                            Fake Ravelry is a free website for knitters, crocheters, and fiber
+                            artists.
+                        </h1>
                     </div>
-                    <button onClick={signup}>Join now</button>
+                    <button onClick={signup} className="frontpagebutton" title="Join now">
+                        Join now
+                    </button>
                 </div>
             </div>
         </div>

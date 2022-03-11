@@ -4,7 +4,6 @@ import type { Needles, Hooks, Yarn, Gauge, YarnDisplay } from "../common/types";
 import { NeedleMap, HookMap } from "./SelectOptions";
 import uniqid from "uniqid";
 import DisplayYarn from "./DisplayYarn";
-import { isJSDocLinkLike } from "typescript";
 
 const ProjectItem = function(props: {
     itemdescription: string;
@@ -39,13 +38,30 @@ const ProjectItem = function(props: {
             }
             setSeparateTags(tagsArray);
             setTagsSeparated(true);
-        } else if (
+            /* } else if (
+             *     props.itemdescription === "Made for" &&
+             *     typeof props.itemvalue === "string"
+             * ) {
+             *     if (props.itemvalue.substring(0, 4) === "/peo") {
+             *         setDisplayLinkToRaveler(true);
+             *         setMadeforusername(props.itemvalue.substring(8));
+             *     } */
+        }
+    }, [props]);
+
+    const [showlinktouser, setshowlinktouser] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (
             props.itemdescription === "Made for" &&
             typeof props.itemvalue === "string"
         ) {
             if (props.itemvalue.substring(0, 4) === "/peo") {
-                setDisplayLinkToRaveler(true);
+                setshowlinktouser(true);
                 setMadeforusername(props.itemvalue.substring(8));
+            } else {
+                console.log(props.itemvalue);
+                setMadeforusername(props.itemvalue);
             }
         }
     }, [props]);
@@ -264,7 +280,7 @@ const ProjectItem = function(props: {
         props.itemdescription !== "Yarn" &&
         props.itemdescription !== "Tags" &&
         props.itemdescription !== "Notes" &&
-        !displayLinkToRaveler
+        props.itemdescription !== "Made for"
     ) {
         return (
             <div className="projectinfodiv">
@@ -272,12 +288,19 @@ const ProjectItem = function(props: {
                 <div className="itemValue">{props.itemvalue}</div>
             </div>
         );
-    } else if (displayLinkToRaveler && typeof props.itemvalue === "string") {
+    } else if (
+        props.itemdescription === "Made for" &&
+        typeof props.itemvalue === "string"
+    ) {
         return (
             <div className="projectinfodiv">
                 <div className="itemDescription">Made For</div>
                 <div className="itemValue">
-                    <Link to={props.itemvalue}>{madeforusername}</Link>
+                    {showlinktouser ? (
+                        <Link to={props.itemvalue}>{madeforusername}</Link>
+                    ) : (
+                        <p>{madeforusername}</p>
+                    )}
                 </div>
             </div>
         );

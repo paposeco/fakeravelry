@@ -12,9 +12,7 @@ const DisplaySingleHook = function(props: {
     const [selectValue, setSelectValue] = useState<string>("");
     const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
         setSelectValue(event.target.value);
-        {
-            props.handler(event);
-        }
+        props.handler(event);
     };
     useEffect(() => {
         setSelectValue(props.hook.value);

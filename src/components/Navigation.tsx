@@ -19,8 +19,6 @@ const Navigation = function(props: { username: string }) {
         "/notebook/" + props.username
     );
     const [profileimg, setprofileimg] = useState<string>("");
-    const [userSignedIn, setUserSignedIn] = useState<boolean>(false);
-
     const user = useSelector((state: RootState) => state.userinfo.username);
     const activateMenu = function(event: React.MouseEvent) {
         const target = event.currentTarget;
@@ -59,18 +57,20 @@ const Navigation = function(props: { username: string }) {
 
     const signOut = function() {
         signOutUser();
-        setUserSignedIn(false);
         window.location.reload();
     };
 
     useEffect(() => {
         if (!imagefetched) {
             fetchUserProfileImage();
-            setUsername(user);
-            setPeoplePath("/people/" + user);
-            setNotebookpath("/notebook/" + user);
         }
     });
+
+    useEffect(() => {
+        setUsername(user);
+        setPeoplePath("/people/" + user);
+        setNotebookpath("/notebook/" + user);
+    }, [user]);
 
     useEffect(() => {
         if (communitymenushown) {

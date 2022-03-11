@@ -19,8 +19,6 @@ const YarnInfo = function(props: {
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
 }) {
-    // select needs to have a local handler
-
     const [selectValue, setSelectValue] = useState<YarnSelects>({
         closestcolor: "",
         yarnweight: "",

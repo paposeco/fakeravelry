@@ -1,5 +1,3 @@
-//acess info from store
-//import { useEffect } from "react";
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import uniqid from "uniqid";
@@ -29,8 +27,6 @@ import DisplaySingleHook from "./DisplaySingleHook";
 import Breadcrumbs from "./Breadcrumbs";
 import ProjectsIcon from "../../images/projectsicon.svg";
 import PlusIcon from "../../images/circle.svg";
-
-//need to handle refreshes
 
 const EditProject = function() {
     // project id is available on state
@@ -197,11 +193,6 @@ const EditProject = function() {
     ) {
         event.preventDefault();
         if (projectInformation !== undefined) {
-            /* let ravelerpath: string = "";
-             * if (projectInformation.madefor !== "") {
-             *     // looks for user in db
-             *     ravelerpath = await linkToRaveler(projectInformation.madefor);
-             * } */
             // update project in db
             let gaugeNumberSts: number | null;
             let gaugeNumberRows: number | null;
@@ -491,6 +482,10 @@ const EditProject = function() {
         }
     }, [madefor]);
 
+    useEffect(() => {
+        document.title = "Fake Ravelry: " + user + "'s " + projectName;
+    }, [user, projectName]);
+
     if (projectInformation !== undefined) {
         return (
             <div>
@@ -655,10 +650,11 @@ const EditProject = function() {
                                         <button id="addhook" onClick={addHook} type="button">
                                             <img src={PlusIcon} alt="icon" /> add hook
                                         </button>
+                                    </div>
+                                    <div id="showtools">
                                         {selectNeedlesToRender}
                                         {selectHooksToRender}
                                     </div>
-                                    {/* <fieldset id="gaugefieldset"> */}
                                     <div className="gaugediv">
                                         <label htmlFor="gaugehorizontal">Gauge</label>
                                         <div id="completegauge">
@@ -716,8 +712,6 @@ const EditProject = function() {
                                             value={projectInformation.gauge.gaugepattern}
                                         />
                                     </div>
-
-                                    {/* </fieldset> */}
                                 </div>
                                 <h3>Yarns</h3>
                                 <div id="yarn">
@@ -734,7 +728,6 @@ const EditProject = function() {
                                     onChange={handlerOfChange}
                                     value={projectInformation.projectnotes}
                                 ></textarea>
-                                {/* <input type="submit" value="Save Changes" /> */}
                                 <div id="editprojectfooter">
                                     <button className="genericbutton" onClick={cancelEdit}>
                                         Cancel
@@ -880,21 +873,3 @@ const EditProject = function() {
 };
 
 export default EditProject;
-
-// very sad <i class="las la-sad-tear"></i>
-// sad <i class="las la-frown"></i>
-// meh <i class="las la-meh"></i>
-// happy <i class="las la-smile-beam"></i>
-// very happy <i class="las la-laugh"></i>
-
-/*
- *   handleInputChange(event) {
- *     const target = event.target;
- *     const value = target.type === 'checkbox' ? target.checked : target.value;
- *     const name = target.name;
- *     this.setState({
- *       [name]: value    });
- *    }*/
-
-// const teste = JSON.stringify(a);
-// const aocontrario = JSON.parse(teste);

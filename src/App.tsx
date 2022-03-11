@@ -1,21 +1,13 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Community from "./components/Community";
 import Login from "./components/Login";
-import Messages from "./components/Messages.js";
 import Notebook from "./components/Notebook";
 import Profile from "./components/Profile";
 import EditProfile from "./components/profiledetails/EditProfile";
 import Welcome from "./components/Welcome";
 import Signup from "./components/Signup";
-import logo from "./images/logo.svg";
-import {
-    auth,
-    getInfo,
-    fetchUserInfo,
-    signOutUser,
-    getUserProfileImage,
-} from "./Firebase";
+import { auth, getInfo, fetchUserInfo } from "./Firebase";
 import NewProject from "./components/NewProject";
 import EditProject from "./components/projects/EditProject";
 import DisplayProject from "./components/projects/DisplayProject";
@@ -23,12 +15,8 @@ import { useDispatch } from "react-redux";
 import { userAdded } from "./components/store/userInfoSlice";
 import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 import Friends from "./components/Friends";
-import DisplayProfileImage from "./components/profiledetails/DisplayProfileImage";
-import DisplayProfileMenu from "./components/profiledetails/DisplayProfileMenu";
-import DisplayCommunityMenu from "./components/community/DisplayCommunityMenu";
 import Navigation from "./components/Navigation";
 
-// it shouldnt load a login page while checking if the user is logged in; before useeffect something else should be displayed
 //for github basename on browserrouter / ghpages name
 
 const App = function() {
@@ -36,88 +24,83 @@ const App = function() {
     const [username, setUsername] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [userID, setUserID] = useState<string>("");
-    const [peoplepath, setPeoplePath] = useState<string>("");
-    const [notebookpath, setNotebookpath] = useState<string>("");
-    const [profileimg, setprofileimg] = useState<string>("");
-    const dispatch = useDispatch();
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
-    const fetchUserData = async function() {
-        const projectsInDb = await fetchUserInfo();
-        if (projectsInDb !== undefined && projectsInDb !== false) {
-            const addallprojects = new Promise((resolve, reject) => {
-                projectsInDb.forEach((project) => {
-                    let gaugeNumberSts: number;
-                    let gaugeNumberRows: number;
-                    project.data().projectinfo.gauge.numberStsOrRepeats === null
-                        ? (gaugeNumberSts = 0)
-                        : (gaugeNumberSts = project.data().projectinfo.gauge
-                            .numberStsOrRepeats);
-                    project.data().projectinfo.gauge.numberRows === null
-                        ? (gaugeNumberRows = 0)
-                        : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
-                    dispatch(
-                        projectFetchedFromDB({
-                            projectid: project.id,
-                            imageUrl: project.data().imageUrl,
-                            crafttype: project.data().crafttype,
-                            projectslug: project.data().projectslug,
-                            projectname: project.data().projectname,
-                            patternused: project.data().patternused,
-                            patternname: project.data().pattern.name,
-                            about: project.data().pattern.about,
-                            madefor: project.data().projectinfo.madefor,
-                            linktoraveler: project.data().projectinfo.linktoraveler,
-                            finishby: project.data().projectinfo.finishby,
-                            sizemade: project.data().projectinfo.sizemade,
-                            patternfrom: project.data().projectinfo.patternfrom,
-                            patterncategory: project.data().projectinfo.patterncategory,
-                            selectedtags: project.data().projectinfo.tags,
-                            needles: project.data().projectinfo.needles,
-                            hooks: project.data().projectinfo.hooks,
-                            numberStsOrRepeats: gaugeNumberSts,
-                            horizontalunits: project.data().projectinfo.gauge.horizontalunits,
-                            numberRows: gaugeNumberRows,
-                            gaugesize: project.data().projectinfo.gauge.gaugesize,
-                            gaugepattern: project.data().projectinfo.gauge.gaugepattern,
-                            yarn: project.data().projectinfo.yarn,
-                            projectnotes: project.data().projectinfo.projectnotes,
-                            progressstatus: project.data().projectstatus.progressstatus,
-                            progressrange: project.data().projectstatus.progressrange,
-                            happiness: project.data().projectstatus.happiness,
-                            starteddate: project.data().projectstatus.starteddate,
-                            completeddate: project.data().projectstatus.completeddate,
-                        })
-                    );
-                });
-            });
-            addallprojects
-                .then((resolve) => setProjectsFetched(true))
-                .catch((reject) => console.log("error"));
-        }
-    };
+
+    const dispatch = useDispatch();
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 setUserSignedIn(true);
                 const userInfo = await getInfo("both");
-                const userProfileImage = await getUserProfileImage();
-                setprofileimg(userProfileImage);
                 setUsername(userInfo[0]);
                 setName(userInfo[1]);
                 setUserID(userInfo[2]);
-                setPeoplePath("/people/" + userInfo[0]);
-                setNotebookpath("/notebook/" + userInfo[0]);
             } else {
                 setUserSignedIn(false);
             }
         });
-    });
+    }, []);
 
     useEffect(() => {
+        const fetchUserData = async function() {
+            const projectsInDb = await fetchUserInfo();
+            if (projectsInDb !== undefined && projectsInDb !== false) {
+                const addallprojects = new Promise((resolve, reject) => {
+                    projectsInDb.forEach((project) => {
+                        let gaugeNumberSts: number;
+                        let gaugeNumberRows: number;
+                        project.data().projectinfo.gauge.numberStsOrRepeats === null
+                            ? (gaugeNumberSts = 0)
+                            : (gaugeNumberSts = project.data().projectinfo.gauge
+                                .numberStsOrRepeats);
+                        project.data().projectinfo.gauge.numberRows === null
+                            ? (gaugeNumberRows = 0)
+                            : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
+                        dispatch(
+                            projectFetchedFromDB({
+                                projectid: project.id,
+                                imageUrl: project.data().imageUrl,
+                                crafttype: project.data().crafttype,
+                                projectslug: project.data().projectslug,
+                                projectname: project.data().projectname,
+                                patternused: project.data().patternused,
+                                patternname: project.data().pattern.name,
+                                about: project.data().pattern.about,
+                                madefor: project.data().projectinfo.madefor,
+                                linktoraveler: project.data().projectinfo.linktoraveler,
+                                finishby: project.data().projectinfo.finishby,
+                                sizemade: project.data().projectinfo.sizemade,
+                                patternfrom: project.data().projectinfo.patternfrom,
+                                patterncategory: project.data().projectinfo.patterncategory,
+                                selectedtags: project.data().projectinfo.tags,
+                                needles: project.data().projectinfo.needles,
+                                hooks: project.data().projectinfo.hooks,
+                                numberStsOrRepeats: gaugeNumberSts,
+                                horizontalunits: project.data().projectinfo.gauge
+                                    .horizontalunits,
+                                numberRows: gaugeNumberRows,
+                                gaugesize: project.data().projectinfo.gauge.gaugesize,
+                                gaugepattern: project.data().projectinfo.gauge.gaugepattern,
+                                yarn: project.data().projectinfo.yarn,
+                                projectnotes: project.data().projectinfo.projectnotes,
+                                progressstatus: project.data().projectstatus.progressstatus,
+                                progressrange: project.data().projectstatus.progressrange,
+                                happiness: project.data().projectstatus.happiness,
+                                starteddate: project.data().projectstatus.starteddate,
+                                completeddate: project.data().projectstatus.completeddate,
+                            })
+                        );
+                    });
+                });
+                addallprojects
+                    .then((resolve) => setProjectsFetched(true))
+                    .catch((reject) => console.log("error"));
+            }
+        };
         if (userSignedIn && !projectsFetched) {
             fetchUserData();
         }
-    }, [userSignedIn]);
+    }, [userSignedIn, dispatch, projectsFetched]);
 
     useEffect(() => {
         if (userID !== "") {
@@ -129,71 +112,7 @@ const App = function() {
                 })
             );
         }
-    }, [userID]);
-
-    const signOut = async function() {
-        await signOutUser();
-        setUserSignedIn(false);
-        window.location.reload();
-    };
-
-    const [menushown, setmenushown] = useState(false);
-
-    const showMenu = function(event: React.MouseEvent) {
-        if (!menushown) {
-            setmenushown(true);
-            const menuitemdivselected = document.getElementById("selectedmenuitem");
-            menuitemdivselected!.setAttribute("class", "activemenu");
-        }
-    };
-
-    const [communitymenushown, setcommunitymenushown] = useState<boolean>(false);
-    const showCommunityMenu = function(event: React.MouseEvent) {
-        if (!communitymenushown) {
-            setcommunitymenushown(true);
-            const communityelement = document.getElementById("selectedcommunityitem");
-            communityelement!.setAttribute("class", "activemenunotprofile");
-        }
-    };
-
-    useEffect(() => {
-        if (communitymenushown) {
-            const communitynavelement = document.getElementById("communitynav");
-            const menuitem = document.getElementById("selectedcommunityitem");
-            if (communitynavelement !== null) {
-                communitynavelement.addEventListener("mouseleave", () => {
-                    setcommunitymenushown(false);
-                    if (menuitem !== null) {
-                        menuitem.classList.remove("activemenunotprofile");
-                    }
-                });
-            }
-        }
-    }, [communitymenushown]);
-
-    useEffect(() => {
-        if (menushown) {
-            const profileimg = document.getElementById("profileimage");
-            const menuitemdivselected = document.getElementById("selectedmenuitem");
-            if (profileimg !== null) {
-                profileimg.addEventListener("mouseleave", () => {
-                    setmenushown(false);
-                    menuitemdivselected!.classList.remove("activemenu");
-                });
-            }
-        }
-    }, [menushown]);
-
-    const activateMenu = function(event: React.MouseEvent) {
-        const target = event.currentTarget;
-        const targetdiv = target.querySelector(".navelementselected");
-        if (targetdiv !== null) {
-            targetdiv.classList.add("activemenunotprofile");
-            target.addEventListener("mouseleave", () => {
-                targetdiv.classList.remove("activemenunotprofile");
-            });
-        }
-    };
+    }, [userID, dispatch, name, username]);
 
     if (!userSignedIn) {
         return (
@@ -218,7 +137,6 @@ const App = function() {
                     <Route path="/people/:id/edit" element={<EditProfile />} />
                     <Route path="/community" element={<Community />} />
                     <Route path="/people/:id/friends" element={<Friends />} />
-                    <Route path="/messages" element={<Messages />} />
                     <Route path="/notebook/:id/" element={<Notebook />} />
                     <Route path="/notebook/:id/newproject/*" element={<NewProject />} />
                     <Route
@@ -230,6 +148,16 @@ const App = function() {
                         element={<DisplayProject />}
                     />
                 </Routes>
+                <footer>
+                    <p>
+                        <a href="https:github.com/paposeco/">
+                            <span>
+                                <i className="lab la-github"></i>
+                            </span>
+                            Fabi
+                        </a>
+                    </p>
+                </footer>
             </div>
         );
     }

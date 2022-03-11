@@ -15,7 +15,7 @@ const Community = function() {
     const [usersfetched, setusersfetched] = useState<boolean>(false);
     const [pagination, setpagination] = useState<Member[][]>([]);
     const [paginationready, setpaginationready] = useState<boolean>(false);
-    const [pageselected, setpageselected] = useState<string>("page1");
+    /* const [pageselected, setpageselected] = useState<string>("page1"); */
     const [pagemembers, setpagemembers] = useState<Member[]>([]);
 
     const fetchusers = async function() {
@@ -30,8 +30,6 @@ const Community = function() {
             fetchusers();
         }
     });
-
-    //click button => show content on index of pagination
 
     useEffect(() => {
         const numbermembers = allmembers.length;
@@ -48,26 +46,24 @@ const Community = function() {
         }
     }, [allmembers]);
 
-    const changePage = function(event: React.MouseEvent) {
-        const buttonid = event.currentTarget.id;
-        const buttonnode = document.getElementById(buttonid);
-        const allbuttons = document.querySelectorAll("button");
-        allbuttons.forEach((button) => button.classList.remove("buttonactive"));
-        if (buttonnode !== null) {
-            buttonnode.classList.add("buttonactive");
-        }
-        setpageselected(buttonid);
-        membersToDisplay(buttonid);
-    };
-
-    const membersToDisplay = function(buttonclicked: string) {
-        const currentpage = Number(buttonclicked.substring(4));
-        const membersonpage = pagination[currentpage - 1];
-        setpagemembers(membersonpage);
-    };
-
     const [pagebuttons, setpagebuttons] = useState<JSX.Element[]>([]);
     useEffect(() => {
+        const membersToDisplay = function(buttonclicked: string) {
+            const currentpage = Number(buttonclicked.substring(4));
+            const membersonpage = pagination[currentpage - 1];
+            setpagemembers(membersonpage);
+        };
+        const changePage = function(event: React.MouseEvent) {
+            const buttonid = event.currentTarget.id;
+            const buttonnode = document.getElementById(buttonid);
+            const allbuttons = document.querySelectorAll("button");
+            allbuttons.forEach((button) => button.classList.remove("buttonactive"));
+            if (buttonnode !== null) {
+                buttonnode.classList.add("buttonactive");
+            }
+            /* setpageselected(buttonid); */
+            membersToDisplay(buttonid);
+        };
         if (paginationready) {
             const neededbuttons = pagination.length;
             let buttons: JSX.Element[] = [];
@@ -96,8 +92,11 @@ const Community = function() {
             }
             setpagebuttons(buttons);
         }
-    }, [paginationready]);
+    }, [paginationready, pagination]);
 
+    useEffect(() => {
+        document.title = "Fake Ravelry";
+    }, []);
     return (
         <div id="communitycontent">
             <h2>Fake Ravelry's members</h2>
@@ -126,5 +125,3 @@ const Community = function() {
 };
 
 export default Community;
-
-// todo: remove friend, remove project and delete images

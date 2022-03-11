@@ -13,7 +13,7 @@ import { getUserProfileInformation } from "../Firebase";
 const NewProject = function() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [projectID, setProjectID] = useState<string>(nanoid());
+    const [projectID, setProjectID] = useState<string>("");
     const [craftType, setCraftType] = useState<string>("knitting");
     const [projectName, setProjectName] = useState<string>("");
     const [patternName, setPatternName] = useState<string>("");
@@ -27,6 +27,9 @@ const NewProject = function() {
         ["patternname", setPatternName],
     ]);
 
+    useEffect(() => {
+        setProjectID(nanoid());
+    }, []);
     const handlerOfChange = function(
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ): void {
@@ -42,9 +45,9 @@ const NewProject = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
-        const patternUsed: string = (
-            event.currentTarget.elements.namedItem("patternused") as HTMLInputElement
-        ).value;
+        const patternUsed: string = (event.currentTarget.elements.namedItem(
+            "patternused"
+        ) as HTMLInputElement).value;
         const cleanProjectName = projectName
             .toLowerCase()
             .trim()
@@ -88,18 +91,10 @@ const NewProject = function() {
         return path;
     };
 
-    const [profilebreadcrumbimage, setprofilebreadcrumbimage] =
-        useState<string>("");
+    const [profilebreadcrumbimage, setprofilebreadcrumbimage] = useState<string>(
+        ""
+    );
     const [projectordinalnumber, setprojectordinalnumber] = useState<string>("");
-    const fetchUserProfileInformation = async () => {
-        if (userid !== "") {
-            const profileinfo: ProfileInformation | false | undefined =
-                await getUserProfileInformation(userid);
-            if (profileinfo !== undefined && profileinfo !== false) {
-                setprofilebreadcrumbimage(profileinfo.imageurl);
-            }
-        }
-    };
 
     const transformtoordinalnumber = function(originalnumber: number) {
         let ordinalnumber = "";
@@ -140,6 +135,17 @@ const NewProject = function() {
         return ordinalnumber;
     };
     useEffect(() => {
+        const fetchUserProfileInformation = async () => {
+            if (userid !== "") {
+                const profileinfo:
+                    | ProfileInformation
+                    | false
+                    | undefined = await getUserProfileInformation(userid);
+                if (profileinfo !== undefined && profileinfo !== false) {
+                    setprofilebreadcrumbimage(profileinfo.imageurl);
+                }
+            }
+        };
         fetchUserProfileInformation();
     }, [userid]);
 
@@ -151,6 +157,10 @@ const NewProject = function() {
         const ordinalnumber = transformtoordinalnumber(projectData.length + 1);
         setprojectordinalnumber(ordinalnumber);
     }, [projectData]);
+
+    useEffect(() => {
+        document.title = "Fake Ravelry";
+    }, []);
 
     return (
         <div id="newprojectcontent">
@@ -243,16 +253,3 @@ const NewProject = function() {
 };
 
 export default NewProject;
-
-// project details can be added after. this creates a project with a name
-
-/* interface PatternC extends PatternI { }
-
-* class PatternC implements PatternC {
-*     /* class PatternC implements PatternI { */
-/* * constructor(name: string, about: string) {
- * * this.name = name;
- * * this.about = about;
- * *     }
- * * } * / */
-//this.pattern = new PatternC(patternnameselected, "");

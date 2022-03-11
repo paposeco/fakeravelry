@@ -36,7 +36,7 @@ export interface ProjectInfo extends IObjectKeys {
     needles: Needles[];
     hooks: Hooks[];
     gauge: Gauge;
-    yarn: string; // should probably be an obj
+    yarn: string;
     projectnotes: string;
 }
 
@@ -127,14 +127,3 @@ export interface UserInfo {
     name: string;
     userID: string;
 }
-
-/*
- * const instanceOfNeedle = function(object: any): object is Needles {
- *     return "selectid" in object;
- * };
- *
- * const instanceOfHook = function(object: any): object is Hooks {
- *     return "selectid" in object;
- * };
- *
- * export { instanceOfNeedle, instanceOfHook }; */

@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PeopleIcon from "../../images/peopleicon.svg";
 import FriendsIcon from "../../images/friendsicon.svg";
 
 const DisplayCommunityMenu = function(props: { currentuser: string }) {
-    const [friendspath, setfriendspath] = useState<string>(
-        "/people/" + props.currentuser + "/friends"
-    );
+    const [friendspath, setfriendspath] = useState<string>("");
+
+    useEffect(() => {
+        setfriendspath("/people/" + props.currentuser + "/friends");
+    }, [props.currentuser]);
     return (
         <div id="communitymenu">
             <ul>

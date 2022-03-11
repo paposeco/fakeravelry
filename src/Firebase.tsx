@@ -29,10 +29,7 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
-    initializeAuth,
 } from "firebase/auth";
-
-//import { User as FirebaseUser } from "firebase/auth";
 
 import type {
     Needles,
@@ -131,7 +128,7 @@ const uploadProfilePhoto = async function(file: File) {
             //upload file to storage bucket
             const filePath = `${auth.currentUser.uid}/${file.name}`;
             const newImageRef = ref(getStorage(), filePath);
-            const fileSnapshot = await uploadBytesResumable(newImageRef, file);
+            await uploadBytesResumable(newImageRef, file);
             const publicImageUrl = await getDownloadURL(newImageRef);
             return publicImageUrl;
         }
@@ -286,25 +283,19 @@ const fetchOtherUserInfo = async function(username: string) {
 
 const signIn = async function(email: string, password: string) {
     signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            //fetchUserInfo(user);
-            // ...
-        })
+        .then((userCredential) => { })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
         });
 };
 
 const signOutUser = async function() {
     signOut(auth)
-        .then(() => {
-            // Sign-out successful.
-        })
+        .then(() => { })
         .catch((error) => {
-            // An error happened.
+            console.log(error);
         });
 };
 
@@ -657,7 +648,6 @@ const searchUser = async function(username: string) {
     }
 };
 
-// have to make sure user can't edit other peoples projects
 const updateProjectInDB = async function(
     currentprojectid: string,
     crafttypeUpdated: string,
@@ -770,5 +760,3 @@ export {
     fetchCommunityMembers,
     getUserProfileImage,
 };
-
-// quando faz displayproject, se o userid que está in store nao fizer match ao user que esta a tentar ver o projecto, tem de ir buscar a informacao do projecto a db

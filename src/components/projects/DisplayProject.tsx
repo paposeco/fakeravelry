@@ -69,7 +69,7 @@ const DisplayProject = function() {
                 setuseronpath(currentuseronpath);
             }
         }
-    }, [user]);
+    }, [user, location.pathname]);
 
     const [displayPattern, setDisplayPattern] = useState<boolean>(true);
     const [displayCategory, setDisplayCategory] = useState<boolean>(true);
@@ -86,13 +86,13 @@ const DisplayProject = function() {
         false
     );
     const [useronpath, setuseronpath] = useState<string>("");
+    const [madeforname, setmadeforname] = useState<string>("");
 
     const deleteproject = function(event: React.MouseEvent) {
         const currentprojectid = state.projectid;
         deleteProject(currentprojectid);
         dispatch(projectDeleted({ projectid: currentprojectid }));
         navigate("/notebook/" + user);
-        /* projectdatafromstore!.imageUrl = ""; */
     };
 
     const editProject = function(event: React.MouseEvent) {
@@ -118,6 +118,17 @@ const DisplayProject = function() {
             }
             if (projectdatafromstore.projectinfo.madefor === "") {
                 setDisplayMadeFor(false);
+            } else {
+                if (
+                    projectdatafromstore.projectinfo.linktoraveler !==
+                    "can't find user" &&
+                    projectdatafromstore.projectinfo.linktoraveler !== "error in db"
+                ) {
+                    setDisplayLinkToRaveler(true);
+                    setmadeforname(projectdatafromstore.projectinfo.linktoraveler);
+                } else {
+                    setmadeforname(projectdatafromstore.projectinfo.madefor);
+                }
             }
             if (projectdatafromstore.projectinfo.finishby === "") {
                 setDisplayFinishby(false);
@@ -149,12 +160,7 @@ const DisplayProject = function() {
             if (projectdatafromstore.projectinfo.projectnotes === "") {
                 setDisplayNotes(false);
             }
-            if (
-                projectdatafromstore.projectinfo.linktoraveler !== "can't find user" &&
-                projectdatafromstore.projectinfo.linktoraveler !== "error in db"
-            ) {
-                setDisplayLinkToRaveler(true);
-            }
+
             if (projectdatafromstore.imageUrl !== "") {
                 setphotoexists(true);
             }
@@ -171,39 +177,44 @@ const DisplayProject = function() {
     const [profilebreadcrumbimage, setprofilebreacrumbimage] = useState<string>(
         ""
     );
-    const fetchUserProfileInformation = async () => {
-        if (usermatchespath) {
-            if (userid !== "") {
-                const profileinfo:
-                    | ProfileInformation
-                    | false
-                    | undefined = await getUserProfileInformation(userid);
-                if (profileinfo !== undefined && profileinfo !== false) {
-                    setprofilebreacrumbimage(profileinfo.imageurl);
-                }
-            }
-        } else {
-            if (otheruserid !== "") {
-                const profileinfo:
-                    | ProfileInformation
-                    | false
-                    | undefined = await getUserProfileInformation(otheruserid);
-                if (profileinfo !== undefined && profileinfo !== false) {
-                    setprofilebreacrumbimage(profileinfo.imageurl);
-                }
-            }
-        }
-    };
 
     useEffect(() => {
+        const fetchUserProfileInformation = async () => {
+            if (usermatchespath) {
+                if (userid !== "") {
+                    const profileinfo:
+                        | ProfileInformation
+                        | false
+                        | undefined = await getUserProfileInformation(userid);
+                    if (profileinfo !== undefined && profileinfo !== false) {
+                        setprofilebreacrumbimage(profileinfo.imageurl);
+                    }
+                }
+            } else {
+                if (otheruserid !== "") {
+                    const profileinfo:
+                        | ProfileInformation
+                        | false
+                        | undefined = await getUserProfileInformation(otheruserid);
+                    if (profileinfo !== undefined && profileinfo !== false) {
+                        setprofilebreacrumbimage(profileinfo.imageurl);
+                    }
+                }
+            }
+        };
         fetchUserProfileInformation();
-    }, [useronpath]);
+    }, [useronpath, userid, otheruserid, usermatchespath]);
+
+    useEffect(() => {
+        document.title =
+            "Fake Ravelry: " + useronpath + "'s " + projectdatafromstore!.projectname;
+    }, [useronpath, projectdatafromstore]);
 
     if (projectdatafromstore === undefined) {
         return <div></div>;
     } else {
         return (
-            <div>
+            <div id="displayproject">
                 <Breadcrumbs
                     username={useronpath}
                     projectname={projectdatafromstore!.projectname}
@@ -245,19 +256,18 @@ const DisplayProject = function() {
                                         }
                                     />
                                 )}
-                                {displayMadefor && !displayLinkToRaveler && (
+                                {displayMadefor && (
                                     <ProjectItem
                                         itemdescription="Made for"
-                                        itemvalue={projectdatafromstore!.projectinfo.madefor}
+                                        itemvalue={madeforname}
                                     />
                                 )}
-                                {/* need to beautify link */}
-                                {displayMadefor && displayLinkToRaveler && (
+                                {/* {displayLinkToRaveler && (
                                     <ProjectItem
                                         itemdescription="Made for"
                                         itemvalue={projectdatafromstore!.projectinfo.linktoraveler}
                                     />
-                                )}
+                                )} */}
 
                                 {displayFinishby && (
                                     <ProjectItem
@@ -323,7 +333,6 @@ const DisplayProject = function() {
                                     />
                                 )}
                             </div>
-                            {/* progress status should be a separate module */}
                         </div>
                         <div id="projectsidebar">
                             <div id="projectbuttons">
@@ -334,20 +343,22 @@ const DisplayProject = function() {
                                             className="projectbutton"
                                             onClick={editProject}
                                         >
-                                            <img src={EditIcon} /> edit project
+                                            <img src={EditIcon} alt="editicon" /> edit project
                                         </button>
                                         <button
                                             id="deleteproject"
                                             className="projectbutton"
                                             onClick={deleteproject}
                                         >
-                                            <img src={TrashIcon} /> delete project
+                                            <img src={TrashIcon} alt="trashicon" /> delete project
                                         </button>
                                         <button className="projectbutton">
-                                            <img src={UploadPhotoIcon} /> update photos
+                                            <img src={UploadPhotoIcon} alt="uploadicon" /> update
+                                            photos
                                         </button>
                                         <button className="projectbutton">
-                                            <img src={FavoritesIcon} /> save in favorites
+                                            <img src={FavoritesIcon} alt="favoriteicon" /> save in
+                                            favorites
                                         </button>
                                     </div>
                                 )}
@@ -366,9 +377,3 @@ const DisplayProject = function() {
 };
 
 export default DisplayProject;
-
-//madefoR?
-//breadcrumbs
-// page title
-// notebook "my projects "
-// notebook doesn't display projects on refresh?

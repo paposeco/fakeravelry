@@ -34,7 +34,7 @@ const Notebook = function() {
         location.pathname.substring(10)
     );
     const [usermatchespath, setusermatchespath] = useState<boolean>(true);
-
+    const [cleared, setcleared] = useState<boolean>(false);
     const [projectsready, setprojectsready] = useState<boolean>(false);
     useEffect(() => {
         if (cleared && !projectsready) {
@@ -73,9 +73,7 @@ const Notebook = function() {
                 });
             }
         }
-    }, [projectsToDisplay]);
-
-    const [cleared, setcleared] = useState<boolean>(false);
+    }, [projectsToDisplay, cleared, projectsready]);
 
     useEffect(() => {
         if (projectsToDisplay.length > 0) {
@@ -107,7 +105,7 @@ const Notebook = function() {
                 return updateState;
             });
         }
-    }, [projectData, user]);
+    }, [projectData, user, location.pathname]);
 
     const loadnewprojectpage = function(event: React.MouseEvent) {
         navigate(newprojectpath);
@@ -131,36 +129,40 @@ const Notebook = function() {
                 return updateState;
             });
         }
-    }, [otherUserProjectData]);
+    }, [otherUserProjectData, location.pathname, user]);
 
     useEffect(() => {
         setnewprojectpath("/notebook/" + user + "/newproject");
     }, [user]);
 
+    useEffect(() => {
+        document.title = "Fake Ravelry: " + useronpath + "'s Projects";
+    }, [useronpath]);
+
     return (
-        <div>
+        <div id="notebookcontentdiv">
             <div id="notebooknav">
                 <ul>
                     <li id="notebooknavselected">
-                        <img src={ProjectsIcon} /> Projects
+                        <img src={ProjectsIcon} alt="projecticon" /> Projects
                     </li>
                     <li>
-                        <img src={QueueIcon} /> Queue
+                        <img src={QueueIcon} alt="queueicon" /> Queue
                     </li>
                     <li>
-                        <img src={StashIcon} /> Stash
+                        <img src={StashIcon} alt="stashicon" /> Stash
                     </li>
                     <li>
-                        <img src={HandspunIcon} /> Handspun
+                        <img src={HandspunIcon} alt="handspunicon" /> Handspun
                     </li>
                     <li>
-                        <img src={ToolsIcon} /> Tools
+                        <img src={ToolsIcon} alt="toolsicon" /> Tools
                     </li>
                     <li>
-                        <img src={FavoritesIcon} /> Favorites
+                        <img src={FavoritesIcon} alt="favoritesicon" /> Favorites
                     </li>
                     <li>
-                        <img src={LibraryIcon} /> Library
+                        <img src={LibraryIcon} alt="libraryicon" /> Library
                     </li>
                 </ul>
             </div>
@@ -171,7 +173,6 @@ const Notebook = function() {
                     <h2>{useronpath}'s projects</h2>
                 )}
                 <div id="notebookcontent">
-                    {/* {usermatchespath && <Link to={newprojectpath}>Add new project</Link>} */}
                     {usermatchespath && (
                         <button className="genericbutton" onClick={loadnewprojectpage}>
                             <img src={Circle} alt="circle" />
