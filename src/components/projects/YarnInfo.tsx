@@ -85,13 +85,18 @@ const YarnInfo = function(props: {
     const localChangeHandler = function(
         event: React.ChangeEvent<HTMLInputElement>
     ) {
+        const parentEventHandler = function(
+            event: React.ChangeEvent<HTMLInputElement>
+        ) {
+            props.handler(event);
+        };
         const elementId: string = event.target.id;
         const newvalue = event.target.value;
         const elementStateFunction = setFunctions.get(elementId);
         if (elementStateFunction !== undefined) {
             elementStateFunction(newvalue);
         }
-        props.handler(event);
+        parentEventHandler(event);
     };
 
     return (

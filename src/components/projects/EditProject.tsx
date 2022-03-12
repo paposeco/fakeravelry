@@ -398,9 +398,9 @@ const EditProject = function() {
             const newvalue = event.target.value;
             if (elementDataSet === "yarn") {
                 let indexYarnAdded = event.target.parentElement!.parentElement!.id;
-                if (elementId === "closestcolor" || elementId === "yarnweight") {
-                    indexYarnAdded = event.target.parentElement!.id;
-                }
+                /* if (elementId === "closestcolor" || elementId === "yarnweight") {
+                 *     indexYarnAdded = event.target.parentElement!.id;
+                 * } */
                 setYarnCollection((prevState) => {
                     let currentyarncollection = Array.from(prevState);
                     const indexCurrentYarn = prevState.findIndex(
@@ -728,17 +728,16 @@ const EditProject = function() {
                                                 <option value="stitches">stitches</option>
                                                 <option value="repeats">repeats</option>
                                             </select>
-                                            <label htmlFor="gaugevertical">
-                                                <input
-                                                    type="number"
-                                                    name="gaugevertical"
-                                                    id="gaugevertical"
-                                                    onChange={handlerOfChange}
-                                                    value={projectInformation.gauge.numberRows}
-                                                    data-project="gauge"
-                                                />
-                                                rows in
-                                            </label>
+
+                                            <input
+                                                type="number"
+                                                name="gaugevertical"
+                                                id="gaugevertical"
+                                                onChange={handlerOfChange}
+                                                value={projectInformation.gauge.numberRows}
+                                                data-project="gauge"
+                                            />
+                                            <label htmlFor="gaugevertical">rows in</label>
                                             <select
                                                 name="verticalUnits"
                                                 id="verticalUnits"

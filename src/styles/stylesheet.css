@@ -1011,6 +1011,14 @@ li.subfolder::before, li.subsubfolder::before{
     width: 33px;
 }
 
+#horizontalunits{
+    max-width: 78px;
+}
+
+#verticalunits{
+    max-width: 71px;
+}
+
 #projectnotes{
     resize: none;
     height: 250px;
