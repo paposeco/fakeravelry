@@ -1,0 +1,43 @@
+{
+  "files": {
+    "main.css": "/fakeravelry/static/css/main.889a0633.chunk.css",
+    "main.js": "/fakeravelry/static/js/main.65c09611.chunk.js",
+    "main.js.map": "/fakeravelry/static/js/main.65c09611.chunk.js.map",
+    "runtime-main.js": "/fakeravelry/static/js/runtime-main.92e15ab9.js",
+    "runtime-main.js.map": "/fakeravelry/static/js/runtime-main.92e15ab9.js.map",
+    "static/js/2.c99e2827.chunk.js": "/fakeravelry/static/js/2.c99e2827.chunk.js",
+    "static/js/2.c99e2827.chunk.js.map": "/fakeravelry/static/js/2.c99e2827.chunk.js.map",
+    "index.html": "/fakeravelry/index.html",
+    "static/css/main.889a0633.chunk.css.map": "/fakeravelry/static/css/main.889a0633.chunk.css.map",
+    "static/js/2.c99e2827.chunk.js.LICENSE.txt": "/fakeravelry/static/js/2.c99e2827.chunk.js.LICENSE.txt",
+    "static/media/stylesheet.css": "/fakeravelry/static/media/folder.b759037c.svg",
+    "static/media/backgroundprimerio.c0973b0c.png": "/fakeravelry/static/media/backgroundprimerio.c0973b0c.png",
+    "static/media/backgroundsegundo.e95aa619.png": "/fakeravelry/static/media/backgroundsegundo.e95aa619.png",
+    "static/media/backgroundterceiro.6ce69c89.png": "/fakeravelry/static/media/backgroundterceiro.6ce69c89.png",
+    "static/media/circle.21c9aa32.svg": "/fakeravelry/static/media/circle.21c9aa32.svg",
+    "static/media/commentsicon.c80199ce.svg": "/fakeravelry/static/media/commentsicon.c80199ce.svg",
+    "static/media/delete.5370a4d5.svg": "/fakeravelry/static/media/delete.5370a4d5.svg",
+    "static/media/edit.c2ba5720.svg": "/fakeravelry/static/media/edit.c2ba5720.svg",
+    "static/media/emptyprojectphoto.97f342c4.svg": "/fakeravelry/static/media/emptyprojectphoto.97f342c4.svg",
+    "static/media/favoritesicon.7ae18f6f.svg": "/fakeravelry/static/media/favoritesicon.7ae18f6f.svg",
+    "static/media/forumsicon.b2b9d8ca.svg": "/fakeravelry/static/media/forumsicon.b2b9d8ca.svg",
+    "static/media/friendsicon.cbc6276d.svg": "/fakeravelry/static/media/friendsicon.cbc6276d.svg",
+    "static/media/handspun.9ea2b6aa.svg": "/fakeravelry/static/media/handspun.9ea2b6aa.svg",
+    "static/media/libraryicon.c6ef027b.svg": "/fakeravelry/static/media/libraryicon.c6ef027b.svg",
+    "static/media/logo.ab7b75e2.svg": "/fakeravelry/static/media/logo.ab7b75e2.svg",
+    "static/media/more-vertical.bc0a2d66.svg": "/fakeravelry/static/media/more-vertical.bc0a2d66.svg",
+    "static/media/peopleicon.1f9103b1.svg": "/fakeravelry/static/media/peopleicon.1f9103b1.svg",
+    "static/media/projectsicon.46f18e65.svg": "/fakeravelry/static/media/projectsicon.46f18e65.svg",
+    "static/media/queueicon.74c32c92.svg": "/fakeravelry/static/media/queueicon.74c32c92.svg",
+    "static/media/recap.a760b8a0.jpg": "/fakeravelry/static/media/recap.a760b8a0.jpg",
+    "static/media/stash.57e501cd.svg": "/fakeravelry/static/media/stash.57e501cd.svg",
+    "static/media/tools.15b387e2.svg": "/fakeravelry/static/media/tools.15b387e2.svg",
+    "static/media/uploadphoto.569817cb.svg": "/fakeravelry/static/media/uploadphoto.569817cb.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.92e15ab9.js",
+    "static/js/2.c99e2827.chunk.js",
+    "static/css/main.889a0633.chunk.css",
+    "static/js/main.65c09611.chunk.js"
+  ]
+}

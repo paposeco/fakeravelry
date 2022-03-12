@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+    <title>icons/ui/delete</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icons/ui/delete" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-15" transform="translate(1.000000, 0.000000)">
+            <path d="M12.8875429,2.84525714 L11.6418286,14.5378286 C11.5698286,15.2669714 10.9572571,15.8212571 10.2258286,15.8212571 L3.66925714,15.8212571 C2.93668571,15.8212571 2.32411429,15.2669714 2.25097143,14.5378286 L1.0064,2.84525714 L12.8875429,2.84525714 Z" id="Fill-1" fill="#C4C9B5"></path>
+            <path d="M12.8875429,2.84525714 L1.0064,2.84525714 L1.21668571,4.9504 C5.03268571,4.33554286 8.89782857,4.52754286 12.7378286,4.3424 L12.8875429,2.84525714 Z" id="Fill-3" fill="#ABB398"></path>
+            <path d="M3.71794286,5.7392 C3.76022857,8.22605714 4.04022857,10.7643429 4.31908571,13.2386286" id="Stroke-5" stroke="#173036" stroke-width="1.14285714" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M7.46571429,5.33851429 C7.31028571,6.70422857 7.29085714,8.12594286 7.29085714,9.58194286 L7.29085714,13.0699429" id="Stroke-7" stroke="#173036" stroke-width="1.14285714" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M10.5795429,5.91337143 C10.1932571,7.84594286 10.1886857,11.3808 9.7064,13.2950857" id="Stroke-9" stroke="#173036" stroke-width="1.14285714" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M0.571771429,2.76937143 C5.12148571,2.74194286 8.99691429,2.55565714 13.5489143,2.53737143" id="Stroke-11" stroke="#D3D6CB" stroke-width="1.14285714" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polyline id="Stroke-13" stroke="#D3D6CB" stroke-width="1.14285714" stroke-linecap="round" stroke-linejoin="round" points="4.15988571 2.40434286 4.0136 0.717485714 9.58731429 0.5712 9.51417143 2.55177143"></polyline>
+        </g>
+    </g>
+</svg>
