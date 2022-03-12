@@ -9,7 +9,7 @@ import "./styles/stylesheet.css";
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <BrowserRouter>
+            <BrowserRouter basename={`/${process.env.PUBLIC_URL}`}>
                 <App />
             </BrowserRouter>
         </Provider>
