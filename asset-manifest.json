@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/fakeravelry/static/css/main.889a0633.chunk.css",
-    "main.js": "/fakeravelry/static/js/main.05165feb.chunk.js",
-    "main.js.map": "/fakeravelry/static/js/main.05165feb.chunk.js.map",
+    "main.js": "/fakeravelry/static/js/main.74b210f1.chunk.js",
+    "main.js.map": "/fakeravelry/static/js/main.74b210f1.chunk.js.map",
     "runtime-main.js": "/fakeravelry/static/js/runtime-main.92e15ab9.js",
     "runtime-main.js.map": "/fakeravelry/static/js/runtime-main.92e15ab9.js.map",
     "static/js/2.c99e2827.chunk.js": "/fakeravelry/static/js/2.c99e2827.chunk.js",
@@ -38,6 +38,6 @@
     "static/js/runtime-main.92e15ab9.js",
     "static/js/2.c99e2827.chunk.js",
     "static/css/main.889a0633.chunk.css",
-    "static/js/main.05165feb.chunk.js"
+    "static/js/main.74b210f1.chunk.js"
   ]
 }
