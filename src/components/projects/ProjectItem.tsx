@@ -19,11 +19,9 @@ const ProjectItem = function(props: {
     const [hooksReady, setHooksReady] = useState<boolean>(false);
     const [yarnReady, setYarnReady] = useState<boolean>(false);
     const [yarnToDisplay, setYarnToDisplay] = useState<YarnDisplay[]>([]);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
-        false
-    );
     const [madeforusername, setMadeforusername] = useState<string>("");
 
+    // tags are stored as a string and displayed separately
     useEffect(() => {
         if (
             props.itemdescription === "Tags" &&
@@ -32,22 +30,14 @@ const ProjectItem = function(props: {
         ) {
             let tagsArray: string[] = [];
             if (props.itemvalue.includes(",")) {
-                tagsArray = props.itemvalue.split(",");
+                tagsArray = props.itemvalue.split(",").map((element) => element.trim());
             } else {
-                tagsArray = props.itemvalue.split(" "); // inform user of how to write tags
+                tagsArray = props.itemvalue.split(" ");
             }
             setSeparateTags(tagsArray);
             setTagsSeparated(true);
-            /* } else if (
-             *     props.itemdescription === "Made for" &&
-             *     typeof props.itemvalue === "string"
-             * ) {
-             *     if (props.itemvalue.substring(0, 4) === "/peo") {
-             *         setDisplayLinkToRaveler(true);
-             *         setMadeforusername(props.itemvalue.substring(8));
-             *     } */
         }
-    }, [props]);
+    }, [props, tagsSeparated]);
 
     const [showlinktouser, setshowlinktouser] = useState<boolean>(false);
 
@@ -60,12 +50,12 @@ const ProjectItem = function(props: {
                 setshowlinktouser(true);
                 setMadeforusername(props.itemvalue.substring(8));
             } else {
-                console.log(props.itemvalue);
                 setMadeforusername(props.itemvalue);
             }
         }
     }, [props]);
 
+    // creates a string with gauge information
     useEffect(() => {
         if (props.itemdescription === "Gauge" && !gaugeReady) {
             let numberSts: number = 0;
@@ -132,7 +122,7 @@ const ProjectItem = function(props: {
                 setGaugeReady(true);
             }
         }
-    }, [props]);
+    }, [props, gaugeReady]);
 
     useEffect(() => {
         if (props.itemdescription === "Needle" && !needlesReady) {
@@ -148,7 +138,7 @@ const ProjectItem = function(props: {
             });
             setNeedlesReady(true);
         }
-    }, [props]);
+    }, [props, needlesReady]);
 
     useEffect(() => {
         if (props.itemdescription === "Hook" && !hooksReady) {
@@ -161,7 +151,7 @@ const ProjectItem = function(props: {
             });
             setHooksReady(true);
         }
-    }, [props]);
+    }, [props, hooksReady]);
 
     useEffect(() => {
         if (props.itemdescription === "Yarn" && !yarnReady) {
@@ -271,7 +261,7 @@ const ProjectItem = function(props: {
             }
             setYarnReady(true);
         }
-    }, [props]);
+    }, [props, yarnReady]);
 
     if (
         props.itemdescription !== "Gauge" &&
@@ -299,7 +289,7 @@ const ProjectItem = function(props: {
                     {showlinktouser ? (
                         <Link to={props.itemvalue}>{madeforusername}</Link>
                     ) : (
-                        <p>{madeforusername}</p>
+                        <span>{madeforusername}</span>
                     )}
                 </div>
             </div>
@@ -312,7 +302,7 @@ const ProjectItem = function(props: {
                 <div className="itemDescription">{props.itemdescription}</div>
                 <div className="itemValue">
                     {separateTags!.map((tag) => (
-                        <span key={uniqid()}>{tag} </span>
+                        <span key={uniqid()}>#{tag} </span>
                     ))}
                 </div>
             </div>

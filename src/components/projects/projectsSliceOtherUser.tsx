@@ -44,7 +44,6 @@ const projectsSliceOtherUser = createSlice({
     initialState,
     reducers: {
         clearProjects(state, action) {
-            const { allprojects } = action.payload;
             return initialState;
         },
         otherUserProjectFetchedFromDB(state, action) {
@@ -152,6 +151,8 @@ const projectsSliceOtherUser = createSlice({
     },
 });
 
-export const { otherUserProjectFetchedFromDB, clearProjects } =
-    projectsSliceOtherUser.actions;
+export const {
+    otherUserProjectFetchedFromDB,
+    clearProjects,
+} = projectsSliceOtherUser.actions;
 export default projectsSliceOtherUser.reducer;

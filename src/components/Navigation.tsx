@@ -33,12 +33,6 @@ const Navigation = function(props: { username: string }) {
 
     const [imagefetched, setimagefetched] = useState(false);
 
-    const fetchUserProfileImage = async function() {
-        setimagefetched(true);
-        const profileimgurl = await getUserProfileImage();
-        setprofileimg(profileimgurl);
-    };
-
     const showMenu = function(event: React.MouseEvent) {
         if (!menushown) {
             setmenushown(true);
@@ -61,10 +55,15 @@ const Navigation = function(props: { username: string }) {
     };
 
     useEffect(() => {
+        const fetchUserProfileImage = async function() {
+            setimagefetched(true);
+            const profileimgurl = await getUserProfileImage();
+            setprofileimg(profileimgurl);
+        };
         if (!imagefetched) {
             fetchUserProfileImage();
         }
-    });
+    }, [imagefetched]);
 
     useEffect(() => {
         setUsername(user);

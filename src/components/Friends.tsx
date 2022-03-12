@@ -28,12 +28,12 @@ const Friends = function() {
         true
     );
     const [usernameonpath, setusernameonpath] = useState<string>("");
-
     const [pagination, setpagination] = useState<FriendProfile[][]>([]);
     const [paginationready, setpaginationready] = useState<boolean>(false);
     const [pagemembers, setpagemembers] = useState<FriendProfile[]>([]);
     const [pagebuttons, setpagebuttons] = useState<JSX.Element[]>([]);
 
+    // fetches friend's usernames and profile pics from DB
     const getFriendsInfo = async function(friendslist: string[]) {
         let friendsDetails: FriendProfile[] = [];
         for (let i = 0; i < friendslist.length; i++) {
@@ -86,6 +86,8 @@ const Friends = function() {
         }
     };
 
+    // if current friend's page belongs to signed in user a removefriend button will be displayed
+
     const removeFriend = async function(event: React.MouseEvent) {
         const buttonid = event.currentTarget.id;
         const friendusername = buttonid.substring(12);
@@ -126,6 +128,7 @@ const Friends = function() {
                 }
             }
         };
+        // fetches friends for a user; either the signed in user, or other user whose username if extracted from current location)
         if (!friendsfetched) {
             const completePath = location.pathname.substring(8);
             const usernameOnPath = completePath.substring(
@@ -136,6 +139,7 @@ const Friends = function() {
         }
     }, [friendsfetched, location.pathname, user]);
 
+    // checks if current friend's page belongs to signed in user
     useEffect(() => {
         if (user.username !== "") {
             const completePath = location.pathname.substring(8);
@@ -221,12 +225,13 @@ const Friends = function() {
             {usermatchespath ? (
                 <h2>My friends</h2>
             ) : (
-                <h2>{usernameonpath}'s friends'</h2>
+                <h2>{usernameonpath}'s friends</h2>
             )}
             {useronpathhasfriends && (
                 <div>
                     <div id="friendgrid">
                         {paginationready &&
+                            usermatchespath &&
                             pagemembers.map((member: FriendProfile) => (
                                 <div className="memberthumbnail" key={uniqid()}>
                                     <Link to={`/people/${member.friendusername}`}>
@@ -237,13 +242,27 @@ const Friends = function() {
                                             {member.friendusername}
                                         </Link>
                                         <button
-                                            title="Remove friend"
+                                            title="More"
                                             onClick={showRemoveFriendOption}
                                             id={"buttonRemove" + member.friendusername}
                                             className="removefriend"
                                         >
                                             <img src={MoreVertical} alt="more" />
                                         </button>
+                                    </div>
+                                </div>
+                            ))}
+                        {paginationready &&
+                            !usermatchespath &&
+                            pagemembers.map((member: FriendProfile) => (
+                                <div className="memberthumbnail" key={uniqid()}>
+                                    <Link to={`/people/${member.friendusername}`}>
+                                        <DisplayProfileImage imageurl={member.friendimageurl} />
+                                    </Link>
+                                    <div className="friendthumbnailfooter">
+                                        <Link to={`/people/${member.friendusername}`}>
+                                            {member.friendusername}
+                                        </Link>
                                     </div>
                                 </div>
                             ))}

@@ -15,22 +15,24 @@ const Community = function() {
     const [usersfetched, setusersfetched] = useState<boolean>(false);
     const [pagination, setpagination] = useState<Member[][]>([]);
     const [paginationready, setpaginationready] = useState<boolean>(false);
-    /* const [pageselected, setpageselected] = useState<string>("page1"); */
     const [pagemembers, setpagemembers] = useState<Member[]>([]);
+    const [pagebuttons, setpagebuttons] = useState<JSX.Element[]>([]);
 
-    const fetchusers = async function() {
-        setusersfetched(true);
-        const fetchfromdb = await fetchCommunityMembers();
-        if (fetchfromdb !== undefined) {
-            setallmembers(fetchfromdb);
-        }
-    };
+    // fetches community members from DB
     useEffect(() => {
+        const fetchusers = async function() {
+            setusersfetched(true);
+            const fetchfromdb = await fetchCommunityMembers();
+            if (fetchfromdb !== undefined) {
+                setallmembers(fetchfromdb);
+            }
+        };
         if (!usersfetched) {
             fetchusers();
         }
-    });
+    }, [usersfetched]);
 
+    // displays 10 members at a time
     useEffect(() => {
         const numbermembers = allmembers.length;
         if (numbermembers > 0) {
@@ -45,8 +47,6 @@ const Community = function() {
             setpaginationready(true);
         }
     }, [allmembers]);
-
-    const [pagebuttons, setpagebuttons] = useState<JSX.Element[]>([]);
     useEffect(() => {
         const membersToDisplay = function(buttonclicked: string) {
             const currentpage = Number(buttonclicked.substring(4));
@@ -61,7 +61,6 @@ const Community = function() {
             if (buttonnode !== null) {
                 buttonnode.classList.add("buttonactive");
             }
-            /* setpageselected(buttonid); */
             membersToDisplay(buttonid);
         };
         if (paginationready) {

@@ -34,7 +34,7 @@ const EditProject = function() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { projectid } = state;
-    const [projectID, setProjectID] = useState(state.projectid);
+    const [projectID, setProjectID] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
@@ -279,7 +279,7 @@ const EditProject = function() {
         }
     };
 
-    // needles', hooks' and yarn's forms are only displayed if the user clicks their respective buttons.
+    // needles, hooks and yarn forms are only displayed if the user clicks their respective buttons.
     const addNeedle = function(event: React.MouseEvent) {
         setNeedlesAdded(needlesAdded + 1);
         const newneedlealias = "selectneedles" + needlesAdded;
@@ -299,25 +299,6 @@ const EditProject = function() {
         ]);
     };
 
-    // if the user is editing a project that already existed, the needles, hooks and yarn need to be rendered differently, since they are rendered with individual components
-    const addNeedlesFromStorage = function(needles: Needles[]) {
-        for (let i = 0; i < needles.length; i++) {
-            setNeedlesAdded(needlesAdded + 1);
-            setNeedleCollection((prevState) => [
-                ...prevState,
-                { selectid: needles[i].selectid, value: needles[i].value },
-            ]);
-            setSelectNeedlesToRender((prevState) => [
-                ...prevState,
-                <DisplaySingleNeedle
-                    needle={{ selectid: needles[i].selectid, value: needles[i].value }}
-                    handler={handlerOfChange}
-                    key={uniqid()}
-                />,
-            ]);
-        }
-    };
-
     const addHook = function(event: React.MouseEvent) {
         setHooksAdded(hooksAdded + 1);
         const newhookalias = "selecthooks" + hooksAdded;
@@ -335,24 +316,6 @@ const EditProject = function() {
         ]);
     };
 
-    const addHooksFromStorage = function(hooks: Hooks[]) {
-        for (let i = 0; i < hooks.length; i++) {
-            setHooksAdded(hooksAdded + 1);
-            setHookCollection((prevState) => [
-                ...prevState,
-                { selectid: hooks[i].selectid, value: hooks[i].value },
-            ]);
-            setSelectHooksToRender((prevState) => [
-                ...prevState,
-                <DisplaySingleHook
-                    hook={{ selectid: hooks[i].selectid, value: hooks[i].value }}
-                    handler={handlerOfChange}
-                    key={uniqid()}
-                />,
-            ]);
-        }
-    };
-
     const addYarn = function(event: React.MouseEvent): void {
         const newYarnCollectionLength: number = yarncollection.length + 1;
         const newyarn = new YarnEntry("yarn" + newYarnCollectionLength);
@@ -366,25 +329,6 @@ const EditProject = function() {
                 handler={handlerOfChange}
             />,
         ]);
-    };
-
-    const renderYarnFromStorage = function(yarncollection: string) {
-        if (yarncollection !== "") {
-            // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
-            const parseCollection: Yarn[] = JSON.parse(yarncollection);
-            for (let i = 0; i < parseCollection.length; i++) {
-                setYarnCollection((prevState) => [...prevState, parseCollection[i]]);
-                setShowYarnForm((prevState) => [
-                    ...prevState,
-                    <YarnInfo
-                        yarnID={parseCollection[i].yarnID}
-                        yarninfo={parseCollection[i]}
-                        key={uniqid()}
-                        handler={handlerOfChange}
-                    />,
-                ]);
-            }
-        }
     };
 
     // handles adding images to projects
@@ -416,12 +360,6 @@ const EditProject = function() {
         }
     };
 
-    const renderImage = function(): void {
-        if (publicImgUrl !== undefined) {
-            setDisplayImageComponent(<DisplayProjectImage imageurl={publicImgUrl} />);
-        }
-    };
-
     const fetchUserProfileInformation = async () => {
         const profileImgUrl: string | undefined = await getUserProfileImage();
         if (profileImgUrl !== undefined) {
@@ -442,8 +380,109 @@ const EditProject = function() {
         });
     };
 
-    // on page load, sets project information with info from store
     useEffect(() => {
+        setProjectID(state.projectid);
+    }, [state]);
+
+    // on page load, sets project information with info from store; used when user is editing a project that already existed on db (instead of editing a new project)
+    useEffect(() => {
+        const localHandlerOfChange = function(
+            event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        ): void {
+            const elementId: string = event.target.id;
+            const elementDataSet = event.target.dataset.project;
+            const newvalue = event.target.value;
+            if (elementDataSet === "info") {
+                if (event.target.className === "needles") {
+                    setNeedleCollection((prevState) => {
+                        const previousInfo: Needles[] = Array.from(prevState);
+                        const selectedneedle = previousInfo.findIndex(
+                            (element) => element.selectid === elementId
+                        );
+                        previousInfo[selectedneedle].value = newvalue;
+                        return previousInfo;
+                    });
+                } else if (event.target.className === "hooks") {
+                    setHookCollection((prevState) => {
+                        const previousInfo: Hooks[] = Array.from(prevState);
+                        const selectedhook = previousInfo.findIndex(
+                            (element) => element.selectid === elementId
+                        );
+                        previousInfo[selectedhook].value = newvalue;
+                        return previousInfo;
+                    });
+                }
+            } else if (elementDataSet === "yarn") {
+                let indexYarnAdded = event.target.parentElement!.parentElement!.id;
+                if (elementId === "closestcolor" || elementId === "yarnweight") {
+                    indexYarnAdded = event.target.parentElement!.id;
+                }
+                setYarnCollection((prevState) => {
+                    let currentyarncollection = Array.from(prevState);
+                    const indexCurrentYarn = prevState.findIndex(
+                        (element) => element.yarnID === indexYarnAdded
+                    );
+                    let currentYarn = currentyarncollection[indexCurrentYarn];
+                    currentYarn[elementId] = event.target.value;
+                    return currentyarncollection;
+                });
+            }
+        };
+        // if the user is editing a project that already existed, the needles, hooks and yarn need to be rendered differently, since they are rendered with individual components
+        const addNeedlesFromStorage = function(needles: Needles[]) {
+            for (let i = 0; i < needles.length; i++) {
+                setNeedlesAdded(needlesAdded + 1);
+                setNeedleCollection((prevState) => [
+                    ...prevState,
+                    { selectid: needles[i].selectid, value: needles[i].value },
+                ]);
+                setSelectNeedlesToRender((prevState) => [
+                    ...prevState,
+                    <DisplaySingleNeedle
+                        needle={{ selectid: needles[i].selectid, value: needles[i].value }}
+                        handler={localHandlerOfChange}
+                        key={uniqid()}
+                    />,
+                ]);
+            }
+        };
+
+        const addHooksFromStorage = function(hooks: Hooks[]) {
+            for (let i = 0; i < hooks.length; i++) {
+                setHooksAdded(hooksAdded + 1);
+                setHookCollection((prevState) => [
+                    ...prevState,
+                    { selectid: hooks[i].selectid, value: hooks[i].value },
+                ]);
+                setSelectHooksToRender((prevState) => [
+                    ...prevState,
+                    <DisplaySingleHook
+                        hook={{ selectid: hooks[i].selectid, value: hooks[i].value }}
+                        handler={localHandlerOfChange}
+                        key={uniqid()}
+                    />,
+                ]);
+            }
+        };
+
+        const renderYarnFromStorage = function(yarncollection: string) {
+            if (yarncollection !== "") {
+                // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
+                const parseCollection: Yarn[] = JSON.parse(yarncollection);
+                for (let i = 0; i < parseCollection.length; i++) {
+                    setYarnCollection((prevState) => [...prevState, parseCollection[i]]);
+                    setShowYarnForm((prevState) => [
+                        ...prevState,
+                        <YarnInfo
+                            yarnID={parseCollection[i].yarnID}
+                            yarninfo={parseCollection[i]}
+                            key={uniqid()}
+                            handler={localHandlerOfChange}
+                        />,
+                    ]);
+                }
+            }
+        };
         if (projectData !== undefined) {
             setCraftType(projectData.crafttype);
             setProjectName(projectData.projectname);
@@ -460,9 +499,16 @@ const EditProject = function() {
             setProjectSlug(projectData.projectslug);
             setPatternUsed(projectData.patternused);
         }
-    }, [projectData]);
+    }, [projectData, hooksAdded, needlesAdded]);
 
     useEffect(() => {
+        const renderImage = function(): void {
+            if (publicImgUrl !== undefined) {
+                setDisplayImageComponent(
+                    <DisplayProjectImage imageurl={publicImgUrl} />
+                );
+            }
+        };
         renderImage();
     }, [publicImgUrl]);
     useEffect(() => {
@@ -480,7 +526,7 @@ const EditProject = function() {
                 });
             });
         }
-    }, [madefor]);
+    }, [madefor, projectInformation]);
 
     useEffect(() => {
         document.title = "Fake Ravelry: " + user + "'s " + projectName;
@@ -639,6 +685,7 @@ const EditProject = function() {
                                         data-project="info"
                                         value={projectInformation.selectedtags}
                                         onChange={handlerOfChange}
+                                        title="Separate tags with spaces or commas"
                                     />
                                 </div>
                                 <div id="needlesandgauge">

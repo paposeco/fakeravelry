@@ -27,6 +27,7 @@ const App = function() {
     const [projectsFetched, setProjectsFetched] = useState<boolean>(false);
 
     const dispatch = useDispatch();
+    // authentication observer
     useEffect(() => {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -41,6 +42,7 @@ const App = function() {
         });
     }, []);
 
+    // if user is signed in, fetches user's projects from DB and dispatches to store
     useEffect(() => {
         const fetchUserData = async function() {
             const projectsInDb = await fetchUserInfo();
@@ -102,6 +104,7 @@ const App = function() {
         }
     }, [userSignedIn, dispatch, projectsFetched]);
 
+    // if user is logged in, dispatches user info to store
     useEffect(() => {
         if (userID !== "") {
             dispatch(
@@ -114,6 +117,7 @@ const App = function() {
         }
     }, [userID, dispatch, name, username]);
 
+    // if user is not signed in, only display the login page or sign up page
     if (!userSignedIn) {
         return (
             <Routes>

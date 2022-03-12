@@ -34,9 +34,7 @@ const YarnInfo = function(props: {
             prevSelects[elementID] = event.target.value;
             return prevSelects;
         });
-        {
-            props.handler(event);
-        }
+        props.handler(event);
     };
 
     const [yarnName, setYarnName] = useState<string>("");
@@ -93,9 +91,7 @@ const YarnInfo = function(props: {
         if (elementStateFunction !== undefined) {
             elementStateFunction(newvalue);
         }
-        {
-            props.handler(event);
-        }
+        props.handler(event);
     };
 
     return (

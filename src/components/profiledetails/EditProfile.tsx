@@ -45,27 +45,26 @@ const EditProfile = function() {
         setfirstname(user.name);
     }, [user]);
 
-    const fetchEmail = async function() {
-        const fetchedemail = await getInfo("email");
-        setemail(fetchedemail);
-        setemailready(true);
-    };
-
     useEffect(() => {
+        const fetchEmail = async function() {
+            const fetchedemail = await getInfo("email");
+            setemail(fetchedemail);
+            setemailready(true);
+        };
         if (!emailready) {
             fetchEmail();
         }
-    });
-    const fetchUserProfileInformation = async function() {
-        const profileinfo:
-            | ProfileInformation
-            | false
-            | undefined = await getUserProfileInformation(user.userID);
-
-        return profileinfo;
-    };
+    }, [emailready]);
 
     useEffect(() => {
+        const fetchUserProfileInformation = async function() {
+            const profileinfo:
+                | ProfileInformation
+                | false
+                | undefined = await getUserProfileInformation(user.userID);
+
+            return profileinfo;
+        };
         if (!infofetched) {
             const profileinfo = fetchUserProfileInformation();
             profileinfo.then(function(dbinfo) {
@@ -83,11 +82,12 @@ const EditProfile = function() {
                 setinfofecthed(true);
             });
         }
-    });
+    }, [infofetched, user]);
 
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
     const fileInput = useRef<HTMLInputElement | null>(null);
 
+    // saves photo to firebase storage and updates DB with publicURL
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         if (

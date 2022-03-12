@@ -36,9 +36,12 @@ const Notebook = function() {
     const [usermatchespath, setusermatchespath] = useState<boolean>(true);
     const [cleared, setcleared] = useState<boolean>(false);
     const [projectsready, setprojectsready] = useState<boolean>(false);
+
+    // sets state for projects to be displayed that where fetched from store when the state was cleared
     useEffect(() => {
         if (cleared && !projectsready) {
             setprojectsready(true);
+            // a fake ravelry member's projects
             if (useronpath !== user) {
                 setusermatchespath(false);
                 setprojectsToDisplay((prevState) => {
@@ -55,6 +58,7 @@ const Notebook = function() {
                     });
                     return updateState;
                 });
+                // the logged in user's projects
             } else {
                 setusermatchespath(true);
                 setprojectsToDisplay((prevState) => {
@@ -73,15 +77,22 @@ const Notebook = function() {
                 });
             }
         }
-    }, [projectsToDisplay, cleared, projectsready]);
+    }, [
+        projectsToDisplay,
+        cleared,
+        projectsready,
+        otherUserProjectData,
+        projectData,
+        user,
+        useronpath,
+    ]);
 
+    // clears state when user checks another notebook
     useEffect(() => {
-        if (projectsToDisplay.length > 0) {
-            setprojectsToDisplay((prevState) => {
-                const freshArray: ProjectFromStore[] = [];
-                return freshArray;
-            });
-        }
+        setprojectsToDisplay((prevState) => {
+            const freshArray: ProjectFromStore[] = [];
+            return freshArray;
+        });
         setcleared(true);
         setprojectsready(false);
         setuseronpath(location.pathname.substring(10));

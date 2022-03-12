@@ -64,6 +64,7 @@ const Profile = function() {
     );
     const [numberprojects, setnumberprojects] = useState<number>(0);
 
+    // fetches profile information for user on location
     useEffect(() => {
         const usernameOnPath = location.pathname.substring(8);
         const fetchUserOtherDetails = async function(usernameonpath: string) {
@@ -123,18 +124,18 @@ const Profile = function() {
         setisfriend(friendexists);
     };
 
-    const fetchUserProfileInformation = async () => {
-        if (userIDOnPath !== "") {
-            const profileinfo:
-                | ProfileInformation
-                | false
-                | undefined = await getUserProfileInformation(userIDOnPath);
-            return profileinfo;
-        }
-    };
     const [infofetched, setinfofetched] = useState<boolean>(false);
 
     useEffect(() => {
+        const fetchUserProfileInformation = async () => {
+            if (userIDOnPath !== "") {
+                const profileinfo:
+                    | ProfileInformation
+                    | false
+                    | undefined = await getUserProfileInformation(userIDOnPath);
+                return profileinfo;
+            }
+        };
         if (userIDOnPath !== "" && !infofetched) {
             const profileinfo = fetchUserProfileInformation();
             profileinfo.then(function(dbinfo) {
@@ -145,13 +146,14 @@ const Profile = function() {
                 }
             });
         }
-    });
+    }, [userIDOnPath, infofetched]);
 
     useEffect(() => {
         setinfofetched(false);
         setnumberprojects(0);
     }, [location]);
 
+    // if visiting someone else's profile, fetches projects and info from db and places it on store
     useEffect(() => {
         const fetchProjectsOtherUser = async function() {
             const usernameOnPath = location.pathname.substring(8);
@@ -227,6 +229,8 @@ const Profile = function() {
     const editProfile = function(event: React.MouseEvent) {
         navigate("/people/" + username + "/edit");
     };
+
+    // when visiting other user's profile shows remove and add friend buttons
     const addFriend = async function(event: React.MouseEvent) {
         await addFriendDB(userOnPath);
         setfriendslist((prevState) => [...prevState, userOnPath]);
@@ -272,6 +276,7 @@ const Profile = function() {
         document.title = "Fake Ravelry: " + userOnPath + "'s profile";
     }, [userOnPath]);
 
+    // only the number of projects and friends is working. remaining counters are not implemented
     return (
         <div id="content">
             <div id="usernickname">

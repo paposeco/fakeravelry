@@ -20,6 +20,7 @@ const SearchFriends = function() {
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
+        // searches db for username; if user exists displays profilepic
         const userexists = await searchUser(searchquery);
         if (userexists) {
             setuserfound(true);
@@ -48,7 +49,7 @@ const SearchFriends = function() {
             </form>
             <p>{searchresultinfo}</p>
             {userfound && (
-                <div>
+                <div id="searchresult">
                     <Link to={`/people/${cleanusername}`}>
                         <DisplayProfileImage imageurl={userpic} />
                     </Link>

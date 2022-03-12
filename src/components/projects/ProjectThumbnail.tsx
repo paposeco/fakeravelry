@@ -21,34 +21,15 @@ const ProjectThumbnail = function(props: {
         if (props.projectprogress === "0") {
             setProgress("");
         } else {
-            setProgress(progress);
+            setProgress(props.projectprogress);
         }
     }, [props.projectprogress]);
-
-    const [projectStatus, setProjectStatus] = useState<string>("");
-
-    useEffect(() => {
-        switch (props.projectstatus) {
-            case "inprogress":
-                setProjectStatus("In progress");
-                break;
-            case "finished":
-                setProjectStatus("Finished");
-                break;
-            case "hibernating":
-                setProjectStatus("Hibernating");
-                break;
-            case "frogged":
-                setProjectStatus("Frogged");
-                break;
-        }
-    }, [props.projectstatus]);
 
     useEffect(() => {
         setProjectpath(
             "/notebook/" + props.useronpath + "/projects/" + props.projectslug
         );
-    }, [props.projectslug]);
+    }, [props]);
     useEffect(() => {
         setProjectID(props.projectid);
     }, [props.projectid]);

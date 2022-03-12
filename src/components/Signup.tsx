@@ -17,6 +17,7 @@ const Signup = function() {
     ]);
 
     const navigate = useNavigate();
+    // checks if username already exists; creates user on DB if it doesn't
     const handlerOfSubmit = async function(
         event: React.FormEvent<HTMLFormElement>
     ) {

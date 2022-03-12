@@ -41,6 +41,7 @@ const NewProject = function() {
         }
     };
 
+    // creates project in DB with provided information and also adds project to store
     const handlerOfSubmit = async function(
         event: React.FormEvent<HTMLFormElement>
     ) {
@@ -52,6 +53,7 @@ const NewProject = function() {
             .toLowerCase()
             .trim()
             .replace(/ /g, "-");
+        // checks if a project with the same name already exists in DB; if it does, checkUniqueProjectName returns a usable projectslug (with a number)
         const uniqueProjectSlug = await checkUniqueProjectName(cleanProjectName);
         if (uniqueProjectSlug !== false) {
             const newpath = getPathWithUsername(uniqueProjectSlug);
@@ -96,6 +98,7 @@ const NewProject = function() {
     );
     const [projectordinalnumber, setprojectordinalnumber] = useState<string>("");
 
+    // for displaying the user's number of existing projects in ordinal
     const transformtoordinalnumber = function(originalnumber: number) {
         let ordinalnumber = "";
         if (Math.floor(originalnumber / 10) === 0) {

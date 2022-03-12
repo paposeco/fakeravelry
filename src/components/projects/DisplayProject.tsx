@@ -35,6 +35,7 @@ const DisplayProject = function() {
     );
     const [usermatchespath, setusermatchespath] = useState<boolean>(true);
 
+    // selects project from store according to its id
     const selectProject = function(currentstate: RootState) {
         const currentuseronpath = location.pathname
             .substring(0, location.pathname.indexOf("projects") - 1)
@@ -82,12 +83,10 @@ const DisplayProject = function() {
     const [displayGauge, setDisplayGauge] = useState<boolean>(true);
     const [displayYarn, setDisplayYarn] = useState<boolean>(true);
     const [displayNotes, setDisplayNotes] = useState<boolean>(true);
-    const [displayLinkToRaveler, setDisplayLinkToRaveler] = useState<boolean>(
-        false
-    );
     const [useronpath, setuseronpath] = useState<string>("");
     const [madeforname, setmadeforname] = useState<string>("");
 
+    // if project page belongs to logged in user, user can edit or delete project
     const deleteproject = function(event: React.MouseEvent) {
         const currentprojectid = state.projectid;
         deleteProject(currentprojectid);
@@ -108,6 +107,7 @@ const DisplayProject = function() {
         });
     };
 
+    // only displays items that are filled in
     useEffect(() => {
         if (projectdatafromstore !== undefined) {
             if (projectdatafromstore.pattern.name === "") {
@@ -116,20 +116,7 @@ const DisplayProject = function() {
             if (projectdatafromstore.projectinfo.patterncategory === "") {
                 setDisplayCategory(false);
             }
-            if (projectdatafromstore.projectinfo.madefor === "") {
-                setDisplayMadeFor(false);
-            } else {
-                if (
-                    projectdatafromstore.projectinfo.linktoraveler !==
-                    "can't find user" &&
-                    projectdatafromstore.projectinfo.linktoraveler !== "error in db"
-                ) {
-                    setDisplayLinkToRaveler(true);
-                    setmadeforname(projectdatafromstore.projectinfo.linktoraveler);
-                } else {
-                    setmadeforname(projectdatafromstore.projectinfo.madefor);
-                }
-            }
+
             if (projectdatafromstore.projectinfo.finishby === "") {
                 setDisplayFinishby(false);
             }
@@ -163,6 +150,26 @@ const DisplayProject = function() {
 
             if (projectdatafromstore.imageUrl !== "") {
                 setphotoexists(true);
+            }
+        }
+    }, [projectdatafromstore]);
+
+    // if link to raveler is filled in, looks for user on DB and if it exists creates link to user's profile; made for displays said link or just a name if user doesn't exist on fake ravelry
+    useEffect(() => {
+        if (projectdatafromstore !== undefined) {
+            if (projectdatafromstore.projectinfo.madefor === "") {
+                setDisplayMadeFor(false);
+            } else {
+                if (
+                    projectdatafromstore.projectinfo.linktoraveler !==
+                    "can't find user" &&
+                    projectdatafromstore.projectinfo.linktoraveler !== "error in db" &&
+                    projectdatafromstore.projectinfo.linktoraveler !== ""
+                ) {
+                    setmadeforname(projectdatafromstore.projectinfo.linktoraveler);
+                } else {
+                    setmadeforname(projectdatafromstore.projectinfo.madefor);
+                }
             }
         }
     }, [projectdatafromstore]);
@@ -262,12 +269,6 @@ const DisplayProject = function() {
                                         itemvalue={madeforname}
                                     />
                                 )}
-                                {/* {displayLinkToRaveler && (
-                                    <ProjectItem
-                                        itemdescription="Made for"
-                                        itemvalue={projectdatafromstore!.projectinfo.linktoraveler}
-                                    />
-                                )} */}
 
                                 {displayFinishby && (
                                     <ProjectItem

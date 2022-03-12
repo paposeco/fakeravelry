@@ -6,6 +6,7 @@ import { Country } from "../projects/SelectOptions";
 const DisplayProfileDetails = function(props: {
     userinfo: ProfileInformation;
 }) {
+    // displays profile information
     const infomap = new Map([
         ["personalsite", "Website or blog"],
         ["selectedcountry", "Location"],
@@ -19,46 +20,49 @@ const DisplayProfileDetails = function(props: {
     const [infotodisplay, setinfotodisplay] = useState<[string, string][]>([]);
     const [infofinished, setinfofinished] = useState<boolean>(false);
     const [personalsiteurl, setpersonalsiteurl] = useState<string>("");
-    const selectnonemptyinfo = function() {
-        const info = props.userinfo;
-        for (const [key, value] of Object.entries(info)) {
-            if (
-                value !== "" &&
-                value !== undefined &&
-                value !== "notselected" &&
-                key !== "username" &&
-                key !== "name" &&
-                key !== "imageurl"
-            ) {
-                setinfotodisplay((prevState) => [...prevState, [key, value]]);
-                if (key === "personalsite") {
-                    if (value.includes("http")) {
-                        setpersonalsiteurl(value);
-                    } else {
-                        setpersonalsiteurl("https://" + value);
+
+    const [countryname, setcountryname] = useState<string>("");
+
+    useEffect(() => {
+        const selectnonemptyinfo = function() {
+            const info = props.userinfo;
+            for (const [key, value] of Object.entries(info)) {
+                if (
+                    value !== "" &&
+                    value !== undefined &&
+                    value !== "notselected" &&
+                    key !== "username" &&
+                    key !== "name" &&
+                    key !== "imageurl"
+                ) {
+                    setinfotodisplay((prevState) => [...prevState, [key, value]]);
+                    // transforms personal site from string to a clickable url if necessary
+                    if (key === "personalsite") {
+                        if (value.includes("http")) {
+                            setpersonalsiteurl(value);
+                        } else {
+                            setpersonalsiteurl("https://" + value);
+                        }
                     }
                 }
             }
-        }
-        setinfofinished(true);
-    };
-
-    const [countryname, setcountryname] = useState<string>("");
-    const getCountryName = function(countrycode: string) {
-        const countryinarray = Country.find(
-            (element) => element.value === countrycode
-        );
-        if (countryinarray !== undefined) {
-            setcountryname(countryinarray.text);
-        }
-    };
-    useEffect(() => {
+            setinfofinished(true);
+        };
         if (!infofinished) {
             selectnonemptyinfo();
         }
-    });
+    }, [infofinished, props]);
 
+    // gets country name from code
     useEffect(() => {
+        const getCountryName = function(countrycode: string) {
+            const countryinarray = Country.find(
+                (element) => element.value === countrycode
+            );
+            if (countryinarray !== undefined) {
+                setcountryname(countryinarray.text);
+            }
+        };
         getCountryName(props.userinfo.selectedcountry);
     }, [props.userinfo]);
 

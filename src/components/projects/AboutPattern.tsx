@@ -5,6 +5,7 @@ const AboutPattern = function(props: {
     pattern: Pattern;
     patternfrom: string;
 }) {
+    // this was meant to fetch information about the pattern, but wasn't implemented. only displays the pattern's name
     const [patternname, setPatternname] = useState("");
     const [displayfrom, setdisplayfrom] = useState<boolean>(false);
 

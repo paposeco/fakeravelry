@@ -36,7 +36,7 @@ const DisplayYarn = function(props: { yarn: YarnDisplay }) {
             }
             setPropsReady(true);
         }
-    }, [props]);
+    }, [props, propsReady]);
 
     const getColorfamilyname = function(colorfamily: string) {
         const colorIndex: number = Number(colorfamily.substring(5));

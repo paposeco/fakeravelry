@@ -402,6 +402,7 @@ nav > ul li a{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
 }
 
 .memberthumbnail .profileimage img{
@@ -426,6 +427,7 @@ nav > ul li a{
 .friendthumbnailfooter{
     display: flex;
     flex-direction: row;
+    justify-content: center;
 }
 
 .removefriend{
@@ -1333,3 +1335,14 @@ footer a, footer a:visited{
 
 }
 
+#searchresult{
+    width: 300px;
+    height: 300px;
+}
+
+#searchresult .profileimage img{
+    
+    object-fit: cover;
+    max-width: 280px;
+    max-height: 280px;
+}

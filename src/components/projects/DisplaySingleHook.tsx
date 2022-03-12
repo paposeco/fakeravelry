@@ -9,6 +9,7 @@ const DisplaySingleHook = function(props: {
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
 }) {
+    // select hook is populated with items from select options (there are quite a few hook sizes)
     const [selectValue, setSelectValue] = useState<string>("");
     const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
         setSelectValue(event.target.value);

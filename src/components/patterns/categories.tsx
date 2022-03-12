@@ -1,6 +1,7 @@
 export let selectedCategory: string = "";
 
 const displaycategories = function() {
+    // creates a list for each category, and if an item is also a foldersecondlevel or folderthirdlevel, creates another list;
     const categoriesArray = [
         { item: "nocategory" },
         {

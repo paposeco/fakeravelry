@@ -14,6 +14,7 @@ const DisplayProgress = function(props: { status: Status }) {
             setstartdate("no date set");
         }
     }, [startdate]);
+
     useEffect(() => {
         if (completedate === "" && props.status.progressstatus === "inprogress") {
             setcompletedate("work in progress");

@@ -9,12 +9,11 @@ const DisplaySingleNeedle = function(props: {
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
 }) {
+    // select needle is populated with items from select options (there are quite a few needle sizes)
     const [selectValue, setSelectValue] = useState<string>("");
     const handleChange = function(event: React.ChangeEvent<HTMLSelectElement>) {
         setSelectValue(event.target.value);
-        {
-            props.handler(event);
-        }
+        props.handler(event);
     };
     useEffect(() => {
         setSelectValue(props.needle.value);
