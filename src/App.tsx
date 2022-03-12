@@ -17,8 +17,6 @@ import { projectFetchedFromDB } from "./components/projects/projectsSlice";
 import Friends from "./components/Friends";
 import Navigation from "./components/Navigation";
 
-//for github basename on browserrouter / ghpages name
-
 const App = function() {
     const [userSignedIn, setUserSignedIn] = useState<boolean>(false);
     const [username, setUsername] = useState<string>("");

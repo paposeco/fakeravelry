@@ -73,6 +73,10 @@ const EditProject = function() {
         ""
     );
 
+    const [projectdatafinished, setprojectdatafinished] = useState<boolean>(
+        false
+    );
+
     // easier access to correct hook for event target id
     const setFunctions = new Map([
         ["projectname", setProjectName],
@@ -392,7 +396,21 @@ const EditProject = function() {
             const elementId: string = event.target.id;
             const elementDataSet = event.target.dataset.project;
             const newvalue = event.target.value;
-            if (elementDataSet === "info") {
+            if (elementDataSet === "yarn") {
+                let indexYarnAdded = event.target.parentElement!.parentElement!.id;
+                if (elementId === "closestcolor" || elementId === "yarnweight") {
+                    indexYarnAdded = event.target.parentElement!.id;
+                }
+                setYarnCollection((prevState) => {
+                    let currentyarncollection = Array.from(prevState);
+                    const indexCurrentYarn = prevState.findIndex(
+                        (element) => element.yarnID === indexYarnAdded
+                    );
+                    let currentYarn = currentyarncollection[indexCurrentYarn];
+                    currentYarn[elementId] = event.target.value;
+                    return currentyarncollection;
+                });
+            } else if (elementDataSet === "info") {
                 if (event.target.className === "needles") {
                     setNeedleCollection((prevState) => {
                         const previousInfo: Needles[] = Array.from(prevState);
@@ -412,20 +430,25 @@ const EditProject = function() {
                         return previousInfo;
                     });
                 }
-            } else if (elementDataSet === "yarn") {
-                let indexYarnAdded = event.target.parentElement!.parentElement!.id;
-                if (elementId === "closestcolor" || elementId === "yarnweight") {
-                    indexYarnAdded = event.target.parentElement!.id;
+            }
+        };
+
+        const renderYarnFromStorage = function(yarncollection: string) {
+            if (yarncollection !== "") {
+                // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
+                const parseCollection: Yarn[] = JSON.parse(yarncollection);
+                for (let i = 0; i < parseCollection.length; i++) {
+                    setYarnCollection((prevState) => [...prevState, parseCollection[i]]);
+                    setShowYarnForm((prevState) => [
+                        ...prevState,
+                        <YarnInfo
+                            yarnID={parseCollection[i].yarnID}
+                            yarninfo={parseCollection[i]}
+                            key={uniqid()}
+                            handler={localHandlerOfChange}
+                        />,
+                    ]);
                 }
-                setYarnCollection((prevState) => {
-                    let currentyarncollection = Array.from(prevState);
-                    const indexCurrentYarn = prevState.findIndex(
-                        (element) => element.yarnID === indexYarnAdded
-                    );
-                    let currentYarn = currentyarncollection[indexCurrentYarn];
-                    currentYarn[elementId] = event.target.value;
-                    return currentyarncollection;
-                });
             }
         };
         // if the user is editing a project that already existed, the needles, hooks and yarn need to be rendered differently, since they are rendered with individual components
@@ -465,25 +488,8 @@ const EditProject = function() {
             }
         };
 
-        const renderYarnFromStorage = function(yarncollection: string) {
-            if (yarncollection !== "") {
-                // due to the amount of information for each yarn added to a project, the yarn array is stored in a json on the store
-                const parseCollection: Yarn[] = JSON.parse(yarncollection);
-                for (let i = 0; i < parseCollection.length; i++) {
-                    setYarnCollection((prevState) => [...prevState, parseCollection[i]]);
-                    setShowYarnForm((prevState) => [
-                        ...prevState,
-                        <YarnInfo
-                            yarnID={parseCollection[i].yarnID}
-                            yarninfo={parseCollection[i]}
-                            key={uniqid()}
-                            handler={localHandlerOfChange}
-                        />,
-                    ]);
-                }
-            }
-        };
-        if (projectData !== undefined) {
+        if (!projectdatafinished && projectData !== undefined) {
+            setprojectdatafinished(true);
             setCraftType(projectData.crafttype);
             setProjectName(projectData.projectname);
             setPatternAbout(projectData.pattern.about);
@@ -494,12 +500,11 @@ const EditProject = function() {
             renderYarnFromStorage(projectData.projectinfo.yarn);
             addNeedlesFromStorage(projectData.projectinfo.needles);
             addHooksFromStorage(projectData.projectinfo.hooks);
-            setHooksAdded(projectData.projectinfo.hooks.length);
             setPublicImgUrl(projectData.imageUrl);
             setProjectSlug(projectData.projectslug);
             setPatternUsed(projectData.patternused);
         }
-    }, [projectData, hooksAdded, needlesAdded]);
+    }, [projectdatafinished, projectData, needlesAdded, hooksAdded]);
 
     useEffect(() => {
         const renderImage = function(): void {
