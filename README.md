@@ -2,7 +2,7 @@
 
 [Live Demo](https://paposeco.github.io/fakeravelry/) 
 
-Login for demo account: e-mail: "demoaccount@fakeravelry.com", password: password
+Login for demo account: e-mail: demoaccount@fakeravelry.com, password: password
 
 ***
 
