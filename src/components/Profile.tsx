@@ -46,14 +46,10 @@ const Profile = function() {
     );
     const [userIDOnPath, setUserIDOnPath] = useState<string>("");
     const [publicImgUrl, setPublicImgUrl] = useState<string>("");
-    const [
-        otherUserProjectsFetched,
-        setOtherUserProjectsFetched,
-    ] = useState<boolean>(false);
-    const [
-        otherUserDetailsFetched,
-        setOtherUserDetailsFetched,
-    ] = useState<boolean>(false);
+    const [otherUserProjectsFetched, setOtherUserProjectsFetched] =
+        useState<boolean>(false);
+    const [otherUserDetailsFetched, setOtherUserDetailsFetched] =
+        useState<boolean>(false);
 
     const [infotodisplay, setinfotodisplay] = useState<ProfileInformation>();
     const [notebookpath, setnotebookpath] = useState<string>("");
@@ -129,10 +125,8 @@ const Profile = function() {
     useEffect(() => {
         const fetchUserProfileInformation = async () => {
             if (userIDOnPath !== "") {
-                const profileinfo:
-                    | ProfileInformation
-                    | false
-                    | undefined = await getUserProfileInformation(userIDOnPath);
+                const profileinfo: ProfileInformation | false | undefined =
+                    await getUserProfileInformation(userIDOnPath);
                 return profileinfo;
             }
         };
@@ -170,8 +164,8 @@ const Profile = function() {
                         let gaugeNumberRows: number;
                         project.data().projectinfo.gauge.numberStsOrRepeats === null
                             ? (gaugeNumberSts = 0)
-                            : (gaugeNumberSts = project.data().projectinfo.gauge
-                                .numberStsOrRepeats);
+                            : (gaugeNumberSts =
+                                project.data().projectinfo.gauge.numberStsOrRepeats);
                         project.data().projectinfo.gauge.numberRows === null
                             ? (gaugeNumberRows = 0)
                             : (gaugeNumberRows = project.data().projectinfo.gauge.numberRows);
@@ -195,8 +189,8 @@ const Profile = function() {
                                 needles: project.data().projectinfo.needles,
                                 hooks: project.data().projectinfo.hooks,
                                 numberStsOrRepeats: gaugeNumberSts,
-                                horizontalunits: project.data().projectinfo.gauge
-                                    .horizontalunits,
+                                horizontalunits:
+                                    project.data().projectinfo.gauge.horizontalunits,
                                 numberRows: gaugeNumberRows,
                                 gaugesize: project.data().projectinfo.gauge.gaugesize,
                                 gaugepattern: project.data().projectinfo.gauge.gaugepattern,
@@ -264,12 +258,20 @@ const Profile = function() {
             dispatch(clearProjects({ allprojects: "allprojects" }));
         } else {
             setUserMatchesPath(true);
-            setnumberprojects(projectData.length);
+            if (projectData[0].projectid === "") {
+                setnumberprojects(0);
+            } else {
+                setnumberprojects(projectData.length);
+            }
         }
     }, [location, dispatch, projectData, user]);
 
     useEffect(() => {
-        setnumberprojects(projectData.length);
+        if (projectData[0].projectid === "") {
+            setnumberprojects(0);
+        } else {
+            setnumberprojects(projectData.length);
+        }
     }, [projectData]);
 
     useEffect(() => {
