@@ -4,6 +4,8 @@
 
 Login for demo account: e-mail: demoaccount@fakeravelry.com, password: password
 
+***
+
 The purpose of this project was to implement an existing website. I decided to implement [Ravelry](https://www.ravelry.com) in React+Typescript and Firebase. Ravelry is a website for crafters where users have their own profile and a notebook with projects. There is a community element where you can add friends and talk with other people on forums. You can also keep track of your yarn stash and buy patterns. 
 
 Since it is a fairly complex website I only implemented the following features:
