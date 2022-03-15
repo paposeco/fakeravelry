@@ -39,11 +39,10 @@ const EditProject = function() {
     // fetches current username from store
     const user = useSelector((state: RootState) => state.userinfo.username);
     // fetches project data from store
-    const projectData:
-        | ProjectFromStore
-        | undefined = useSelector((state: RootState) =>
+    const projectData: ProjectFromStore | undefined = useSelector(
+        (state: RootState) =>
             state.projects.find((element) => element.projectid === projectid)
-        );
+    );
 
     // local state hooks for form
     const [craftType, setCraftType] = useState<string>("");
@@ -69,13 +68,11 @@ const EditProject = function() {
     const [projectSlug, setProjectSlug] = useState<string>("");
     const [madefor, setMadeFor] = useState<string>("");
     const fileInput = useRef<HTMLInputElement | null>(null);
-    const [profilebreadcrumbimage, setprofilebreacrumbimage] = useState<string>(
-        ""
-    );
+    const [profilebreadcrumbimage, setprofilebreacrumbimage] =
+        useState<string>("");
 
-    const [projectdatafinished, setprojectdatafinished] = useState<boolean>(
-        false
-    );
+    const [projectdatafinished, setprojectdatafinished] =
+        useState<boolean>(false);
 
     // easier access to correct hook for event target id
     const setFunctions = new Map([
@@ -132,9 +129,6 @@ const EditProject = function() {
             }
         } else if (elementDataSet === "yarn") {
             let indexYarnAdded = event.target.parentElement!.parentElement!.id;
-            if (elementId === "closestcolor" || elementId === "yarnweight") {
-                indexYarnAdded = event.target.parentElement!.id;
-            }
             setYarnCollection((prevState) => {
                 let currentyarncollection = Array.from(prevState);
                 const indexCurrentYarn = prevState.findIndex(
@@ -152,7 +146,6 @@ const EditProject = function() {
                     previousStatus.happiness = elementId;
                 } else {
                     previousStatus[elementId] = event.target.value;
-                    console.log(event.target.value);
                 }
 
                 return previousStatus;
@@ -337,10 +330,8 @@ const EditProject = function() {
 
     // handles adding images to projects
     const [publicImgUrl, setPublicImgUrl] = useState<string>();
-    const [
-        displayImageComponent,
-        setDisplayImageComponent,
-    ] = useState<JSX.Element>();
+    const [displayImageComponent, setDisplayImageComponent] =
+        useState<JSX.Element>();
 
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -398,9 +389,6 @@ const EditProject = function() {
             const newvalue = event.target.value;
             if (elementDataSet === "yarn") {
                 let indexYarnAdded = event.target.parentElement!.parentElement!.id;
-                /* if (elementId === "closestcolor" || elementId === "yarnweight") {
-                 *     indexYarnAdded = event.target.parentElement!.id;
-                 * } */
                 setYarnCollection((prevState) => {
                     let currentyarncollection = Array.from(prevState);
                     const indexCurrentYarn = prevState.findIndex(

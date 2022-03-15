@@ -27,6 +27,8 @@ const EditProfile = function() {
     const [email, setemail] = useState<string>("");
     const [emailready, setemailready] = useState<boolean>(false);
     const [infofetched, setinfofecthed] = useState<boolean>(false);
+    const [publicImgUrl, setPublicImgUrl] = useState<string>("");
+    const fileInput = useRef<HTMLInputElement | null>(null);
 
     const functionmap = new Map([
         ["personalsite", setpersonalsite],
@@ -58,10 +60,8 @@ const EditProfile = function() {
 
     useEffect(() => {
         const fetchUserProfileInformation = async function() {
-            const profileinfo:
-                | ProfileInformation
-                | false
-                | undefined = await getUserProfileInformation(user.userID);
+            const profileinfo: ProfileInformation | false | undefined =
+                await getUserProfileInformation(user.userID);
 
             return profileinfo;
         };
@@ -69,23 +69,43 @@ const EditProfile = function() {
             const profileinfo = fetchUserProfileInformation();
             profileinfo.then(function(dbinfo) {
                 if (dbinfo !== false && dbinfo !== undefined) {
-                    setselectedcountry(dbinfo.selectedcountry);
-                    setpersonalsite(dbinfo.personalsite);
-                    setyearsknitting(dbinfo.yearsknitting);
-                    setyearscrocheting(dbinfo.yearscrocheting);
-                    setpetskids(dbinfo.petskids);
-                    setfavoritecolors(dbinfo.favoritecolors);
-                    setfavecurseword(dbinfo.favecurseword);
-                    setaboutme(dbinfo.aboutme);
-                    setPublicImgUrl(dbinfo.imageurl);
+                    if (dbinfo.selectedcountry !== undefined) {
+                        setselectedcountry(dbinfo.selectedcountry);
+                    }
+
+                    if (dbinfo.personalsite !== undefined) {
+                        setpersonalsite(dbinfo.personalsite);
+                    }
+
+                    if (dbinfo.yearsknitting !== undefined) {
+                        setyearsknitting(dbinfo.yearsknitting);
+                    }
+
+                    if (dbinfo.yearscrocheting !== undefined) {
+                        setyearscrocheting(dbinfo.yearscrocheting);
+                    }
+
+                    if (dbinfo.petskids !== undefined) {
+                        setpetskids(dbinfo.petskids);
+                    }
+                    if (dbinfo.favoritecolors !== undefined) {
+                        setfavoritecolors(dbinfo.favoritecolors);
+                    }
+                    if (dbinfo.favecurseword !== undefined) {
+                        setfavecurseword(dbinfo.favecurseword);
+                    }
+
+                    if (dbinfo.aboutme !== undefined) {
+                        setaboutme(dbinfo.aboutme);
+                    }
+                    if (dbinfo.imageurl !== undefined) {
+                        setPublicImgUrl(dbinfo.imageurl);
+                    }
                 }
                 setinfofecthed(true);
             });
         }
     }, [infofetched, user]);
-
-    const [publicImgUrl, setPublicImgUrl] = useState<string>("");
-    const fileInput = useRef<HTMLInputElement | null>(null);
 
     // saves photo to firebase storage and updates DB with publicURL
     const savePhoto = async function(event: React.FormEvent<HTMLFormElement>) {
@@ -174,7 +194,12 @@ const EditProfile = function() {
                                 ref={fileInput}
                             />
                         </label>
-                        <button id="submitphoto" type="submit" className="genericbutton">
+                        <button
+                            id="submitphoto"
+                            type="submit"
+                            form="uploadProfilePic"
+                            className="genericbutton"
+                        >
                             Upload
                         </button>
                     </form>
@@ -186,7 +211,7 @@ const EditProfile = function() {
                         <div className="editprofiledivlabel">Email address</div>
                         <div>{email}</div>
                     </div>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} id="submitprofiledetails">
                         <div className="editprofilediv">
                             <label htmlFor="personalsite" className="editprofiledivlabel">
                                 Website or blog
@@ -301,7 +326,11 @@ const EditProfile = function() {
                                 onChange={handleChange}
                             />
                         </div>
-                        <button type="submit" className="genericbutton">
+                        <button
+                            type="submit"
+                            className="genericbutton"
+                            form="submitprofiledetails"
+                        >
                             save changes
                         </button>
                     </form>

@@ -34,6 +34,7 @@ const YarnInfo = function(props: {
             prevSelects[elementID] = event.target.value;
             return prevSelects;
         });
+
         props.handler(event);
     };
 

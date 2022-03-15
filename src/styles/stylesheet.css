@@ -338,7 +338,9 @@ nav > ul li a{
 }
 
 #profileleft .profileimage img{
-    max-width: 102px;
+    width: 102px;
+    height: 102px;
+    object-fit: cover;
     border-radius: 5px;
     border: 1px solid black;
 }
