@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/fakeravelry/static/css/main.a8d1f7d8.chunk.css",
-    "main.js": "/fakeravelry/static/js/main.649c67bf.chunk.js",
-    "main.js.map": "/fakeravelry/static/js/main.649c67bf.chunk.js.map",
+    "main.css": "/fakeravelry/static/css/main.0d199e41.chunk.css",
+    "main.js": "/fakeravelry/static/js/main.bb08952a.chunk.js",
+    "main.js.map": "/fakeravelry/static/js/main.bb08952a.chunk.js.map",
     "runtime-main.js": "/fakeravelry/static/js/runtime-main.92e15ab9.js",
     "runtime-main.js.map": "/fakeravelry/static/js/runtime-main.92e15ab9.js.map",
     "static/js/2.0ee66485.chunk.js": "/fakeravelry/static/js/2.0ee66485.chunk.js",
     "static/js/2.0ee66485.chunk.js.map": "/fakeravelry/static/js/2.0ee66485.chunk.js.map",
     "index.html": "/fakeravelry/index.html",
-    "static/css/main.a8d1f7d8.chunk.css.map": "/fakeravelry/static/css/main.a8d1f7d8.chunk.css.map",
+    "static/css/main.0d199e41.chunk.css.map": "/fakeravelry/static/css/main.0d199e41.chunk.css.map",
     "static/js/2.0ee66485.chunk.js.LICENSE.txt": "/fakeravelry/static/js/2.0ee66485.chunk.js.LICENSE.txt",
     "static/media/stylesheet.css": "/fakeravelry/static/media/folder.b759037c.svg",
     "static/media/backgroundprimerio.c0973b0c.png": "/fakeravelry/static/media/backgroundprimerio.c0973b0c.png",
@@ -37,7 +37,7 @@
   "entrypoints": [
     "static/js/runtime-main.92e15ab9.js",
     "static/js/2.0ee66485.chunk.js",
-    "static/css/main.a8d1f7d8.chunk.css",
-    "static/js/main.649c67bf.chunk.js"
+    "static/css/main.0d199e41.chunk.css",
+    "static/js/main.bb08952a.chunk.js"
   ]
 }
