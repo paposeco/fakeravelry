@@ -2,15 +2,15 @@
 
 [Live Demo](https://paposeco.github.io/fakeravelry/) 
 
+![Fake Ravelry Home](https://github.com/paposeco/fakeravelry/assets/13892562/4dcfb8b1-918f-4e30-8716-287226f3f3eb)
+
 ![Fake Ravelry](https://github.com/paposeco/fakeravelry/assets/13892562/38103090-0468-4286-a5b8-030e955ebde4)
-
-![Fake Ravelry demoaccount's friends](https://github.com/paposeco/fakeravelry/assets/13892562/72745237-6479-48be-8d8f-194bd566b992)
-
-![Fake Ravelry demoaccount's Projects](https://github.com/paposeco/fakeravelry/assets/13892562/d3a0e512-a61b-435b-86c3-38b228dc3d48)
 
 ![Fake Ravelry demoaccount's profile](https://github.com/paposeco/fakeravelry/assets/13892562/a5f4005c-3828-495b-8b20-3ef284247ce2)
 
-![Fake Ravelry Home](https://github.com/paposeco/fakeravelry/assets/13892562/4dcfb8b1-918f-4e30-8716-287226f3f3eb)
+![Fake Ravelry demoaccount's Projects](https://github.com/paposeco/fakeravelry/assets/13892562/d3a0e512-a61b-435b-86c3-38b228dc3d48)
+
+![Fake Ravelry demoaccount's project page](https://github.com/paposeco/fakeravelry/assets/13892562/94faedf4-bbd1-4c5f-9d49-2395dad7b338)
 
 Login for demo account: e-mail: demoaccount@fakeravelry.com, password: password
 
